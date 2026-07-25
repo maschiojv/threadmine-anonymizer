@@ -1,0 +1,27 @@
+JNI global refs: 15, weak refs: 5
+
+	at com.acme.web.PaymentController.confirm(PaymentController.java:52)
+	at java.net.SocketInputStream.socketRead0(java.base@21.0.3/Native Method)
+   java.lang.Thread.State: RUNNABLE
+"http-nio-8080-exec-1" #27 daemon prio=5 os_prio=0 cpu=2500.00ms elapsed=8.50s tid=0x00007f8a1f010000 nid=0x5803 runnable  [0x00007ffee9d20000]
+
+	at com.acme.payment.PaymentFacade.settle(PaymentFacade.java:41)
+	- waiting to lock <0x00000007ffc12345> (a com.acme.payment.LedgerLock)
+	at com.acme.payment.LedgerService.applyEntry(LedgerService.java:88)
+   java.lang.Thread.State: BLOCKED (on object monitor)
+"pgto-worker-1" #30 prio=5 os_prio=0 cpu=2.10ms elapsed=8.45s tid=0x00007f8a1f011000 nid=0x6003 waiting for monitor entry  [0x00007ffee9e21000]
+
+	at java.lang.ref.Reference$ReferenceHandler.run(java.base@21.0.3/Reference.java:208)
+	at java.lang.ref.Reference.processPendingReferences(java.base@21.0.3/Reference.java:246)
+	at java.lang.ref.Reference.waitForReferencePendingList(java.base@21.0.3/Native Method)
+   java.lang.Thread.State: RUNNABLE
+"Reference Handler" #2 daemon prio=10 os_prio=0 cpu=0.50ms elapsed=10.20s tid=0x00007f8a1f009000 nid=0x3003 waiting on condition  [0x00007ffee9f24000]
+
+	at com.acme.gateway.Bootstrap.main(Bootstrap.java:41)
+	at java.io.FileInputStream.read(java.base@21.0.3/FileInputStream.java:276)
+	at java.io.FileInputStream.readBytes(java.base@21.0.3/Native Method)
+   java.lang.Thread.State: RUNNABLE
+"main" #1 prio=5 os_prio=0 cpu=125.50ms elapsed=10.25s tid=0x00007f8a1f008000 nid=0x2803 runnable  [0x00007ffee9c1e000]
+
+Full thread dump OpenJDK 64-Bit Server VM (21.0.3+9-LTS mixed mode, sharing):
+2026-07-24 10:30:45

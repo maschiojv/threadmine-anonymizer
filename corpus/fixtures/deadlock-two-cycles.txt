@@ -1,0 +1,100 @@
+2026-07-24 10:27:55
+Full thread dump OpenJDK 64-Bit Server VM (21.0.3+9-LTS mixed mode, sharing):
+
+"main" #1 prio=5 os_prio=0 cpu=210.11ms elapsed=95.30s tid=0x00007f8a1f008000 nid=0x2803 waiting on condition  [0x00007ffee9c1e000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep0(java.base@21.0.3/Native Method)
+	at java.lang.Thread.sleep(java.base@21.0.3/Thread.java:509)
+	at com.acme.gateway.Bootstrap.awaitShutdown(Bootstrap.java:77)
+	at com.acme.gateway.Bootstrap.main(Bootstrap.java:41)
+
+"pgto-worker-1" #14 prio=5 os_prio=0 cpu=45.68ms elapsed=94.80s tid=0x00007f8a1f011000 nid=0x6203 waiting for monitor entry  [0x00007ffee9e21000]
+   java.lang.Thread.State: BLOCKED (on object monitor)
+	at com.acme.payment.LedgerService.applyEntry(LedgerService.java:88)
+	- waiting to lock <0x000000061fcc9b90> (a com.acme.stock.StockLatch)
+	- locked <0x000000061fcc9b80> (a com.acme.payment.LedgerLock)
+	at com.acme.payment.PaymentFacade.settle(PaymentFacade.java:41)
+	at java.lang.Thread.run(java.base@21.0.3/Thread.java:1583)
+
+"pgto-worker-2" #15 prio=5 os_prio=0 cpu=45.23ms elapsed=94.80s tid=0x00007f8a1f012000 nid=0x9e03 waiting for monitor entry  [0x00007ffee9f22000]
+   java.lang.Thread.State: BLOCKED (on object monitor)
+	at com.acme.stock.StockSync.reserve(StockSync.java:141)
+	- waiting to lock <0x000000061fcc9b80> (a com.acme.payment.LedgerLock)
+	- locked <0x000000061fcc9b90> (a com.acme.stock.StockLatch)
+	at com.acme.order.OrderService.processOrder(OrderService.java:67)
+	at java.lang.Thread.run(java.base@21.0.3/Thread.java:1583)
+
+"billing-sched-1" #21 prio=5 os_prio=0 cpu=12.90ms elapsed=91.02s tid=0x00007f8a1f014000 nid=0xa103 waiting for monitor entry  [0x00007ffeea023000]
+   java.lang.Thread.State: BLOCKED (on object monitor)
+	at com.acme.billing.InvoiceService.computeTotals(InvoiceService.java:120)
+	- waiting to lock <0x000000061fdd1a20> (a com.acme.report.RenderGate)
+	- locked <0x000000061fdd1a10> (a com.acme.billing.TariffTable)
+	at com.acme.billing.sched.TariffJob.run(TariffJob.java:61)
+	at java.lang.Thread.run(java.base@21.0.3/Thread.java:1583)
+
+"report-render-1" #22 prio=5 os_prio=0 cpu=11.44ms elapsed=91.02s tid=0x00007f8a1f015000 nid=0xa203 waiting for monitor entry  [0x00007ffeea124000]
+   java.lang.Thread.State: BLOCKED (on object monitor)
+	at com.acme.report.PdfRenderer.renderPage(PdfRenderer.java:212)
+	- waiting to lock <0x000000061fdd1a10> (a com.acme.billing.TariffTable)
+	- locked <0x000000061fdd1a20> (a com.acme.report.RenderGate)
+	at com.acme.report.ReportJob.run(ReportJob.java:44)
+	at java.lang.Thread.run(java.base@21.0.3/Thread.java:1583)
+
+"VM Thread" os_prio=0 cpu=30.06ms elapsed=95.36s tid=0x00007f8a1e00a800 nid=0x4903 runnable
+
+"GC Thread#0" os_prio=0 cpu=13.12ms elapsed=95.37s tid=0x00007f8a1e00e800 nid=0x5103 runnable
+
+"VM Periodic Task Thread" os_prio=0 cpu=21.45ms elapsed=95.31s tid=0x00007f8a1f039800 nid=0x5e03 waiting on condition
+
+JNI global refs: 18, weak refs: 0
+
+
+Found one Java-level deadlock:
+=============================
+"pgto-worker-1":
+  waiting to lock monitor 0x00007f8a6800fe00 (object 0x000000061fcc9b90, a com.acme.stock.StockLatch),
+  which is held by "pgto-worker-2"
+"pgto-worker-2":
+  waiting to lock monitor 0x00007f8a6800ff00 (object 0x000000061fcc9b80, a com.acme.payment.LedgerLock),
+  which is held by "pgto-worker-1"
+
+Java stack information for the threads listed above:
+===================================================
+"pgto-worker-1":
+	at com.acme.payment.LedgerService.applyEntry(LedgerService.java:88)
+	- waiting to lock <0x000000061fcc9b90> (a com.acme.stock.StockLatch)
+	- locked <0x000000061fcc9b80> (a com.acme.payment.LedgerLock)
+	at com.acme.payment.PaymentFacade.settle(PaymentFacade.java:41)
+	at java.lang.Thread.run(java.base@21.0.3/Thread.java:1583)
+"pgto-worker-2":
+	at com.acme.stock.StockSync.reserve(StockSync.java:141)
+	- waiting to lock <0x000000061fcc9b80> (a com.acme.payment.LedgerLock)
+	- locked <0x000000061fcc9b90> (a com.acme.stock.StockLatch)
+	at com.acme.order.OrderService.processOrder(OrderService.java:67)
+	at java.lang.Thread.run(java.base@21.0.3/Thread.java:1583)
+
+Found one Java-level deadlock:
+=============================
+"billing-sched-1":
+  waiting to lock monitor 0x00007f8a68010a00 (object 0x000000061fdd1a20, a com.acme.report.RenderGate),
+  which is held by "report-render-1"
+"report-render-1":
+  waiting to lock monitor 0x00007f8a68010b00 (object 0x000000061fdd1a10, a com.acme.billing.TariffTable),
+  which is held by "billing-sched-1"
+
+Java stack information for the threads listed above:
+===================================================
+"billing-sched-1":
+	at com.acme.billing.InvoiceService.computeTotals(InvoiceService.java:120)
+	- waiting to lock <0x000000061fdd1a20> (a com.acme.report.RenderGate)
+	- locked <0x000000061fdd1a10> (a com.acme.billing.TariffTable)
+	at com.acme.billing.sched.TariffJob.run(TariffJob.java:61)
+	at java.lang.Thread.run(java.base@21.0.3/Thread.java:1583)
+"report-render-1":
+	at com.acme.report.PdfRenderer.renderPage(PdfRenderer.java:212)
+	- waiting to lock <0x000000061fdd1a10> (a com.acme.billing.TariffTable)
+	- locked <0x000000061fdd1a20> (a com.acme.report.RenderGate)
+	at com.acme.report.ReportJob.run(ReportJob.java:44)
+	at java.lang.Thread.run(java.base@21.0.3/Thread.java:1583)
+
+Found 2 deadlocks.

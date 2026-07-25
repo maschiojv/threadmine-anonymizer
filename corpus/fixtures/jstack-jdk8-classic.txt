@@ -1,0 +1,92 @@
+2026-07-24 09:14:33
+Full thread dump Java HotSpot(TM) 64-Bit Server VM (25.362-b09 mixed mode):
+
+"order-dispatcher" #29 prio=5 os_prio=0 tid=0x00007f3a4c0f4800 nid=0x1c33 waiting on condition [0x00007f3a1d6d5000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(Native Method)
+	at com.acme.order.OrderDispatcher.pollLoop(OrderDispatcher.java:91)
+	at com.acme.order.OrderDispatcher.run(OrderDispatcher.java:58)
+	at java.lang.Thread.run(Thread.java:748)
+
+"http-nio-8080-exec-2" #28 daemon prio=5 os_prio=0 tid=0x00007f3a4c0f2800 nid=0x1c31 runnable [0x00007f3a1d5d3000]
+   java.lang.Thread.State: RUNNABLE
+	at java.net.SocketInputStream.socketRead0(Native Method)
+	at java.net.SocketInputStream.socketRead(SocketInputStream.java:116)
+	at java.net.SocketInputStream.read(SocketInputStream.java:171)
+	at org.apache.coyote.http11.Http11InputBuffer.fill(Http11InputBuffer.java:737)
+	at org.apache.coyote.http11.Http11InputBuffer.parseRequestLine(Http11InputBuffer.java:356)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+	at java.lang.Thread.run(Thread.java:748)
+
+"http-nio-8080-exec-1" #27 daemon prio=5 os_prio=0 tid=0x00007f3a4c0f1000 nid=0x1c2f waiting for monitor entry [0x00007f3a1d5d2000]
+   java.lang.Thread.State: BLOCKED (on object monitor)
+	at com.acme.payment.LedgerService.applyEntry(LedgerService.java:88)
+	- waiting to lock <0x00000000e1a2b3c8> (a com.acme.payment.LedgerLock)
+	at com.acme.payment.PaymentFacade.settle(PaymentFacade.java:41)
+	at com.acme.web.PaymentController.confirm(PaymentController.java:52)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:190)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at java.lang.Thread.run(Thread.java:748)
+
+"pgto-worker-1" #24 prio=5 os_prio=0 tid=0x00007f3a4c0d2000 nid=0x1c28 runnable [0x00007f3a1d3d0000]
+   java.lang.Thread.State: RUNNABLE
+	at com.acme.payment.gateway.AcquirerClient.capture(AcquirerClient.java:133)
+	at com.acme.payment.LedgerService.applyEntry(LedgerService.java:95)
+	- locked <0x00000000e1a2b3c8> (a com.acme.payment.LedgerLock)
+	at com.acme.payment.PaymentFacade.settle(PaymentFacade.java:41)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at java.lang.Thread.run(Thread.java:748)
+
+"DestroyJavaVM" #26 prio=5 os_prio=0 tid=0x00007f3a4c00b800 nid=0x1bd0 waiting on condition [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+
+"Service Thread" #10 daemon prio=9 os_prio=0 tid=0x00007f3a4c09b000 nid=0x1bf9 runnable [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+
+"C1 CompilerThread2" #8 daemon prio=9 os_prio=0 tid=0x00007f3a4c084000 nid=0x1bf7 waiting on condition [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+
+"C2 CompilerThread0" #6 daemon prio=9 os_prio=0 tid=0x00007f3a4c07f800 nid=0x1bf5 waiting on condition [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+
+"Signal Dispatcher" #4 daemon prio=9 os_prio=0 tid=0x00007f3a4c071800 nid=0x1bf4 runnable [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+
+"Finalizer" #3 daemon prio=8 os_prio=0 tid=0x00007f3a4c070000 nid=0x1bf3 in Object.wait() [0x00007f3a20ee1000]
+   java.lang.Thread.State: WAITING (on object monitor)
+	at java.lang.Object.wait(Native Method)
+	- waiting on <0x00000000e0a01c40> (a java.lang.ref.ReferenceQueue$Lock)
+	at java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:144)
+	- locked <0x00000000e0a01c40> (a java.lang.ref.ReferenceQueue$Lock)
+	at java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:165)
+	at java.lang.ref.Finalizer$FinalizerThread.run(Finalizer.java:216)
+
+"Reference Handler" #2 daemon prio=10 os_prio=0 tid=0x00007f3a4c06e000 nid=0x1bf2 in Object.wait() [0x00007f3a20fe0000]
+   java.lang.Thread.State: WAITING (on object monitor)
+	at java.lang.Object.wait(Native Method)
+	- waiting on <0x00000000e0a01b20> (a java.lang.ref.Reference$Lock)
+	at java.lang.Object.wait(Object.java:502)
+	at java.lang.ref.Reference.tryHandlePending(Reference.java:191)
+	- locked <0x00000000e0a01b20> (a java.lang.ref.Reference$Lock)
+	at java.lang.ref.Reference$ReferenceHandler.run(Reference.java:153)
+
+"VM Thread" os_prio=0 tid=0x00007f3a4c066800 nid=0x1bf1 runnable
+
+"GC task thread#0 (ParallelGC)" os_prio=0 tid=0x00007f3a4c01e800 nid=0x1bd2 runnable
+
+"GC task thread#1 (ParallelGC)" os_prio=0 tid=0x00007f3a4c020800 nid=0x1bd3 runnable
+
+"VM Periodic Task Thread" os_prio=0 tid=0x00007f3a4c0a5000 nid=0x1bfb waiting on condition
+
+JNI global references: 245
+
+Heap
+ PSYoungGen      total 76288K, used 65313K [0x00000000f5580000, 0x00000000fab00000, 0x0000000100000000)
+  eden space 65536K, 91% used [0x00000000f5580000,0x00000000f91a8560,0x00000000f9580000)
+  from space 10752K, 42% used [0x00000000fa080000,0x00000000fa4e8000,0x00000000fab00000)
+  to   space 10752K, 0% used [0x00000000f9580000,0x00000000f9580000,0x00000000fa000000)
+ ParOldGen       total 175104K, used 82911K [0x00000000e0000000, 0x00000000eab00000, 0x00000000f5580000)
+  object space 175104K, 47% used [0x00000000e0000000,0x00000000e50f7c38,0x00000000eab00000)
+ Metaspace       used 41234K, capacity 43120K, committed 43392K, reserved 1087488K
+  class space    used 5321K, capacity 5760K, committed 5888K, reserved 1048576K

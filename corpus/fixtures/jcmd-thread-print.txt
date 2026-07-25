@@ -1,0 +1,53 @@
+48350:
+2026-07-24 10:02:19
+Full thread dump OpenJDK 64-Bit Server VM (17.0.8+7-LTS mixed mode, sharing):
+
+Threads class SMR info:
+_java_thread_list=0x00006000021d5e40, length=5, elements={
+0x00007fb2a3809200, 0x00007fb2a3810800, 0x00007fb2a3813200, 0x00007fb2a3813a00,
+0x00007fb2a3874c00
+}
+
+"main" #1 prio=5 os_prio=31 cpu=311.18ms elapsed=88.09s tid=0x00007fb2a3809200 nid=0x2603 waiting on condition  [0x000000016b7fa000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.8/Native Method)
+	at com.acme.gateway.Bootstrap.awaitShutdown(Bootstrap.java:77)
+	at com.acme.gateway.Bootstrap.main(Bootstrap.java:41)
+
+"Reference Handler" #2 daemon prio=10 os_prio=31 cpu=0.29ms elapsed=88.08s tid=0x00007fb2a3810800 nid=0x3a03 waiting on condition  [0x000000016c8a6000]
+   java.lang.Thread.State: RUNNABLE
+	at java.lang.ref.Reference.waitForReferencePendingList(java.base@17.0.8/Native Method)
+	at java.lang.ref.Reference.processPendingReferences(java.base@17.0.8/Reference.java:253)
+	at java.lang.ref.Reference$ReferenceHandler.run(java.base@17.0.8/Reference.java:215)
+
+"report-render-1" #14 prio=5 os_prio=31 cpu=6120.45ms elapsed=86.51s tid=0x00007fb2a3813200 nid=0x5203 runnable  [0x000000016d0be000]
+   java.lang.Thread.State: RUNNABLE
+	at com.acme.report.PdfRenderer.renderPage(PdfRenderer.java:212)
+	at com.acme.report.PdfRenderer.render(PdfRenderer.java:88)
+	at com.acme.report.ReportJob.run(ReportJob.java:44)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(java.base@17.0.8/ThreadPoolExecutor.java:1136)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(java.base@17.0.8/ThreadPoolExecutor.java:635)
+	at java.lang.Thread.run(java.base@17.0.8/Thread.java:833)
+
+"report-render-2" #15 prio=5 os_prio=31 cpu=12.02ms elapsed=86.51s tid=0x00007fb2a3813a00 nid=0x5403 waiting on condition  [0x000000016d2ca000]
+   java.lang.Thread.State: WAITING (parking)
+	at jdk.internal.misc.Unsafe.park(java.base@17.0.8/Native Method)
+	- parking to wait for  <0x000000061f8cc2e0> (a java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject)
+	at java.util.concurrent.locks.LockSupport.park(java.base@17.0.8/LockSupport.java:211)
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(java.base@17.0.8/AbstractQueuedSynchronizer.java:1625)
+	at java.util.concurrent.LinkedBlockingQueue.take(java.base@17.0.8/LinkedBlockingQueue.java:435)
+	at java.util.concurrent.ThreadPoolExecutor.getTask(java.base@17.0.8/ThreadPoolExecutor.java:1062)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(java.base@17.0.8/ThreadPoolExecutor.java:1122)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(java.base@17.0.8/ThreadPoolExecutor.java:635)
+	at java.lang.Thread.run(java.base@17.0.8/Thread.java:833)
+
+"Monitor Deflation Thread" #6 daemon prio=9 os_prio=31 cpu=1.63ms elapsed=88.08s tid=0x00007fb2a3874c00 nid=0x4203 runnable  [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+
+"VM Thread" os_prio=31 cpu=44.21ms elapsed=88.09s tid=0x00007fb2a2909e00 nid=0x3803 runnable
+
+"GC Thread#0" os_prio=31 cpu=12.16ms elapsed=88.10s tid=0x00007fb2a2904f00 nid=0x3103 runnable
+
+"VM Periodic Task Thread" os_prio=31 cpu=48.33ms elapsed=88.08s tid=0x00007fb2a3839800 nid=0x5f03 waiting on condition
+
+JNI global refs: 17, weak refs: 0

@@ -1,0 +1,32 @@
+# Edge: lambdas ($$Lambda$123/0x... estilo JDK 15-20 e $$Lambda/0x... estilo JDK 21+),
+# inner classes (Foo$Bar, Foo$Bar$1), lambda$met$0, proxies CGLIB
+# ($$EnhancerBySpringCGLIB$$/$$FastClassBySpringCGLIB$$ + frame (<generated>)),
+# <init>/<clinit>, LambdaForm$MH.
+formato: hotspot-jstack
+ancoras_preservadas:
+  - "Full thread dump OpenJDK 64-Bit Server VM (17.0.8+7-LTS mixed mode, sharing):"
+  - "java.lang.Thread.State:"
+threads_allowlist_verbatim:
+  - "http-nio-8080-exec-3"
+  - "VM Thread"
+threads_tokenizadas:
+  "order-async-1": { preserva_sufixo: "-1" }
+  "stock-init-1": { preserva_sufixo: "-1" }
+classes_tokenizadas:
+  - "com.acme.order.OrderService"      # em lambda$processOrder$0: metodo interno vira lambda$<m...>$0
+  - "com.acme.stock.StockSync"         # StockSync$Watcher -> C...$C...; StockSync$Watcher$1 idem com $1 anonima
+  - "com.acme.web.OrderController"     # $$EnhancerBySpringCGLIB$$aa11bb22: classe base tokenizada, moldura CGLIB + hash preservados
+  - "com.acme.stock.StockCatalog"
+  - "com.acme.stock.StockBootstrap"
+linhas_stripadas:
+  - "JNI global refs"
+invariantes:
+  - determinismo_intra_dump
+  - blank_lines_preservadas
+# Armadilhas cobertas (SPEC 5.2): `OrderService$$Lambda$123/0x00007f8a1c2b3c40.run(Unknown
+# Source)` mantem a moldura $$Lambda$123/0x... intacta (o hex e endereco de classe gerada, nao
+# segredo) tokenizando so a classe base; `StockBootstrap$$Lambda/0x...` (sem $N) idem;
+# `lambda$processOrder$0` vira `lambda$<m...>$0` preservando lambda$/$0; `<init>`/`<clinit>`
+# verbatim; frame `(<generated>)` do CGLIB preservado (nao ha arquivo .java); frames
+# org.springframework.* sao tier recommended: verbatim por default, tokenizados sob --strict;
+# LambdaForm$MH/0x... e java.lang.invoke -> allowlist verbatim.

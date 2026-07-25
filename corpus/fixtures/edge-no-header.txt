@@ -1,0 +1,18 @@
+"pgto-worker-1" #31 prio=5 tid=0x1000 nid=0x1000 waiting for monitor entry
+   java.lang.Thread.State: BLOCKED (on object monitor)
+	at com.acme.payment.LedgerService.applyEntry(LedgerService.java:88)
+	- waiting to lock <0x00000007ffc11111> (a com.acme.payment.LedgerLock)
+	- locked <0x00000007ffc22222> (a com.acme.stock.StockLatch)
+	at com.acme.payment.PaymentFacade.settle(PaymentFacade.java:41)
+
+"pgto-worker-2" #32 prio=5 tid=0x2000 nid=0x2000 waiting for monitor entry
+   java.lang.Thread.State: BLOCKED (on object monitor)
+	at com.acme.stock.StockSync.reserve(StockSync.java:141)
+	- waiting to lock <0x00000007ffc22222> (a com.acme.stock.StockLatch)
+	- locked <0x00000007ffc11111> (a com.acme.payment.LedgerLock)
+	at com.acme.order.OrderService.processOrder(OrderService.java:67)
+
+"http-nio-8080-exec-1" #27 daemon prio=5 tid=0x3000 nid=0x3000 runnable
+   java.lang.Thread.State: RUNNABLE
+	at java.net.SocketInputStream.socketRead0(Native Method)
+	at com.acme.web.PaymentController.confirm(PaymentController.java:52)

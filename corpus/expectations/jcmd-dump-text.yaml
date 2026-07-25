@@ -1,0 +1,32 @@
+# jcmd <pid> Thread.dump_to_file -format=text (JEP 425+): cabecalho de 3 linhas (pid,
+# timestamp ISO, versao), threads como `#N "nome" ESTADO`, frames indentados com 6 espacos e
+# prefixo de modulo `java.base/` (barra, NAO arroba), VTs como `#N "" VIRTUAL ESTADO`.
+formato: hotspot-jcmd-text
+ancoras_preservadas:
+  - "48350"
+  - "2026-07-24T13:02:19.482190Z"
+  - "21.0.3+9-LTS"
+  - "VIRTUAL"
+threads_allowlist_verbatim:
+  - "main"
+  - "Reference Handler"
+  - "Finalizer"
+  - "ForkJoinPool-1-worker-1"
+threads_tokenizadas:
+  "pgto-worker-1": { preserva_sufixo: "-1" }
+  "pgto-worker-2": { preserva_sufixo: "-2" }
+  "order-vt-9": { preserva_sufixo: "-9" }
+classes_tokenizadas:
+  - "com.acme.gateway.Bootstrap"
+  - "com.acme.payment.LedgerService"
+  - "com.acme.payment.PaymentFacade"
+  - "com.acme.payment.gateway.AcquirerClient"
+  - "com.acme.order.queue.EventConsumer"
+linhas_stripadas: []
+invariantes:
+  - determinismo_intra_dump
+  - blank_lines_preservadas
+# Armadilhas cobertas: frames SEM "at " e SEM modulo nos frames de app (so java.base/ nos de
+# JDK) - o lexer de frame nao pode exigir o prefixo "at "; `#52 ""` (VT anonima) preservada;
+# o numero apos # e o TID da thread (nao sequencial) - verbatim; nomes entre aspas tokenizados
+# com as MESMAS atribuicoes dos outros dialetos (mesmo canonico => mesmo token).

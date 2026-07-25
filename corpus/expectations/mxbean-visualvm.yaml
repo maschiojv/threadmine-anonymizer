@@ -1,0 +1,34 @@
+# ThreadMXBean/VisualVM: `"nome" Id=N ESTADO on Classe@hash owned by "outro" Id=M`,
+# frames com prefixo app// ou java.base@21.0.3/, linhas `-  blocked on` / `-  waiting on` /
+# `-  locked` com Classe@hash, bloco `Number of locked synchronizers = N`.
+formato: hotspot-mxbean
+ancoras_preservadas:
+  - "Full thread dump Java HotSpot(TM) 64-Bit Server VM (21.0.3+9-LTS mixed mode):"
+  - "Id="
+threads_allowlist_verbatim:
+  - "main"
+  - "Reference Handler"
+  - "Finalizer"
+  - "http-nio-8080-exec-1"
+threads_tokenizadas:
+  "pgto-worker-1": { preserva_sufixo: "-1" }
+  "pgto-worker-2": { preserva_sufixo: "-2" }
+  "order-dispatcher": {}
+classes_tokenizadas:
+  - "com.acme.gateway.Bootstrap"
+  - "com.acme.payment.LedgerLock"      # em `on com.acme.payment.LedgerLock@1f2e3d`: classe -> C..., @1f2e3d verbatim
+  - "com.acme.payment.LedgerService"
+  - "com.acme.payment.PaymentFacade"
+  - "com.acme.payment.gateway.AcquirerClient"
+  - "com.acme.web.PaymentController"
+  - "com.acme.order.OrderDispatcher"
+linhas_stripadas: []
+invariantes:
+  - determinismo_intra_dump
+  - blank_lines_preservadas
+# Armadilhas cobertas: `owned by "pgto-worker-2" Id=32` referencia OUTRA thread pelo nome - tem
+# que receber o MESMO token do cabecalho dela (consistencia igual ao bloco de deadlock);
+# Classe@hash aparece 2x com o mesmo hash (blocked/locked) - correlacao sobrevive porque o token
+# e deterministico e o @hash e verbatim; prefixo de classloader `app//` preservado antes do FQCN
+# tokenizado; `Number of locked synchronizers` cita classe java.util.concurrent (allowlist) -
+# linha preservada, nao redigida.

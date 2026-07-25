@@ -1,0 +1,49 @@
+48350
+2026-07-24T13:02:19.482190Z
+21.0.3+9-LTS
+
+#1 "main" TIMED_WAITING
+      java.base/java.lang.Thread.sleep0(Native Method)
+      java.base/java.lang.Thread.sleep(Thread.java:509)
+      com.acme.gateway.Bootstrap.awaitShutdown(Bootstrap.java:77)
+      com.acme.gateway.Bootstrap.main(Bootstrap.java:41)
+
+#8 "Reference Handler" RUNNABLE
+      java.base/java.lang.ref.Reference.waitForReferencePendingList(Native Method)
+      java.base/java.lang.ref.Reference.processPendingReferences(Reference.java:246)
+      java.base/java.lang.ref.Reference$ReferenceHandler.run(Reference.java:208)
+
+#9 "Finalizer" WAITING
+      java.base/java.lang.Object.wait0(Native Method)
+      java.base/java.lang.Object.wait(Object.java:366)
+      java.base/java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:215)
+      java.base/java.lang.ref.Finalizer$FinalizerThread.run(Finalizer.java:165)
+
+#30 "pgto-worker-1" BLOCKED
+      com.acme.payment.LedgerService.applyEntry(LedgerService.java:88)
+      com.acme.payment.PaymentFacade.settle(PaymentFacade.java:41)
+      java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+      java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+      java.base/java.lang.Thread.run(Thread.java:1583)
+
+#31 "pgto-worker-2" RUNNABLE
+      java.base/java.net.SocketInputStream.socketRead0(Native Method)
+      com.acme.payment.gateway.AcquirerClient.capture(AcquirerClient.java:133)
+      com.acme.payment.LedgerService.applyEntry(LedgerService.java:95)
+      java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+      java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+      java.base/java.lang.Thread.run(Thread.java:1583)
+
+#52 "" VIRTUAL WAITING
+      java.base/java.lang.VirtualThread.park(VirtualThread.java:582)
+      java.base/java.lang.System$2.parkVirtualThread(System.java:2639)
+      java.base/jdk.internal.misc.VirtualThreads.park(VirtualThreads.java:54)
+      java.base/java.util.concurrent.locks.LockSupport.park(LockSupport.java:369)
+      com.acme.order.queue.EventConsumer.waitForEvent(EventConsumer.java:56)
+
+#53 "order-vt-9" VIRTUAL RUNNABLE
+      java.base/java.net.SocketInputStream.socketRead0(Native Method)
+      com.acme.payment.gateway.AcquirerClient.call(AcquirerClient.java:89)
+
+#17 "ForkJoinPool-1-worker-1" RUNNABLE
+      java.base/java.lang.VirtualThread.park(VirtualThread.java:582)

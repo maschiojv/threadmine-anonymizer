@@ -1,0 +1,41 @@
+# Edge: "waiting to re-lock in wait()" (thread BLOCKED saindo de Object.wait), sentinela
+# "<no object reference available>", linhas "Compiling:" citando classes com.acme.* no
+# CompilerThread, "process reaper (pid 4242)".
+formato: hotspot-jstack
+ancoras_preservadas:
+  - "Full thread dump OpenJDK 64-Bit Server VM (11.0.16+8-LTS mixed mode):"
+  - "java.lang.Thread.State:"
+  - "waiting to re-lock in wait()"
+  - "<no object reference available>"   # sentinela verbatim (SPEC 5.4)
+threads_allowlist_verbatim:
+  - "main"
+  - "C2 CompilerThread0"
+  - "C1 CompilerThread0"
+  - "process reaper (pid 4242)"
+  - "VM Thread"
+  - "GC Thread#0"
+  - "VM Periodic Task Thread"
+threads_tokenizadas:
+  "order-consumer-1": { preserva_sufixo: "-1" }
+  "order-consumer-2": { preserva_sufixo: "-2" }
+  "gc-notifier-1": { preserva_sufixo: "-1" }   # comeca com "gc-" minusculo: NAO e o prefixo de infra "GC " - tokeniza
+classes_tokenizadas:
+  - "com.acme.gateway.Bootstrap"
+  - "com.acme.order.queue.OrderQueue"   # aparece no "(a ...)" da linha de re-lock
+  - "com.acme.order.OrderConsumer"
+  - "com.acme.core.util.GcNotifier"
+linhas_stripadas:
+  - "Threads class SMR info:"
+  - "_java_thread_list"
+  - "Compiling:"     # AS DUAS linhas Compiling (com e sem % de OSR) - citam com.acme, strip e obrigatorio
+  - "JNI global refs"
+invariantes:
+  - determinismo_intra_dump
+  - blank_lines_preservadas
+  - enderecos_lock_verbatim
+# Armadilhas cobertas: "- waiting to re-lock in wait() <0x...> (a com.acme...)" - a moldura e o
+# endereco verbatim, so a classe apos "(a " tokenizada; a linha "Compiling: 9017 %     3
+# com.acme.billing.InvoiceService::computeTotals @ 24 (188 bytes)" contem FQCN::metodo fora do
+# formato de frame - strippa-la e mais seguro (e barato) que tokenizar; "gc-notifier-1" prova
+# que o match de allowlist de prefixo e case/word-sensitive ("GC " != "gc-"); process reaper
+# com pid custom 4242 verbatim (prefixo allowlist, pid nao e identificador de negocio).

@@ -1,0 +1,41 @@
+2026-07-24 10:41:12
+Full thread dump OpenJDK 64-Bit Server VM (17.0.8+7-LTS mixed mode, sharing):
+
+"order-async-1" #24 prio=5 os_prio=31 cpu=812.40ms elapsed=310.55s tid=0x00007fb2a3910200 nid=0x6103 runnable  [0x000000016e1d0000]
+   java.lang.Thread.State: RUNNABLE
+	at com.acme.order.OrderService.lambda$processOrder$0(OrderService.java:67)
+	at com.acme.order.OrderService$$Lambda$123/0x00007f8a1c2b3c40.run(Unknown Source)
+	at com.acme.stock.StockSync$Watcher.poll(StockSync.java:112)
+	at com.acme.stock.StockSync$Watcher$1.compare(StockSync.java:131)
+	at java.util.concurrent.CompletableFuture$AsyncRun.run(java.base@17.0.8/CompletableFuture.java:1804)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(java.base@17.0.8/ThreadPoolExecutor.java:1136)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(java.base@17.0.8/ThreadPoolExecutor.java:635)
+	at java.lang.Thread.run(java.base@17.0.8/Thread.java:833)
+
+"http-nio-8080-exec-3" #29 daemon prio=5 os_prio=31 cpu=1211.05ms elapsed=308.91s tid=0x00007fb2a3912a00 nid=0x6503 runnable  [0x000000016e3dc000]
+   java.lang.Thread.State: RUNNABLE
+	at com.acme.web.OrderController.confirm(OrderController.java:58)
+	at com.acme.web.OrderController$$FastClassBySpringCGLIB$$1a2b3c4d.invoke(<generated>)
+	at org.springframework.cglib.proxy.MethodProxy.invoke(MethodProxy.java:218)
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.invokeJoinpoint(CglibAopProxy.java:792)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163)
+	at com.acme.web.OrderController$$EnhancerBySpringCGLIB$$aa11bb22.confirm(<generated>)
+	at java.lang.invoke.LambdaForm$MH/0x0000000800c0a000.invoke(java.base@17.0.8/LambdaForm$MH)
+	at java.lang.invoke.Invokers$Holder.invokeExact_MT(java.base@17.0.8/Invokers$Holder)
+	at jdk.internal.reflect.DirectMethodHandleAccessor.invokeImpl(java.base@17.0.8/DirectMethodHandleAccessor.java:154)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+	at java.lang.Thread.run(java.base@17.0.8/Thread.java:833)
+
+"stock-init-1" #25 prio=5 os_prio=31 cpu=41.20ms elapsed=310.50s tid=0x00007fb2a3911800 nid=0x6303 runnable  [0x000000016e2d6000]
+   java.lang.Thread.State: RUNNABLE
+	at com.acme.stock.StockCatalog.<clinit>(StockCatalog.java:19)
+	at com.acme.stock.StockSync.<init>(StockSync.java:44)
+	at com.acme.stock.StockSync$Watcher.<init>(StockSync.java:98)
+	at com.acme.stock.StockBootstrap.lambda$start$1(StockBootstrap.java:31)
+	at com.acme.stock.StockBootstrap$$Lambda/0x00003800011ad400.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.8/Thread.java:833)
+
+"VM Thread" os_prio=31 cpu=88.21ms elapsed=310.60s tid=0x00007fb2a2909e00 nid=0x3803 runnable
+
+JNI global refs: 22, weak refs: 0

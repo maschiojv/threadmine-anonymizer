@@ -1,0 +1,119 @@
+2026-07-24 10:55:21
+Full thread dump OpenJDK 64-Bit Server VM (17.0.8+7-LTS mixed mode, sharing):
+
+"pgto-worker-1" #21 prio=5 os_prio=31 cpu=101.11ms elapsed=1201.30s tid=0x00007fb2a3921000 nid=0x7103 waiting for monitor entry  [0x000000016f1d0000]
+   java.lang.Thread.State: BLOCKED (on object monitor)
+	at com.acme.payment.LedgerService.applyEntry(LedgerService.java:88)
+	- waiting to lock <0x000000061fcc9b80> (a com.acme.payment.LedgerLock)
+	at com.acme.payment.PaymentFacade.settle(PaymentFacade.java:41)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(java.base@17.0.8/ThreadPoolExecutor.java:1136)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(java.base@17.0.8/ThreadPoolExecutor.java:635)
+	at java.lang.Thread.run(java.base@17.0.8/Thread.java:833)
+
+"pgto-worker-2" #22 prio=5 os_prio=31 cpu=98.02ms elapsed=1201.30s tid=0x00007fb2a3921800 nid=0x7203 waiting for monitor entry  [0x000000016f2d2000]
+   java.lang.Thread.State: BLOCKED (on object monitor)
+	at com.acme.payment.LedgerService.applyEntry(LedgerService.java:88)
+	- waiting to lock <0x000000061fcc9b80> (a com.acme.payment.LedgerLock)
+	at com.acme.payment.PaymentFacade.settle(PaymentFacade.java:41)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(java.base@17.0.8/ThreadPoolExecutor.java:1136)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(java.base@17.0.8/ThreadPoolExecutor.java:635)
+	at java.lang.Thread.run(java.base@17.0.8/Thread.java:833)
+
+"pgto-worker-3" #23 prio=5 os_prio=31 cpu=102.44ms elapsed=1201.30s tid=0x00007fb2a3922000 nid=0x7303 waiting for monitor entry  [0x000000016f3d4000]
+   java.lang.Thread.State: BLOCKED (on object monitor)
+	at com.acme.payment.LedgerService.applyEntry(LedgerService.java:88)
+	- waiting to lock <0x000000061fcc9b80> (a com.acme.payment.LedgerLock)
+	at com.acme.payment.PaymentFacade.settle(PaymentFacade.java:41)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(java.base@17.0.8/ThreadPoolExecutor.java:1136)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(java.base@17.0.8/ThreadPoolExecutor.java:635)
+	at java.lang.Thread.run(java.base@17.0.8/Thread.java:833)
+
+"pgto-worker-4" #24 prio=5 os_prio=31 cpu=97.61ms elapsed=1201.30s tid=0x00007fb2a3922800 nid=0x7403 waiting for monitor entry  [0x000000016f4d6000]
+   java.lang.Thread.State: BLOCKED (on object monitor)
+	at com.acme.payment.LedgerService.applyEntry(LedgerService.java:88)
+	- waiting to lock <0x000000061fcc9b80> (a com.acme.payment.LedgerLock)
+	at com.acme.payment.PaymentFacade.settle(PaymentFacade.java:41)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(java.base@17.0.8/ThreadPoolExecutor.java:1136)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(java.base@17.0.8/ThreadPoolExecutor.java:635)
+	at java.lang.Thread.run(java.base@17.0.8/Thread.java:833)
+
+"pgto-worker-5" #25 prio=5 os_prio=31 cpu=100.09ms elapsed=1201.30s tid=0x00007fb2a3923000 nid=0x7503 waiting for monitor entry  [0x000000016f5d8000]
+   java.lang.Thread.State: BLOCKED (on object monitor)
+	at com.acme.payment.LedgerService.applyEntry(LedgerService.java:88)
+	- waiting to lock <0x000000061fcc9b80> (a com.acme.payment.LedgerLock)
+	at com.acme.payment.PaymentFacade.settle(PaymentFacade.java:41)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(java.base@17.0.8/ThreadPoolExecutor.java:1136)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(java.base@17.0.8/ThreadPoolExecutor.java:635)
+	at java.lang.Thread.run(java.base@17.0.8/Thread.java:833)
+
+"pgto-worker-6" #26 prio=5 os_prio=31 cpu=95.83ms elapsed=1201.30s tid=0x00007fb2a3923800 nid=0x7603 waiting for monitor entry  [0x000000016f6da000]
+   java.lang.Thread.State: BLOCKED (on object monitor)
+	at com.acme.payment.LedgerService.applyEntry(LedgerService.java:88)
+	- waiting to lock <0x000000061fcc9b80> (a com.acme.payment.LedgerLock)
+	at com.acme.payment.PaymentFacade.settle(PaymentFacade.java:41)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(java.base@17.0.8/ThreadPoolExecutor.java:1136)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(java.base@17.0.8/ThreadPoolExecutor.java:635)
+	at java.lang.Thread.run(java.base@17.0.8/Thread.java:833)
+
+"pgto-worker-7" #27 prio=5 os_prio=31 cpu=99.15ms elapsed=1201.30s tid=0x00007fb2a3924000 nid=0x7703 waiting for monitor entry  [0x000000016f7dc000]
+   java.lang.Thread.State: BLOCKED (on object monitor)
+	at com.acme.payment.LedgerService.applyEntry(LedgerService.java:88)
+	- waiting to lock <0x000000061fcc9b80> (a com.acme.payment.LedgerLock)
+	at com.acme.payment.PaymentFacade.settle(PaymentFacade.java:41)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(java.base@17.0.8/ThreadPoolExecutor.java:1136)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(java.base@17.0.8/ThreadPoolExecutor.java:635)
+	at java.lang.Thread.run(java.base@17.0.8/Thread.java:833)
+
+"pgto-worker-8" #28 prio=5 os_prio=31 cpu=96.77ms elapsed=1201.30s tid=0x00007fb2a3924800 nid=0x7803 waiting for monitor entry  [0x000000016f8de000]
+   java.lang.Thread.State: BLOCKED (on object monitor)
+	at com.acme.payment.LedgerService.applyEntry(LedgerService.java:88)
+	- waiting to lock <0x000000061fcc9b80> (a com.acme.payment.LedgerLock)
+	at com.acme.payment.PaymentFacade.settle(PaymentFacade.java:41)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(java.base@17.0.8/ThreadPoolExecutor.java:1136)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(java.base@17.0.8/ThreadPoolExecutor.java:635)
+	at java.lang.Thread.run(java.base@17.0.8/Thread.java:833)
+
+"billing-sched-1" #29 prio=5 os_prio=31 cpu=54012.88ms elapsed=1199.90s tid=0x00007fb2a3925000 nid=0x7903 runnable  [0x000000016f9e0000]
+   java.lang.Thread.State: RUNNABLE
+	at java.net.SocketInputStream.socketRead0(java.base@17.0.8/Native Method)
+	at java.net.SocketInputStream.socketRead(java.base@17.0.8/SocketInputStream.java:115)
+	at java.net.SocketInputStream.read(java.base@17.0.8/SocketInputStream.java:168)
+	at com.acme.billing.sched.TariffJob.fetchRates(TariffJob.java:104)
+	at com.acme.payment.LedgerService.applyEntry(LedgerService.java:95)
+	- locked <0x000000061fcc9b80> (a com.acme.payment.LedgerLock)
+	at com.acme.billing.sched.TariffJob.run(TariffJob.java:61)
+	at java.lang.Thread.run(java.base@17.0.8/Thread.java:833)
+
+"http-nio-8080-exec-1" #18 daemon prio=5 os_prio=31 cpu=71.29ms elapsed=1200.83s tid=0x00007fb2a3874c00 nid=0x5803 waiting on condition  [0x000000016d4d6000]
+   java.lang.Thread.State: TIMED_WAITING (parking)
+	at jdk.internal.misc.Unsafe.park(java.base@17.0.8/Native Method)
+	- parking to wait for  <0x000000061f8b1170> (a java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject)
+	at java.util.concurrent.locks.LockSupport.parkNanos(java.base@17.0.8/LockSupport.java:252)
+	at java.util.concurrent.LinkedBlockingQueue.poll(java.base@17.0.8/LinkedBlockingQueue.java:460)
+	at org.apache.tomcat.util.threads.TaskQueue.poll(TaskQueue.java:99)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.getTask(ThreadPoolExecutor.java:1113)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+	at java.lang.Thread.run(java.base@17.0.8/Thread.java:833)
+
+"http-nio-8080-exec-2" #19 daemon prio=5 os_prio=31 cpu=68.90ms elapsed=1200.83s tid=0x00007fb2a3875400 nid=0x5a03 waiting on condition  [0x000000016d6e2000]
+   java.lang.Thread.State: TIMED_WAITING (parking)
+	at jdk.internal.misc.Unsafe.park(java.base@17.0.8/Native Method)
+	- parking to wait for  <0x000000061f8b1170> (a java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject)
+	at java.util.concurrent.locks.LockSupport.parkNanos(java.base@17.0.8/LockSupport.java:252)
+	at java.util.concurrent.LinkedBlockingQueue.poll(java.base@17.0.8/LinkedBlockingQueue.java:460)
+	at org.apache.tomcat.util.threads.TaskQueue.poll(TaskQueue.java:99)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.getTask(ThreadPoolExecutor.java:1113)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+	at java.lang.Thread.run(java.base@17.0.8/Thread.java:833)
+
+"VM Thread" os_prio=31 cpu=488.21ms elapsed=1201.40s tid=0x00007fb2a2909e00 nid=0x3803 runnable
+
+"GC Thread#0" os_prio=31 cpu=242.16ms elapsed=1201.41s tid=0x00007fb2a2904f00 nid=0x3103 runnable
+
+"VM Periodic Task Thread" os_prio=31 cpu=801.33ms elapsed=1201.39s tid=0x00007fb2a3839800 nid=0x5f03 waiting on condition
+
+JNI global refs: 24, weak refs: 0

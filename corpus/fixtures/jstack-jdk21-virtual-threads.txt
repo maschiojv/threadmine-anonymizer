@@ -1,0 +1,64 @@
+2026-07-24 09:44:02
+Full thread dump OpenJDK 64-Bit Server VM (21.0.3+9-LTS mixed mode, sharing):
+
+"main" #1 prio=5 os_prio=0 cpu=100.00ms elapsed=30.00s tid=0x00007f9a1c019000 nid=0x1a03 waiting on condition [0x00007f9a2c5bd000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep0(java.base@21.0.3/Native Method)
+	at java.lang.Thread.sleep(java.base@21.0.3/Thread.java:509)
+	at com.acme.gateway.Bootstrap.main(Bootstrap.java:41)
+
+"ForkJoinPool-1-worker-1" #15 daemon prio=5 os_prio=0 cpu=1234.56ms elapsed=29.00s tid=0x00007f9a1c100000 nid=0x2003 runnable [0x00007f9a1be00000]
+   java.lang.Thread.State: RUNNABLE
+	at java.lang.VirtualThread.park(java.base@21.0.3/VirtualThread.java:582)
+
+"ForkJoinPool-1-worker-2" #16 daemon prio=5 os_prio=0 cpu=987.65ms elapsed=28.50s tid=0x00007f9a1c101000 nid=0x2103 runnable [0x00007f9a1bd00000]
+   java.lang.Thread.State: RUNNABLE
+	at java.lang.VirtualThread.park(java.base@21.0.3/VirtualThread.java:582)
+
+"ForkJoinPool-1-worker-3" #17 daemon prio=5 os_prio=0 cpu=876.54ms elapsed=28.00s tid=0x00007f9a1c102000 nid=0x2203 runnable [0x00007f9a1bc00000]
+   java.lang.Thread.State: RUNNABLE
+	at java.lang.VirtualThread.park(java.base@21.0.3/VirtualThread.java:582)
+
+"" #21 virtual prio=5 os_prio=0 cpu=500.00ms elapsed=28.00s tid=0x00007f9a1c200000 nid=0x0 runnable
+   java.lang.Thread.State: RUNNABLE
+	at com.acme.order.OrderService.processOrder(OrderService.java:67)
+	at com.acme.order.handler.OrderHandler.handle(OrderHandler.java:34)
+      <virtual thread is mounted on carrier thread "ForkJoinPool-1-worker-1">
+
+"" #22 virtual prio=5 os_prio=0 cpu=400.00ms elapsed=28.00s tid=0x00007f9a1c201000 nid=0x0 waiting for monitor entry
+   java.lang.Thread.State: BLOCKED (on object monitor)
+	at com.acme.cache.SharedCache.update(SharedCache.java:45)
+	- waiting to lock <0x000000061fcc0001> (a java.util.HashMap)
+      <pinned: synchronized>
+      <virtual thread is mounted on carrier thread "ForkJoinPool-1-worker-2">
+
+"order-vt-9" #23 virtual prio=5 os_prio=0 cpu=300.00ms elapsed=27.50s tid=0x00007f9a1c202000 nid=0x0 runnable
+   java.lang.Thread.State: RUNNABLE
+	at java.net.SocketInputStream.socketRead0(java.base@21.0.3/Native Method)
+	at com.acme.payment.gateway.AcquirerClient.call(AcquirerClient.java:89)
+      <virtual thread is mounted on carrier thread "ForkJoinPool-1-worker-3">
+
+"" #24 virtual prio=5 os_prio=0 cpu=150.00ms elapsed=26.50s tid=0x00007f9a1c204000 nid=0x0 waiting on condition
+   java.lang.Thread.State: WAITING (parking)
+	at jdk.internal.misc.Unsafe.park(java.base@21.0.3/Native Method)
+	at java.util.concurrent.locks.LockSupport.park(java.base@21.0.3/LockSupport.java:221)
+	at com.acme.order.queue.EventConsumer.waitForEvent(EventConsumer.java:56)
+
+"" #25 virtual prio=5 os_prio=0 cpu=120.00ms elapsed=26.00s tid=0x00007f9a1c205000 nid=0x0 waiting on condition
+   java.lang.Thread.State: WAITING (parking)
+	at jdk.internal.misc.Unsafe.park(java.base@21.0.3/Native Method)
+	at java.util.concurrent.locks.LockSupport.park(java.base@21.0.3/LockSupport.java:221)
+	at com.acme.order.queue.EventConsumer.waitForEvent(EventConsumer.java:56)
+
+"Reference Handler" #2 daemon prio=10 os_prio=0 cpu=0.34ms elapsed=30.00s tid=0x00007f9a1c051000 nid=0x1b03 runnable [0x00007f9a2b000000]
+   java.lang.Thread.State: RUNNABLE
+	at java.lang.ref.Reference.waitForReferencePendingList(java.base@21.0.3/Native Method)
+
+"Finalizer" #3 daemon prio=8 os_prio=0 cpu=0.12ms elapsed=30.00s tid=0x00007f9a1c052000 nid=0x1c03 in Object.wait() [0x00007f9a2a000000]
+   java.lang.Thread.State: WAITING (on object monitor)
+	at java.lang.Object.wait0(java.base@21.0.3/Native Method)
+	- waiting on <0x000000061f001000> (a java.lang.ref.ReferenceQueue$Lock)
+	at java.lang.ref.ReferenceQueue.remove(java.base@21.0.3/ReferenceQueue.java:197)
+	- locked <0x000000061f001000> (a java.lang.ref.ReferenceQueue$Lock)
+
+JNI global refs: 15, weak refs: 5
