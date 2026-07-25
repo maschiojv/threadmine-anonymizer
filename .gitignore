@@ -1,0 +1,18 @@
+# The vault holds the HMAC key and the token->original map.
+# It must NEVER be versioned. This entry exists since the very first commit.
+tm-anon-vault.json
+*.vault.json
+
+# Anonymizer output files
+*.anon.*
+
+# Build
+target/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.classpath
+.project
+.settings/
