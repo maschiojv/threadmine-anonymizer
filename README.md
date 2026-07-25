@@ -1,6 +1,6 @@
-# tm-anon
+# ThreadMine Anonymizer
 
-Local, offline anonymizer for JVM thread dumps.
+Local, offline anonymizer for JVM thread dumps. `tm-anon` is its CLI.
 
 `tm-anon` masks application identifiers (packages, classes, methods, thread
 names) in a thread dump **before** it leaves your machine, so you can send the
