@@ -1,0 +1,32 @@
+# Edge: dump SEM a linha "Full thread dump" (recorte colado de um log, cabecalhos minimos sem
+# os_prio/cpu/elapsed). O parser do ThreadMine aceita esse formato (fixture
+# real-hotspot-deadlock.txt e assim) - logo o tm-anon TAMBEM deve aceitar: a ancora
+# "Full thread dump" e SUFICIENTE mas nao NECESSARIA; cabecalho de thread `"nome" #N prio=`
+# tambem identifica hotspot-jstack. Recusar aqui bloquearia uploads validos (fail-closed e para
+# formato DESCONHECIDO, nao para jstack parcial).
+formato: hotspot-jstack
+ancoras_preservadas:
+  - "java.lang.Thread.State:"
+threads_allowlist_verbatim:
+  - "http-nio-8080-exec-1"
+threads_tokenizadas:
+  "pgto-worker-1": { preserva_sufixo: "-1" }
+  "pgto-worker-2": { preserva_sufixo: "-2" }
+classes_tokenizadas:
+  - "com.acme.payment.LedgerService"
+  - "com.acme.payment.LedgerLock"
+  - "com.acme.payment.PaymentFacade"
+  - "com.acme.stock.StockLatch"
+  - "com.acme.stock.StockSync"
+  - "com.acme.order.OrderService"
+  - "com.acme.web.PaymentController"
+linhas_stripadas: []
+invariantes:
+  - aceita_sem_header_full_thread_dump
+  - determinismo_intra_dump
+  - blank_lines_preservadas
+  - enderecos_lock_verbatim
+# Armadilha coberta: cabecalho minimo (`"pgto-worker-1" #31 prio=5 tid=0x1000 nid=0x1000
+# waiting for monitor entry`, sem colchete de stack range) precisa ser reconhecido como
+# cabecalho de thread; a 1a linha do output ("# tm-anon v1") vira a unica coisa antes do
+# primeiro cabecalho.

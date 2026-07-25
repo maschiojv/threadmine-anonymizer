@@ -1,0 +1,82 @@
+2026-07-24 10:22:08
+Full thread dump OpenJDK 64-Bit Server VM (17.0.8+7-LTS mixed mode, sharing):
+
+Threads class SMR info:
+_java_thread_list=0x00006000021e6f50, length=6, elements={
+0x00007fa894019000, 0x00007fa895008800, 0x00007fa892008800, 0x00007fa89421b000,
+0x00007fa89427b800, 0x00007fa89483c000
+}
+
+"main" #1 prio=5 os_prio=31 cpu=349.40ms elapsed=225.80s tid=0x00007fa894019000 nid=0x2b03 waiting on condition  [0x0000700004b3a000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.8/Native Method)
+	at com.acme.gateway.Bootstrap.awaitShutdown(Bootstrap.java:77)
+	at com.acme.gateway.Bootstrap.main(Bootstrap.java:41)
+
+"Reference Handler" #2 daemon prio=10 os_prio=31 cpu=0.42ms elapsed=225.79s tid=0x00007fa895008800 nid=0x3e03 waiting on condition  [0x0000700004c3d000]
+   java.lang.Thread.State: RUNNABLE
+	at java.lang.ref.Reference.waitForReferencePendingList(java.base@17.0.8/Native Method)
+	at java.lang.ref.Reference.processPendingReferences(java.base@17.0.8/Reference.java:253)
+	at java.lang.ref.Reference$ReferenceHandler.run(java.base@17.0.8/Reference.java:215)
+
+"Finalizer" #3 daemon prio=8 os_prio=31 cpu=0.21ms elapsed=225.79s tid=0x00007fa892008800 nid=0x4003 in Object.wait()  [0x0000700004d40000]
+   java.lang.Thread.State: WAITING (on object monitor)
+	at java.lang.Object.wait(java.base@17.0.8/Native Method)
+	- waiting on <0x000000061f002770> (a java.lang.ref.ReferenceQueue$Lock)
+	at java.lang.ref.ReferenceQueue.remove(java.base@17.0.8/ReferenceQueue.java:155)
+	- locked <0x000000061f002770> (a java.lang.ref.ReferenceQueue$Lock)
+	at java.lang.ref.Finalizer$FinalizerThread.run(java.base@17.0.8/Finalizer.java:170)
+
+"pgto-worker-1" #14 prio=5 os_prio=31 cpu=545.68ms elapsed=225.30s tid=0x00007fa89421b000 nid=0x6203 waiting for monitor entry  [0x00007000077f9000]
+   java.lang.Thread.State: BLOCKED (on object monitor)
+	at com.acme.payment.LedgerService.applyEntry(LedgerService.java:88)
+	- waiting to lock <0x000000061fcc9b90> (a com.acme.stock.StockLatch)
+	- locked <0x000000061fcc9b80> (a com.acme.payment.LedgerLock)
+	at com.acme.payment.PaymentFacade.settle(PaymentFacade.java:41)
+	at java.lang.Thread.run(java.base@17.0.8/Thread.java:833)
+
+"pgto-worker-2" #15 prio=5 os_prio=31 cpu=545.23ms elapsed=225.30s tid=0x00007fa89427b800 nid=0x9e03 waiting for monitor entry  [0x00007000078fc000]
+   java.lang.Thread.State: BLOCKED (on object monitor)
+	at com.acme.stock.StockSync.reserve(StockSync.java:141)
+	- waiting to lock <0x000000061fcc9b80> (a com.acme.payment.LedgerLock)
+	- locked <0x000000061fcc9b90> (a com.acme.stock.StockLatch)
+	at com.acme.order.OrderService.processOrder(OrderService.java:67)
+	at java.lang.Thread.run(java.base@17.0.8/Thread.java:833)
+
+"Attach Listener" #16 daemon prio=9 os_prio=31 cpu=37.37ms elapsed=224.94s tid=0x00007fa89483c000 nid=0x9c03 waiting on condition  [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+
+"VM Thread" os_prio=31 cpu=230.06ms elapsed=225.96s tid=0x00007fa88200a800 nid=0x4903 runnable
+
+"GC Thread#0" os_prio=31 cpu=73.12ms elapsed=225.97s tid=0x00007fa89400e800 nid=0x5103 runnable
+
+"VM Periodic Task Thread" os_prio=31 cpu=121.45ms elapsed=225.81s tid=0x00007fa894839800 nid=0x5e03 waiting on condition
+
+JNI global refs: 19, weak refs: 0
+
+
+Found one Java-level deadlock:
+=============================
+"pgto-worker-1":
+  waiting to lock monitor 0x00007fa86800fe00 (object 0x000000061fcc9b90, a com.acme.stock.StockLatch),
+  which is held by "pgto-worker-2"
+"pgto-worker-2":
+  waiting to lock monitor 0x00007fa86800ff00 (object 0x000000061fcc9b80, a com.acme.payment.LedgerLock),
+  which is held by "pgto-worker-1"
+
+Java stack information for the threads listed above:
+===================================================
+"pgto-worker-1":
+	at com.acme.payment.LedgerService.applyEntry(LedgerService.java:88)
+	- waiting to lock <0x000000061fcc9b90> (a com.acme.stock.StockLatch)
+	- locked <0x000000061fcc9b80> (a com.acme.payment.LedgerLock)
+	at com.acme.payment.PaymentFacade.settle(PaymentFacade.java:41)
+	at java.lang.Thread.run(java.base@17.0.8/Thread.java:833)
+"pgto-worker-2":
+	at com.acme.stock.StockSync.reserve(StockSync.java:141)
+	- waiting to lock <0x000000061fcc9b80> (a com.acme.payment.LedgerLock)
+	- locked <0x000000061fcc9b90> (a com.acme.stock.StockLatch)
+	at com.acme.order.OrderService.processOrder(OrderService.java:67)
+	at java.lang.Thread.run(java.base@17.0.8/Thread.java:833)
+
+Found 1 deadlock.

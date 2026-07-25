@@ -1,0 +1,31 @@
+# Edge: arquivo com as LINHAS em ordem invertida (JNI refs primeiro, "Full thread dump" na
+# ultima linha) - acontece com ferramentas de coleta que empilham logs. O ThreadMine aceita
+# (fixture real-hotspot-jstack.txt do parser e assim); o tm-anon deve mascarar linha a linha
+# SEM reordenar e SEM depender de "header antes do corpo".
+formato: hotspot-jstack
+ancoras_preservadas:
+  - "Full thread dump OpenJDK 64-Bit Server VM (21.0.3+9-LTS mixed mode, sharing):"
+  - "java.lang.Thread.State:"
+threads_allowlist_verbatim:
+  - "main"
+  - "Reference Handler"
+  - "http-nio-8080-exec-1"
+threads_tokenizadas:
+  "pgto-worker-1": { preserva_sufixo: "-1" }
+classes_tokenizadas:
+  - "com.acme.web.PaymentController"
+  - "com.acme.payment.PaymentFacade"
+  - "com.acme.payment.LedgerLock"
+  - "com.acme.payment.LedgerService"
+  - "com.acme.gateway.Bootstrap"
+linhas_stripadas:
+  - "JNI global refs"
+invariantes:
+  - ordem_linhas_preservada     # saida na MESMA ordem (invertida) da entrada
+  - determinismo_intra_dump
+  - blank_lines_preservadas
+  - enderecos_lock_verbatim
+# Armadilha coberta: a ancora "Full thread dump" esta FORA dos primeiros 4KB apenas em dumps
+# grandes; aqui esta na ultima linha de um arquivo pequeno (dentro dos 4KB) - a deteccao de
+# formato nao pode exigir que ela seja a 1a linha nao-vazia. Frames aparecem ANTES do cabecalho
+# da sua thread: o lexer classifica cada linha pelo formato dela, nao pela posicao.

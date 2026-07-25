@@ -1,0 +1,65 @@
+2026-07-24 10:15:40
+Full thread dump Java HotSpot(TM) 64-Bit Server VM (21.0.3+9-LTS mixed mode):
+
+"main" Id=1 TIMED_WAITING
+	at java.base@21.0.3/java.lang.Thread.sleep0(Native Method)
+	at java.base@21.0.3/java.lang.Thread.sleep(Thread.java:509)
+	at app//com.acme.gateway.Bootstrap.awaitShutdown(Bootstrap.java:77)
+	at app//com.acme.gateway.Bootstrap.main(Bootstrap.java:41)
+
+"Reference Handler" Id=2 RUNNABLE
+	at java.base@21.0.3/java.lang.ref.Reference.waitForReferencePendingList(Native Method)
+	at java.base@21.0.3/java.lang.ref.Reference.processPendingReferences(Reference.java:246)
+	at java.base@21.0.3/java.lang.ref.Reference$ReferenceHandler.run(Reference.java:208)
+
+"Finalizer" Id=3 WAITING on java.lang.ref.ReferenceQueue$Lock@6f2b958e
+	at java.base@21.0.3/java.lang.Object.wait0(Native Method)
+	-  waiting on java.lang.ref.ReferenceQueue$Lock@6f2b958e
+	at java.base@21.0.3/java.lang.Object.wait(Object.java:366)
+	at java.base@21.0.3/java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:215)
+	at java.base@21.0.3/java.lang.ref.Finalizer$FinalizerThread.run(Finalizer.java:165)
+
+"pgto-worker-1" Id=31 BLOCKED on com.acme.payment.LedgerLock@1f2e3d owned by "pgto-worker-2" Id=32
+	at app//com.acme.payment.LedgerService.applyEntry(LedgerService.java:88)
+	-  blocked on com.acme.payment.LedgerLock@1f2e3d
+	at app//com.acme.payment.PaymentFacade.settle(PaymentFacade.java:41)
+	at app//com.acme.web.PaymentController.confirm(PaymentController.java:52)
+	at java.base@21.0.3/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+	at java.base@21.0.3/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+	at java.base@21.0.3/java.lang.Thread.run(Thread.java:1583)
+
+"pgto-worker-2" Id=32 RUNNABLE (in native)
+	at java.base@21.0.3/java.net.SocketInputStream.socketRead0(Native Method)
+	at app//com.acme.payment.gateway.AcquirerClient.capture(AcquirerClient.java:133)
+	at app//com.acme.payment.LedgerService.applyEntry(LedgerService.java:95)
+	-  locked com.acme.payment.LedgerLock@1f2e3d
+	at app//com.acme.payment.PaymentFacade.settle(PaymentFacade.java:41)
+	at java.base@21.0.3/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+	at java.base@21.0.3/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+	at java.base@21.0.3/java.lang.Thread.run(Thread.java:1583)
+
+	Number of locked synchronizers = 1
+	- java.util.concurrent.locks.ReentrantLock$NonfairSync@5e8f9a
+
+"order-dispatcher" Id=40 WAITING on java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject@77aabb
+	at java.base@21.0.3/jdk.internal.misc.Unsafe.park(Native Method)
+	-  waiting on java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject@77aabb
+	at java.base@21.0.3/java.util.concurrent.locks.LockSupport.park(LockSupport.java:371)
+	at java.base@21.0.3/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(AbstractQueuedSynchronizer.java:1893)
+	at java.base@21.0.3/java.util.concurrent.LinkedBlockingQueue.take(LinkedBlockingQueue.java:435)
+	at app//com.acme.order.OrderDispatcher.pollLoop(OrderDispatcher.java:91)
+	at app//com.acme.order.OrderDispatcher.run(OrderDispatcher.java:58)
+	at java.base@21.0.3/java.lang.Thread.run(Thread.java:1583)
+
+"http-nio-8080-exec-1" Id=45 TIMED_WAITING on java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject@19c8f2
+	at java.base@21.0.3/jdk.internal.misc.Unsafe.park(Native Method)
+	-  waiting on java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject@19c8f2
+	at java.base@21.0.3/java.util.concurrent.locks.LockSupport.parkNanos(LockSupport.java:269)
+	at java.base@21.0.3/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.awaitNanos(AbstractQueuedSynchronizer.java:1758)
+	at java.base@21.0.3/java.util.concurrent.LinkedBlockingQueue.poll(LinkedBlockingQueue.java:460)
+	at app//org.apache.tomcat.util.threads.TaskQueue.poll(TaskQueue.java:99)
+	at app//org.apache.tomcat.util.threads.ThreadPoolExecutor.getTask(ThreadPoolExecutor.java:1113)
+	at app//org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191)
+	at app//org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
+	at app//org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+	at java.base@21.0.3/java.lang.Thread.run(Thread.java:1583)

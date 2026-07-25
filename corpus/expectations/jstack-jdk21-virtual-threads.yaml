@@ -1,0 +1,37 @@
+# jstack JDK 21 com virtual threads: VT montada em carrier, VT pinned (<pinned: synchronized>),
+# VT sem carrier (desmontada... aqui: parked sem linha de carrier), VT com nome custom.
+formato: hotspot-vt
+ancoras_preservadas:
+  - "Full thread dump OpenJDK 64-Bit Server VM (21.0.3+9-LTS mixed mode, sharing):"
+  - "java.lang.Thread.State:"
+  - "<pinned: synchronized>"
+  - "<virtual thread is mounted on carrier thread \"ForkJoinPool-1-worker-1\">"
+  - "<virtual thread is mounted on carrier thread \"ForkJoinPool-1-worker-2\">"
+  - "<virtual thread is mounted on carrier thread \"ForkJoinPool-1-worker-3\">"
+threads_allowlist_verbatim:
+  - "main"
+  - "ForkJoinPool-1-worker-1"
+  - "ForkJoinPool-1-worker-2"
+  - "ForkJoinPool-1-worker-3"
+  - "Reference Handler"
+  - "Finalizer"
+threads_tokenizadas:
+  "order-vt-9": { preserva_sufixo: "-9" }   # VT nomeada: cabecalho `"order-vt-9" #23 virtual` tokeniza so o nome
+classes_tokenizadas:
+  - "com.acme.gateway.Bootstrap"
+  - "com.acme.order.OrderService"
+  - "com.acme.order.handler.OrderHandler"
+  - "com.acme.cache.SharedCache"
+  - "com.acme.payment.gateway.AcquirerClient"
+  - "com.acme.order.queue.EventConsumer"
+linhas_stripadas:
+  - "JNI global refs"
+invariantes:
+  - determinismo_intra_dump
+  - blank_lines_preservadas
+  - enderecos_lock_verbatim
+# Armadilhas cobertas: cabecalho de VT anonima (`"" #21 virtual`) - aspas vazias preservadas, nada
+# a tokenizar; palavra-chave `virtual` no cabecalho intocada; marcadores Loom preservados BYTE A
+# BYTE (o parser do ThreadMine casa por eles) - o nome do carrier dentro do marcador e allowlist
+# (ForkJoinPool-N-worker-N), entao o marcador inteiro sai verbatim; VT #24/#25 sem linha de
+# carrier = VT desmontada/unmounted nao pode ganhar linha nova.

@@ -1,0 +1,41 @@
+# jstack JDK 17 com -l: blocos "Locked ownable synchronizers:" apos CADA thread
+# (inclusive "- None"), lock ReentrantLock held/parked entre duas threads do mesmo pool.
+formato: hotspot-jstack
+ancoras_preservadas:
+  - "Full thread dump OpenJDK 64-Bit Server VM (17.0.8+7-LTS mixed mode, sharing):"
+  - "java.lang.Thread.State:"
+threads_allowlist_verbatim:
+  - "main"
+  - "Reference Handler"
+  - "http-nio-8080-exec-1"
+  - "Monitor Deflation Thread"
+  - "Notification Thread"
+  - "Attach Listener"
+  - "VM Thread"
+  - "GC Thread#0"
+  - "G1 Main Marker"
+  - "G1 Conc#0"
+  - "G1 Service"
+  - "VM Periodic Task Thread"
+threads_tokenizadas:
+  "pgto-worker-1": { preserva_sufixo: "-1" }
+  "pgto-worker-2": { preserva_sufixo: "-2" }  # mesmo prefixo => mesmo token base de pgto-worker-1
+classes_tokenizadas:
+  - "com.acme.gateway.Bootstrap"
+  - "com.acme.payment.gateway.AcquirerClient"
+  - "com.acme.payment.LedgerService"
+  - "com.acme.payment.PaymentFacade"
+linhas_stripadas:
+  - "Threads class SMR info:"
+  - "_java_thread_list"
+  - "Locked ownable synchronizers:"   # bloco inteiro (marcador + "- None" + entradas <0x...>)
+  - "JNI global refs"
+invariantes:
+  - determinismo_intra_dump
+  - blank_lines_preservadas
+  - enderecos_lock_verbatim
+# Armadilhas cobertas: strip do bloco "Locked ownable synchronizers" nao pode engolir a linha em
+# branco que delimita a proxima thread (usar "# [tm-anon: stripped]" se necessario); o endereco
+# <0x000000061f8a2b40> aparece no held (synchronizers) E no "parking to wait for" de outra thread
+# - correlacao por endereco sobrevive porque enderecos sao sempre verbatim; classes
+# java.util.concurrent.* sao allowlist -> verbatim.

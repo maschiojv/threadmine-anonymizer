@@ -1,0 +1,43 @@
+# Deadlock de 1 ciclo (2 threads custom, classes de lock com.acme.*): bloco completo
+# "Found one Java-level deadlock:" + "===" + "Java stack information" + "Found 1 deadlock."
+formato: hotspot-jstack
+ancoras_preservadas:
+  - "Full thread dump OpenJDK 64-Bit Server VM (17.0.8+7-LTS mixed mode, sharing):"
+  - "java.lang.Thread.State:"
+  - "Found one Java-level deadlock:"
+  - "============================="
+  - "Java stack information for the threads listed above:"
+  - "==================================================="
+  - "Found 1 deadlock."
+threads_allowlist_verbatim:
+  - "main"
+  - "Reference Handler"
+  - "Finalizer"
+  - "Attach Listener"
+  - "VM Thread"
+  - "GC Thread#0"
+  - "VM Periodic Task Thread"
+threads_tokenizadas:
+  "pgto-worker-1": { preserva_sufixo: "-1" }
+  "pgto-worker-2": { preserva_sufixo: "-2" }
+classes_tokenizadas:
+  - "com.acme.payment.LedgerService"
+  - "com.acme.payment.LedgerLock"     # aparece em frame, "(a ...)", e "(object 0x..., a ...)" do bloco
+  - "com.acme.payment.PaymentFacade"
+  - "com.acme.stock.StockLatch"
+  - "com.acme.stock.StockSync"
+  - "com.acme.order.OrderService"
+  - "com.acme.gateway.Bootstrap"
+linhas_stripadas:
+  - "Threads class SMR info:"
+  - "_java_thread_list"
+  - "JNI global refs"
+invariantes:
+  - determinismo_intra_dump
+  - deadlock_nomes_consistentes   # "pgto-worker-1" no bloco = MESMO token do cabecalho da thread
+  - blank_lines_preservadas
+  - enderecos_lock_verbatim       # monitor 0x..., object 0x..., <0x...> intocados
+# Armadilhas cobertas: os nomes entre aspas dentro do bloco de deadlock (incl. `which is held by
+# "pgto-worker-1"`) reescritos com o mesmo token (+ sufixo) dos cabecalhos; a classe em
+# `(object 0x000000061fcc9b90, a com.acme.stock.StockLatch)` tokenizada preservando a moldura
+# `(object ..., a ...)`; linhas de "===" byte a byte.

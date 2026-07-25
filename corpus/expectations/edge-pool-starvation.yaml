@@ -1,0 +1,40 @@
+# Edge: starvation REAL de pool custom - pgto-worker-1..8 TODOS BLOCKED no mesmo monitor,
+# segurado por billing-sched-1 fazendo IO lento. Contraste: http-nio-8080-exec-* ociosos em
+# TIMED_WAITING (parking) - pool ocioso NAO e starvation (falso-positivo historico do detector).
+formato: hotspot-jstack
+ancoras_preservadas:
+  - "Full thread dump OpenJDK 64-Bit Server VM (17.0.8+7-LTS mixed mode, sharing):"
+  - "java.lang.Thread.State:"
+threads_allowlist_verbatim:
+  - "http-nio-8080-exec-1"
+  - "http-nio-8080-exec-2"
+  - "VM Thread"
+  - "GC Thread#0"
+  - "VM Periodic Task Thread"
+threads_tokenizadas:
+  "pgto-worker-1": { preserva_sufixo: "-1" }
+  "pgto-worker-2": { preserva_sufixo: "-2" }
+  "pgto-worker-3": { preserva_sufixo: "-3" }
+  "pgto-worker-4": { preserva_sufixo: "-4" }
+  "pgto-worker-5": { preserva_sufixo: "-5" }
+  "pgto-worker-6": { preserva_sufixo: "-6" }
+  "pgto-worker-7": { preserva_sufixo: "-7" }
+  "pgto-worker-8": { preserva_sufixo: "-8" }
+  "billing-sched-1": { preserva_sufixo: "-1" }
+classes_tokenizadas:
+  - "com.acme.payment.LedgerService"
+  - "com.acme.payment.LedgerLock"
+  - "com.acme.payment.PaymentFacade"
+  - "com.acme.billing.sched.TariffJob"
+linhas_stripadas:
+  - "JNI global refs"
+invariantes:
+  - determinismo_intra_dump
+  - blank_lines_preservadas
+  - enderecos_lock_verbatim
+  - sufixo_numerico_preservado
+# Armadilhas cobertas: os 8 workers compartilham o MESMO prefixo => mesmo token base + sufixos
+# -1..-8 distintos - e isso que mantem a deteccao de pool/starvation no servidor (agrupamento por
+# prefixo e N threads do mesmo pool BLOCKED no mesmo <0x...>); se cada worker ganhasse token
+# independente, o detector veria 8 pools de 1 thread e a starvation sumiria. O monitor
+# <0x000000061fcc9b80> repete 9x e deve permanecer identico em todas.

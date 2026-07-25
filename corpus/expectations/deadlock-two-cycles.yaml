@@ -1,0 +1,43 @@
+# Deadlock de 2 ciclos SIMULTANEOS: dois blocos "Found one Java-level deadlock:" (um por ciclo,
+# cada um com sua secao "Java stack information") e fecho "Found 2 deadlocks." (plural).
+formato: hotspot-jstack
+ancoras_preservadas:
+  - "Full thread dump OpenJDK 64-Bit Server VM (21.0.3+9-LTS mixed mode, sharing):"
+  - "java.lang.Thread.State:"
+  - "Found one Java-level deadlock:"     # ocorre 2x - ambas preservadas
+  - "Java stack information for the threads listed above:"
+  - "Found 2 deadlocks."
+threads_allowlist_verbatim:
+  - "main"
+  - "VM Thread"
+  - "GC Thread#0"
+  - "VM Periodic Task Thread"
+threads_tokenizadas:
+  "pgto-worker-1": { preserva_sufixo: "-1" }
+  "pgto-worker-2": { preserva_sufixo: "-2" }
+  "billing-sched-1": { preserva_sufixo: "-1" }
+  "report-render-1": { preserva_sufixo: "-1" }
+classes_tokenizadas:
+  - "com.acme.payment.LedgerService"
+  - "com.acme.payment.LedgerLock"
+  - "com.acme.payment.PaymentFacade"
+  - "com.acme.stock.StockLatch"
+  - "com.acme.stock.StockSync"
+  - "com.acme.order.OrderService"
+  - "com.acme.billing.InvoiceService"
+  - "com.acme.billing.TariffTable"
+  - "com.acme.billing.sched.TariffJob"
+  - "com.acme.report.RenderGate"
+  - "com.acme.report.PdfRenderer"
+  - "com.acme.report.ReportJob"
+linhas_stripadas:
+  - "JNI global refs"
+invariantes:
+  - determinismo_intra_dump
+  - deadlock_nomes_consistentes
+  - blank_lines_preservadas
+  - enderecos_lock_verbatim
+# Armadilhas cobertas: dois ciclos independentes - a reescrita nao pode misturar as atribuicoes
+# entre blocos; "billing-sched-1" e "report-render-1" terminam ambos em "-1" mas tem prefixos
+# diferentes => tokens base diferentes, mesmo sufixo literal; o fecho plural ("Found 2
+# deadlocks.") difere do singular e deve ser reconhecido como ancora, nao redigido.

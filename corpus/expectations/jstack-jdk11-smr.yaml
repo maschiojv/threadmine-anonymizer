@@ -1,0 +1,43 @@
+# jstack JDK 11: SMR info, cpu=/elapsed=, modulo java.base@11.0.16/ nos frames,
+# "JNI global refs: N, weak refs: N".
+formato: hotspot-jstack
+ancoras_preservadas:
+  - "Full thread dump OpenJDK 64-Bit Server VM (11.0.16+8-LTS mixed mode):"
+  - "java.lang.Thread.State:"
+threads_allowlist_verbatim:
+  - "main"
+  - "Reference Handler"
+  - "Finalizer"
+  - "Signal Dispatcher"
+  - "C2 CompilerThread0"
+  - "C1 CompilerThread0"
+  - "Thread-7"                 # regex ^Thread-\d+$ da allowlist
+  - "Common-Cleaner"
+  - "VM Thread"
+  - "GC Thread#0"
+  - "G1 Main Marker"
+  - "G1 Conc#0"
+  - "G1 Refine#0"
+  - "G1 Young RemSet Sampling"
+  - "VM Periodic Task Thread"
+threads_tokenizadas:
+  "cache-refresher-2": { preserva_sufixo: "-2" }
+  "billing-sched-1": { preserva_sufixo: "-1" }
+classes_tokenizadas:
+  - "com.acme.gateway.Bootstrap"
+  - "com.acme.core.util.NamedThreadFactory"   # inner anonima NamedThreadFactory$1 -> C...$C...
+  - "com.acme.billing.sched.TariffJob"
+  - "com.acme.order.queue.OrderQueue"         # tambem apos "(a " nas linhas waiting on/locked
+  - "com.acme.order.OrderTailer"
+linhas_stripadas:
+  - "Threads class SMR info:"
+  - "_java_thread_list"
+  - "JNI global refs"
+invariantes:
+  - determinismo_intra_dump
+  - blank_lines_preservadas
+  - enderecos_lock_verbatim
+# Armadilhas cobertas: bloco SMR (enderecos multi-linha + chave "}") strippado sem quebrar a
+# contagem de linhas em branco; "G1 Young RemSet Sampling" e "VM Periodic Task Thread" SEM linha
+# em branco entre eles (aparece em dumps reais - delimitacao de thread nao pode depender so de
+# linha em branco); modulo java.base@11.0.16/ preservado dentro do frame.

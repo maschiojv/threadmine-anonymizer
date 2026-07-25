@@ -1,0 +1,120 @@
+2026-07-24 11:00:00
+Full thread dump OpenJDK 64-Bit Server VM (17.0.8+7-LTS mixed mode, sharing):
+
+Threads class SMR info:
+_java_thread_list=0x00006000021f1a10, length=4, elements={
+0x00007fb2a3809200, 0x00007fb2a3810800, 0x00007fb2a3813200, 0x00007fb2a3813a00
+}
+
+"main" #1 prio=5 os_prio=31 cpu=311.18ms elapsed=600.09s tid=0x00007fb2a3809200 nid=0x2603 waiting on condition  [0x000000016b7fa000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.8/Native Method)
+	at com.acme.gateway.Bootstrap.awaitShutdown(Bootstrap.java:77)
+	at com.acme.gateway.Bootstrap.main(Bootstrap.java:41)
+
+"Reference Handler" #2 daemon prio=10 os_prio=31 cpu=0.29ms elapsed=600.08s tid=0x00007fb2a3810800 nid=0x3a03 waiting on condition  [0x000000016c8a6000]
+   java.lang.Thread.State: RUNNABLE
+	at java.lang.ref.Reference.waitForReferencePendingList(java.base@17.0.8/Native Method)
+	at java.lang.ref.Reference.processPendingReferences(java.base@17.0.8/Reference.java:253)
+	at java.lang.ref.Reference$ReferenceHandler.run(java.base@17.0.8/Reference.java:215)
+
+"pgto-worker-3" #15 prio=5 os_prio=31 cpu=4211.03ms elapsed=598.55s tid=0x00007fb2a3813200 nid=0x5203 runnable  [0x000000016d0be000]
+   java.lang.Thread.State: RUNNABLE
+	at java.net.SocketInputStream.socketRead0(java.base@17.0.8/Native Method)
+	at com.acme.payment.gateway.AcquirerClient.capture(AcquirerClient.java:133)
+	at com.acme.payment.LedgerService.applyEntry(LedgerService.java:95)
+	- locked <0x000000061fcc9b80> (a com.acme.payment.LedgerLock)
+	at com.acme.payment.PaymentFacade.settle(PaymentFacade.java:41)
+	at java.lang.Thread.run(java.base@17.0.8/Thread.java:833)
+
+"order-dispatcher" #16 prio=5 os_prio=31 cpu=88.77ms elapsed=598.55s tid=0x00007fb2a3813a00 nid=0x5403 waiting on condition  [0x000000016d2ca000]
+   java.lang.Thread.State: WAITING (parking)
+	at jdk.internal.misc.Unsafe.park(java.base@17.0.8/Native Method)
+	- parking to wait for  <0x000000061f8b1170> (a java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject)
+	at java.util.concurrent.locks.LockSupport.park(java.base@17.0.8/LockSupport.java:211)
+	at java.util.concurrent.LinkedBlockingQueue.take(java.base@17.0.8/LinkedBlockingQueue.java:435)
+	at com.acme.order.OrderDispatcher.pollLoop(OrderDispatcher.java:91)
+	at com.acme.order.OrderDispatcher.run(OrderDispatcher.java:58)
+	at java.lang.Thread.run(java.base@17.0.8/Thread.java:833)
+
+JNI global refs: 17, weak refs: 0
+
+2026-07-24 11:00:10
+Full thread dump OpenJDK 64-Bit Server VM (17.0.8+7-LTS mixed mode, sharing):
+
+Threads class SMR info:
+_java_thread_list=0x00006000021f1b20, length=4, elements={
+0x00007fb2a3809200, 0x00007fb2a3810800, 0x00007fb2a3813200, 0x00007fb2a3813a00
+}
+
+"main" #1 prio=5 os_prio=31 cpu=311.42ms elapsed=610.09s tid=0x00007fb2a3809200 nid=0x2603 waiting on condition  [0x000000016b7fa000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.8/Native Method)
+	at com.acme.gateway.Bootstrap.awaitShutdown(Bootstrap.java:77)
+	at com.acme.gateway.Bootstrap.main(Bootstrap.java:41)
+
+"Reference Handler" #2 daemon prio=10 os_prio=31 cpu=0.29ms elapsed=610.08s tid=0x00007fb2a3810800 nid=0x3a03 waiting on condition  [0x000000016c8a6000]
+   java.lang.Thread.State: RUNNABLE
+	at java.lang.ref.Reference.waitForReferencePendingList(java.base@17.0.8/Native Method)
+	at java.lang.ref.Reference.processPendingReferences(java.base@17.0.8/Reference.java:253)
+	at java.lang.ref.Reference$ReferenceHandler.run(java.base@17.0.8/Reference.java:215)
+
+"pgto-worker-3" #15 prio=5 os_prio=31 cpu=14202.88ms elapsed=608.55s tid=0x00007fb2a3813200 nid=0x5203 runnable  [0x000000016d0be000]
+   java.lang.Thread.State: RUNNABLE
+	at java.net.SocketInputStream.socketRead0(java.base@17.0.8/Native Method)
+	at com.acme.payment.gateway.AcquirerClient.capture(AcquirerClient.java:133)
+	at com.acme.payment.LedgerService.applyEntry(LedgerService.java:95)
+	- locked <0x000000061fcc9b80> (a com.acme.payment.LedgerLock)
+	at com.acme.payment.PaymentFacade.settle(PaymentFacade.java:41)
+	at java.lang.Thread.run(java.base@17.0.8/Thread.java:833)
+
+"order-dispatcher" #16 prio=5 os_prio=31 cpu=89.01ms elapsed=608.55s tid=0x00007fb2a3813a00 nid=0x5403 waiting for monitor entry  [0x000000016d2ca000]
+   java.lang.Thread.State: BLOCKED (on object monitor)
+	at com.acme.payment.LedgerService.applyEntry(LedgerService.java:88)
+	- waiting to lock <0x000000061fcc9b80> (a com.acme.payment.LedgerLock)
+	at com.acme.order.OrderService.processOrder(OrderService.java:67)
+	at com.acme.order.OrderDispatcher.pollLoop(OrderDispatcher.java:94)
+	at com.acme.order.OrderDispatcher.run(OrderDispatcher.java:58)
+	at java.lang.Thread.run(java.base@17.0.8/Thread.java:833)
+
+JNI global refs: 17, weak refs: 0
+
+2026-07-24 11:00:20
+Full thread dump OpenJDK 64-Bit Server VM (17.0.8+7-LTS mixed mode, sharing):
+
+Threads class SMR info:
+_java_thread_list=0x00006000021f1c30, length=4, elements={
+0x00007fb2a3809200, 0x00007fb2a3810800, 0x00007fb2a3813200, 0x00007fb2a3813a00
+}
+
+"main" #1 prio=5 os_prio=31 cpu=311.67ms elapsed=620.09s tid=0x00007fb2a3809200 nid=0x2603 waiting on condition  [0x000000016b7fa000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.8/Native Method)
+	at com.acme.gateway.Bootstrap.awaitShutdown(Bootstrap.java:77)
+	at com.acme.gateway.Bootstrap.main(Bootstrap.java:41)
+
+"Reference Handler" #2 daemon prio=10 os_prio=31 cpu=0.29ms elapsed=620.08s tid=0x00007fb2a3810800 nid=0x3a03 waiting on condition  [0x000000016c8a6000]
+   java.lang.Thread.State: RUNNABLE
+	at java.lang.ref.Reference.waitForReferencePendingList(java.base@17.0.8/Native Method)
+	at java.lang.ref.Reference.processPendingReferences(java.base@17.0.8/Reference.java:253)
+	at java.lang.ref.Reference$ReferenceHandler.run(java.base@17.0.8/Reference.java:215)
+
+"pgto-worker-3" #15 prio=5 os_prio=31 cpu=24188.12ms elapsed=618.55s tid=0x00007fb2a3813200 nid=0x5203 runnable  [0x000000016d0be000]
+   java.lang.Thread.State: RUNNABLE
+	at java.net.SocketInputStream.socketRead0(java.base@17.0.8/Native Method)
+	at com.acme.payment.gateway.AcquirerClient.capture(AcquirerClient.java:133)
+	at com.acme.payment.LedgerService.applyEntry(LedgerService.java:95)
+	- locked <0x000000061fcc9b80> (a com.acme.payment.LedgerLock)
+	at com.acme.payment.PaymentFacade.settle(PaymentFacade.java:41)
+	at java.lang.Thread.run(java.base@17.0.8/Thread.java:833)
+
+"order-dispatcher" #16 prio=5 os_prio=31 cpu=89.01ms elapsed=618.55s tid=0x00007fb2a3813a00 nid=0x5403 waiting for monitor entry  [0x000000016d2ca000]
+   java.lang.Thread.State: BLOCKED (on object monitor)
+	at com.acme.payment.LedgerService.applyEntry(LedgerService.java:88)
+	- waiting to lock <0x000000061fcc9b80> (a com.acme.payment.LedgerLock)
+	at com.acme.order.OrderService.processOrder(OrderService.java:67)
+	at com.acme.order.OrderDispatcher.pollLoop(OrderDispatcher.java:94)
+	at com.acme.order.OrderDispatcher.run(OrderDispatcher.java:58)
+	at java.lang.Thread.run(java.base@17.0.8/Thread.java:833)
+
+JNI global refs: 17, weak refs: 0

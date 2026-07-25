@@ -1,0 +1,60 @@
+2026-07-24 10:48:33
+Full thread dump OpenJDK 64-Bit Server VM (21.0.3+9-LTS mixed mode, sharing):
+
+"sync-/api/orders?id=99887766" #33 prio=5 os_prio=0 cpu=210.40ms elapsed=45.02s tid=0x00007f8a1f021000 nid=0x7103 runnable  [0x00007ffee9a10000]
+   java.lang.Thread.State: RUNNABLE
+	at java.net.SocketInputStream.socketRead0(java.base@21.0.3/Native Method)
+	at com.acme.order.sync.TenantSyncClient.pull(TenantSyncClient.java:77)
+	at com.acme.order.sync.TenantSyncWorker.run(TenantSyncWorker.java:39)
+	at java.lang.Thread.run(java.base@21.0.3/Thread.java:1583)
+
+"worker-550e8400-e29b-41d4-a716-446655440000" #34 prio=5 os_prio=0 cpu=8.12ms elapsed=44.90s tid=0x00007f8a1f022000 nid=0x7203 waiting on condition  [0x00007ffee9b12000]
+   java.lang.Thread.State: WAITING (parking)
+	at jdk.internal.misc.Unsafe.park(java.base@21.0.3/Native Method)
+	- parking to wait for  <0x000000061f8d2a40> (a java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject)
+	at java.util.concurrent.locks.LockSupport.park(java.base@21.0.3/LockSupport.java:371)
+	at java.util.concurrent.LinkedBlockingQueue.take(java.base@21.0.3/LinkedBlockingQueue.java:435)
+	at com.acme.core.util.JobRunner.awaitNext(JobRunner.java:64)
+	at com.acme.core.util.JobRunner.run(JobRunner.java:41)
+	at java.lang.Thread.run(java.base@21.0.3/Thread.java:1583)
+
+"req-1a2b3c4d5e6f7a8b GET /api/v1/invoices/9f8e7d6c" #35 prio=5 os_prio=0 cpu=91.02ms elapsed=12.11s tid=0x00007f8a1f023000 nid=0x7303 runnable  [0x00007ffee9c14000]
+   java.lang.Thread.State: RUNNABLE
+	at com.acme.billing.InvoiceService.computeTotals(InvoiceService.java:120)
+	at com.acme.web.InvoiceController.detail(InvoiceController.java:44)
+	at java.lang.Thread.run(java.base@21.0.3/Thread.java:1583)
+
+"tenant-sync#4" #36 prio=5 os_prio=0 cpu=33.71ms elapsed=44.80s tid=0x00007f8a1f024000 nid=0x7403 waiting on condition  [0x00007ffee9d16000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep0(java.base@21.0.3/Native Method)
+	at java.lang.Thread.sleep(java.base@21.0.3/Thread.java:509)
+	at com.acme.order.sync.TenantSyncWorker.backoff(TenantSyncWorker.java:58)
+	at com.acme.order.sync.TenantSyncWorker.run(TenantSyncWorker.java:42)
+	at java.lang.Thread.run(java.base@21.0.3/Thread.java:1583)
+
+"Thread-7" #37 prio=5 os_prio=0 cpu=0.88ms elapsed=40.02s tid=0x00007f8a1f025000 nid=0x7503 in Object.wait()  [0x00007ffee9e18000]
+   java.lang.Thread.State: WAITING (on object monitor)
+	at java.lang.Object.wait0(java.base@21.0.3/Native Method)
+	- waiting on <0x000000061f8e1238> (a com.acme.order.queue.OrderQueue)
+	at java.lang.Object.wait(java.base@21.0.3/Object.java:366)
+	at com.acme.order.queue.OrderQueue.take(OrderQueue.java:57)
+	- locked <0x000000061f8e1238> (a com.acme.order.queue.OrderQueue)
+	at com.acme.order.OrderTailer.run(OrderTailer.java:33)
+	at java.lang.Thread.run(java.base@21.0.3/Thread.java:1583)
+
+"http-nio-8080-exec-1" #27 daemon prio=5 os_prio=0 cpu=45.00ms elapsed=44.50s tid=0x00007f8a1f010000 nid=0x5803 waiting on condition  [0x00007ffee9f20000]
+   java.lang.Thread.State: TIMED_WAITING (parking)
+	at jdk.internal.misc.Unsafe.park(java.base@21.0.3/Native Method)
+	- parking to wait for  <0x000000061f8b1170> (a java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject)
+	at java.util.concurrent.locks.LockSupport.parkNanos(java.base@21.0.3/LockSupport.java:269)
+	at java.util.concurrent.LinkedBlockingQueue.poll(java.base@21.0.3/LinkedBlockingQueue.java:460)
+	at org.apache.tomcat.util.threads.TaskQueue.poll(TaskQueue.java:99)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.getTask(ThreadPoolExecutor.java:1113)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+	at java.lang.Thread.run(java.base@21.0.3/Thread.java:1583)
+
+"VM Thread" os_prio=0 cpu=30.06ms elapsed=45.36s tid=0x00007f8a1e00a800 nid=0x4903 runnable
+
+JNI global refs: 16, weak refs: 2
