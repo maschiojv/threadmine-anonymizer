@@ -15,6 +15,7 @@ original names in any analysis output.
   no network dependency — direct or transitive. This is enforced by an
   architecture test that scans sources, bytecode and the Maven dependency
   list. You can audit in minutes that this tool *cannot* exfiltrate anything.
+  Verify it yourself: `./mvnw test -Dtest=NoNetworkArchitectureTest`
 - **Deterministic tokens.** Tokens are derived with HMAC-SHA256 from a random
   256-bit key stored in your local vault. Same vault, same name, same token —
   across dumps, forever. Cross-dump analyses (diff, timeline) keep working.
