@@ -325,8 +325,13 @@ public final class HotspotRewriter {
 
     // --- thread names (SPEC §5.3) ---------------------------------------------
 
-    /** Applies the §5.3 cascade: allowlist, route heuristic, numeric suffix, whole name. */
-    String rewriteThreadName(String name) {
+    /**
+     * Applies the §5.3 cascade: allowlist, route heuristic, numeric suffix,
+     * whole name. Public because the cascade is dialect-independent: the
+     * OpenJ9 {@link dev.threadmine.anon.format.openj9.JavacoreRewriter}
+     * delegates here so both formats assign identical tokens (SPEC §5-B.4).
+     */
+    public String rewriteThreadName(String name) {
         if (name.isEmpty() || allowlist.allowsThreadName(name)) {
             return name;
         }
@@ -391,8 +396,13 @@ public final class HotspotRewriter {
         return null;
     }
 
-    /** Rewrites a bare FQCN reference (lock lines, deadlock monitors, MXBean headers). */
-    String rewriteClassReference(String fqcn) {
+    /**
+     * Rewrites a bare FQCN reference (lock lines, deadlock monitors, MXBean
+     * headers). Public for the same reason as {@link #rewriteThreadName}: the
+     * canonical values of SPEC §1 are dialect-independent, so the javacore
+     * rewriter reuses this to keep tokens identical across dialects.
+     */
+    public String rewriteClassReference(String fqcn) {
         if (allowlist.allowsFqcn(fqcn)) {
             return fqcn;
         }
