@@ -125,7 +125,9 @@ public final class HotspotRewriter {
         String[] lines = text.split("\n", -1);
         List<String> out = new ArrayList<>(lines.length + 1);
         List<String> warnings = new ArrayList<>();
-        out.add(OUTPUT_MARKER);
+        // The marker is prepended, so it inherits the file's line ending:
+        // emitting LF into a CRLF dump would hand the server a mixed-ending file.
+        out.add(OUTPUT_MARKER + (lines.length > 0 && lines[0].endsWith("\r") ? "\r" : ""));
 
         int preserved = 0;
         int tokenized = 0;

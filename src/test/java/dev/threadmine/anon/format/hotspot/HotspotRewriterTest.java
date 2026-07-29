@@ -487,6 +487,35 @@ class HotspotRewriterTest {
         assertFalse(result.output().contains("acme"));
     }
 
+    /**
+     * A dump captured on Windows arrives with CRLF. Every line rule here is
+     * anchored with {@code $}, so a stray {@code \r} would push each line into
+     * the fail-closed branch and redact the whole file.
+     */
+    @Test
+    void windowsLineEndingsSurviveAndDoNotTripFailClosed() {
+        String text = String.join("\r\n",
+                "Full thread dump OpenJDK 64-Bit Server VM (21.0.3+9-LTS mixed mode, sharing):",
+                "",
+                "\"pgto-worker-1\" #24 prio=5 tid=0x1 nid=0x1 waiting for monitor entry",
+                "   java.lang.Thread.State: BLOCKED (on object monitor)",
+                "\tat com.acme.payment.LedgerService.applyEntry(LedgerService.java:88)",
+                "\t- waiting to lock <0x00000000e1a2b3c8> (a com.acme.payment.LedgerLock)",
+                "JNI global refs: 19, weak refs: 0",
+                "");
+
+        MaskResult result = rewriter.mask(text);
+        String out = result.output();
+
+        assertEquals(0, result.redactedLines(), result.warnings().toString());
+        assertFalse(out.contains("acme"));
+        assertTrue(out.contains("   java.lang.Thread.State: BLOCKED (on object monitor)\r\n"),
+                "CRLF must survive on preserved lines: " + out.replace("\r", "\\r"));
+        assertTrue(out.contains("<0x00000000e1a2b3c8>"));
+        assertEquals(text.split("\r\n", -1).length + 1, out.split("\r\n", -1).length,
+                "one line in, one line out, plus the marker");
+    }
+
     @Test
     void blankLinesAreNeverCreatedNorRemoved() {
         String text = """
