@@ -66,7 +66,7 @@ masked-analysis export:
 
 ## Findings
 
-### BUG (verify, false positive): CGLIB scaffolding and `(<generated>)` flagged as residual identifiers
+### BUG (verify, false positive): CGLIB scaffolding and `(<generated>)` flagged as residual identifiers — **FIXED, see resolution below**
 
 - **Where:** `src/main/java/dev/threadmine/anon/verify/ComplianceVerifier.java`
 - **What:** on a correctly masked frame such as
@@ -94,6 +94,14 @@ masked-analysis export:
   fix direction: treat `$$<KnownScaffold>$$<hex>` segments as structural in
   `atomIsSafe` (mirroring the rewriter's own scaffolding rules) and add
   `<generated>` to `NON_LOCATIONS`.
+- **RESOLUTION — already fixed on master.** Task 3I hit the same defect from the
+  other direction (its `CorpusMaskVerifyTest` runs mask+verify over all 20
+  fixtures) and landed the fix in `ComplianceVerifier` before this branch was
+  integrated: the `$$…` scaffolding is now stripped before tokens are demanded,
+  and `<generated>` is accepted as a location. Re-checked after rebasing this
+  branch onto master: `verify` of `edge-lambda-inner-cglib` exits **0 / PASS**.
+  Two agents finding the same bug independently is the reason the SPEC §9 table
+  below now reads 17/17 on item (1).
 
 ### Notes (not bugs)
 
@@ -114,7 +122,7 @@ masked-analysis export:
 
 | Item | Status |
 |---|---|
-| (1) mask output passes `verify` | **16/17 fixtures** — fails only on `edge-lambda-inner-cglib` due to the verify false positive above (the masked file itself contains no residual identifiers; confirmed manually) |
+| (1) mask output passes `verify` | **PASS — 17/17 fixtures.** Measured 16/17 on the pre-integration master; the one failure was the CGLIB verify false positive above, fixed by task 3I and re-verified as PASS after rebasing onto master (`verify` exit 0) |
 | (2) accepted by ThreadMine dev with the SAME problems and health score | **PASS — 17/17 fixtures**, automated by this harness |
 | (3) `unmask` of the export JSON restores real names, including inside prose | **PASS — 17/17 fixtures** + prose spot checks |
 | Zero network code in the jar | **PASS** — `./mvnw test` (incl. `NoNetworkArchitectureTest`) green; the harness lives outside the Maven build |
