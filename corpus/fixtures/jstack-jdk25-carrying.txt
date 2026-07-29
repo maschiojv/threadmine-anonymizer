@@ -1,0 +1,50 @@
+2026-07-24 09:44:02
+Full thread dump OpenJDK 64-Bit Server VM (25.0.1+9-LTS mixed mode, sharing):
+
+"main" #1 [1543] prio=5 os_prio=31 cpu=180.22ms elapsed=33.66s tid=0x000000012f80ba00 [0x000000016b2e6000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep0(java.base@25.0.1/Native Method)
+	at java.lang.Thread.sleep(java.base@25.0.1/Thread.java:509)
+	at com.acme.gateway.Bootstrap.awaitShutdown(Bootstrap.java:77)
+
+"ForkJoinPool-1-worker-1" #33 [33539] daemon prio=5 os_prio=31 cpu=33651.61ms elapsed=33.65s tid=0x000000013289f000 [0x000000016e225000]
+   Carrying virtual thread #32
+	at jdk.internal.vm.Continuation.run(java.base@25.0.1/Continuation.java:251)
+	at java.lang.VirtualThread.runContinuation(java.base@25.0.1/VirtualThread.java:297)
+	at java.util.concurrent.ForkJoinTask$RunnableExecuteAction.compute(java.base@25.0.1/ForkJoinTask.java:1750)
+	at java.util.concurrent.ForkJoinWorkerThread.run(java.base@25.0.1/ForkJoinWorkerThread.java:189)
+
+"ForkJoinPool-1-worker-2" #34 [33795] daemon prio=5 os_prio=31 cpu=21044.03ms elapsed=33.65s tid=0x00000001328a0800 [0x000000016e431000]
+   Carrying virtual thread #35
+	at jdk.internal.vm.Continuation.run(java.base@25.0.1/Continuation.java:251)
+	at java.lang.VirtualThread.runContinuation(java.base@25.0.1/VirtualThread.java:297)
+	at java.util.concurrent.ForkJoinWorkerThread.run(java.base@25.0.1/ForkJoinWorkerThread.java:189)
+
+"ForkJoinPool-1-worker-3" #36 [34051] daemon prio=5 os_prio=31 cpu=12.04ms elapsed=33.64s tid=0x00000001328a1600 [0x000000016e63d000]
+   java.lang.Thread.State: WAITING (parking)
+	at jdk.internal.misc.Unsafe.park(java.base@25.0.1/Native Method)
+	at java.util.concurrent.ForkJoinPool.awaitWork(java.base@25.0.1/ForkJoinPool.java:1893)
+	at java.util.concurrent.ForkJoinWorkerThread.run(java.base@25.0.1/ForkJoinWorkerThread.java:189)
+
+"" #32 virtual
+   java.lang.Thread.State: RUNNABLE
+	at com.acme.order.OrderService.processOrder(OrderService.java:67)
+	at com.acme.order.handler.OrderHandler.handle(OrderHandler.java:34)
+      <virtual thread is mounted on carrier thread "ForkJoinPool-1-worker-1">
+
+"pedido-vt-7" #35 virtual
+   java.lang.Thread.State: BLOCKED (on object monitor)
+	at com.acme.stock.StockSync.reserve(StockSync.java:112)
+	- waiting to lock <0x000000061fcc0001> (a com.acme.stock.StockLatch)
+      <pinned: synchronized>
+      <virtual thread is mounted on carrier thread "ForkJoinPool-1-worker-2">
+
+"VirtualThread-unblocker" #37 daemon prio=5 os_prio=31 cpu=0.42ms elapsed=33.64s tid=0x00000001328a2400 [0x000000016e849000]
+   java.lang.Thread.State: RUNNABLE
+	at java.lang.VirtualThread.unblockVirtualThreads(java.base@25.0.1/Native Method)
+
+"Reference Handler" #2 [1799] daemon prio=10 os_prio=31 cpu=0.34ms elapsed=33.66s tid=0x000000012f80c200 [0x000000016b4f2000]
+   java.lang.Thread.State: RUNNABLE
+	at java.lang.ref.Reference.waitForReferencePendingList(java.base@25.0.1/Native Method)
+
+JNI global refs: 21, weak refs: 4

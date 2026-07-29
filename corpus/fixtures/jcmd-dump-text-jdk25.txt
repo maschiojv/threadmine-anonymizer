@@ -1,0 +1,52 @@
+41215
+2026-07-24T13:44:02.113921Z
+25.0.1+9-LTS
+
+#1 "main" TIMED_WAITING 2026-07-24T13:44:02.114003Z
+    at java.base/java.lang.Thread.sleep0(Native Method)
+    at java.base/java.lang.Thread.sleep(Thread.java:509)
+    at com.acme.gateway.Bootstrap.awaitShutdown(Bootstrap.java:77)
+    at com.acme.gateway.Bootstrap.main(Bootstrap.java:41)
+
+#30 "pgto-worker-1" BLOCKED 2026-07-24T13:44:02.114188Z
+    at com.acme.payment.LedgerService.applyEntry(LedgerService.java:88)
+    - waiting to lock <com.acme.payment.LedgerLock@6e8cf4c6>
+    at com.acme.payment.PaymentFacade.settle(PaymentFacade.java:41)
+    at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+    - locked <java.util.concurrent.ThreadPoolExecutor$Worker@1a2b3c4d>
+    at java.base/java.lang.Thread.run(Thread.java:1583)
+
+#31 "pgto-worker-2" RUNNABLE 2026-07-24T13:44:02.114260Z
+    at java.base/sun.nio.ch.Net.poll(Native Method)
+    at com.acme.payment.gateway.AcquirerClient.capture(AcquirerClient.java:133)
+    at com.acme.payment.LedgerService.applyEntry(LedgerService.java:95)
+    - locked <com.acme.payment.LedgerLock@6e8cf4c6>
+    at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+    at java.base/java.lang.Thread.run(Thread.java:1583)
+
+#32 "pgto-worker-3" WAITING 2026-07-24T13:44:02.114331Z
+    at java.base/jdk.internal.misc.Unsafe.park(Native Method)
+    - parking to wait for <java.util.concurrent.locks.ReentrantLock$NonfairSync@5e8f9a3b>, owner #30
+    at java.base/java.util.concurrent.locks.LockSupport.park(LockSupport.java:369)
+    at com.acme.payment.LedgerService.awaitSlot(LedgerService.java:142)
+    at java.base/java.lang.Thread.run(Thread.java:1583)
+
+#40 "order-dispatcher" TIMED_WAITING 2026-07-24T13:44:02.114402Z
+    at java.base/java.lang.Object.wait0(Native Method)
+    - waiting on <com.acme.order.queue.OrderQueue@3f2a1b0c>
+    at com.acme.order.queue.OrderQueue.take(OrderQueue.java:73)
+    - lock is eliminated
+    at com.acme.order.OrderDispatcher.run(OrderDispatcher.java:58)
+
+#52 "" virtual WAITING 2026-07-24T13:44:02.114470Z
+    at java.base/java.lang.VirtualThread.park(VirtualThread.java:582)
+    at java.base/java.util.concurrent.locks.LockSupport.park(LockSupport.java:369)
+    at com.acme.order.queue.EventConsumer.waitForEvent(EventConsumer.java:56)
+
+#53 "sync-/api/orders?tenant=99887766" virtual RUNNABLE 2026-07-24T13:44:02.114540Z
+    at java.base/sun.nio.ch.Net.poll(Native Method)
+    at com.acme.payment.gateway.AcquirerClient.call(AcquirerClient.java:89)
+
+#17 "ForkJoinPool-1-worker-1" RUNNABLE 2026-07-24T13:44:02.114601Z
+    at java.base/jdk.internal.vm.Continuation.run(Continuation.java:251)
+    at java.base/java.lang.VirtualThread.runContinuation(VirtualThread.java:297)

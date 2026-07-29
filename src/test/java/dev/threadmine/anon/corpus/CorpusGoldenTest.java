@@ -47,7 +47,7 @@ class CorpusGoldenTest {
                     .map(n -> n.substring(0, n.length() - 4))
                     .sorted()
                     .toList();
-            assertEquals(17, names.size(), "the corpus must have its 17 fixtures");
+            assertEquals(20, names.size(), "the corpus must have its 20 fixtures");
             return names.stream();
         }
     }

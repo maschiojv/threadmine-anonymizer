@@ -1,0 +1,38 @@
+48350
+2026-07-24T13:02:19.482190Z
+21.0.3+9-LTS
+
+#1 "main"
+      java.base/java.lang.Thread.sleep0(Native Method)
+      java.base/java.lang.Thread.sleep(Thread.java:509)
+      com.acme.gateway.Bootstrap.awaitShutdown(Bootstrap.java:77)
+      com.acme.gateway.Bootstrap.main(Bootstrap.java:41)
+
+#8 "Reference Handler"
+      java.base/java.lang.ref.Reference.waitForReferencePendingList(Native Method)
+      java.base/java.lang.ref.Reference.processPendingReferences(Reference.java:246)
+
+#17 "ForkJoinPool-1-worker-1"
+      java.base/jdk.internal.vm.Continuation.run(Continuation.java:251)
+      java.base/java.lang.VirtualThread.runContinuation(VirtualThread.java:297)
+
+#30 "pgto-worker-1"
+      com.acme.payment.LedgerService.applyEntry(LedgerService.java:88)
+      com.acme.payment.PaymentFacade.settle(PaymentFacade.java:41)
+      java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+      java.base/java.lang.Thread.run(Thread.java:1583)
+
+#31 "pgto-worker-2"
+      java.base/sun.nio.ch.Net.poll(Native Method)
+      com.acme.payment.gateway.AcquirerClient.capture(AcquirerClient.java:133)
+      java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+      java.base/java.lang.Thread.run(Thread.java:1583)
+
+#52 "" virtual
+      java.base/java.lang.VirtualThread.park(VirtualThread.java:582)
+      java.base/java.util.concurrent.locks.LockSupport.park(LockSupport.java:369)
+      com.acme.order.queue.EventConsumer.waitForEvent(EventConsumer.java:56)
+
+#53 "order-vt-9" virtual
+      java.base/sun.nio.ch.Net.poll(Native Method)
+      com.acme.payment.gateway.AcquirerClient.call(AcquirerClient.java:89)
