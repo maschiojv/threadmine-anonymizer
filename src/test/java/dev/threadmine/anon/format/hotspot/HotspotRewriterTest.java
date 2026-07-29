@@ -255,6 +255,43 @@ class HotspotRewriterTest {
         assertTrue(Pattern.compile("#30 \"t[0-9a-f]{5}x[0-9a-f]{5}-1\" BLOCKED").matcher(out).find(), out);
     }
 
+    /**
+     * JDK 21..23 {@code Thread.dump_to_file -format=text}: the header carries
+     * no state at all and the virtual marker is lowercase
+     * ({@code jdk.internal.vm.ThreadDumper#dumpThread}, jdk-21+35:
+     * {@code ps.format("#%d \"%s\"%s%n", threadId, name, isVirtual ? " virtual" : "")}).
+     */
+    @Test
+    void jcmdTextHeaderWithoutStateIsRecognized() {
+        MaskResult result = rewriter.mask("#1 \"main\"\n#22 \"\" virtual\n#30 \"pgto-worker-1\"\n");
+        String out = result.output();
+
+        assertEquals(0, result.redactedLines(), "stateless jcmd headers must be classified: " + result.warnings());
+        assertTrue(out.contains("#22 \"\" virtual"), "anonymous virtual thread header must survive: " + out);
+        assertFalse(out.contains("pgto"));
+        assertTrue(Pattern.compile("#30 \"t[0-9a-f]{5}x[0-9a-f]{5}-1\"$", Pattern.MULTILINE).matcher(out).find(), out);
+    }
+
+    /** JDK 24+ text dump: {@code #N "name" virtual STATE <Instant>}. */
+    @Test
+    void jcmdTextHeaderWithLowercaseVirtualStateAndTimestampIsRecognized() {
+        MaskResult result = rewriter.mask("#52 \"order-vt-9\" virtual WAITING 2026-07-24T13:44:02.114003Z\n");
+        String out = result.output();
+
+        assertEquals(0, result.redactedLines(), result.warnings().toString());
+        assertTrue(out.contains(" virtual WAITING 2026-07-24T13:44:02.114003Z"),
+                "state and timestamp must survive verbatim: " + out);
+        assertFalse(out.contains("order-vt"));
+    }
+
+    @Test
+    void jcmdTextHeaderWithUnknownTrailerFailsClosed() {
+        MaskResult result = rewriter.mask("#7 \"main\" BLOCKED password=hunter2\n");
+
+        assertEquals(1, result.redactedLines());
+        assertFalse(result.output().contains("hunter2"));
+    }
+
     @Test
     void mxbeanOwnedByReceivesTheSameTokenAsTheOwnedThreadHeader() {
         String out = mask("""
@@ -297,6 +334,57 @@ class HotspotRewriterTest {
     void noObjectReferenceSentinelIsVerbatim() {
         String line = "\t- waiting on <no object reference available>";
         assertTrue(mask(line + "\n").contains(line));
+    }
+
+    /**
+     * The JDK 24+ jcmd text dump does not print monitor addresses: it prints
+     * {@code Objects.toIdentityString(obj)}, i.e. {@code FQCN@hash}, inside the
+     * angle brackets ({@code ThreadDumper#decorateObject}). Keeping the angle
+     * content verbatim — which is right for an address — would ship the
+     * application class name untouched.
+     */
+    @Test
+    void monitorIdentityStringInsideAngleBracketsIsTokenized() {
+        String out = mask("    - waiting to lock <com.acme.payment.LedgerLock@6e8cf4c6>\n"
+                + "    - locked <java.util.concurrent.ThreadPoolExecutor$Worker@1a2b3c4d>\n");
+
+        assertFalse(out.contains("acme"));
+        assertFalse(out.contains("LedgerLock"));
+        assertTrue(out.contains("@6e8cf4c6>"), "identity hash must survive verbatim: " + out);
+        assertTrue(out.contains("    - locked <java.util.concurrent.ThreadPoolExecutor$Worker@1a2b3c4d>"),
+                "allowlisted monitor class stays verbatim: " + out);
+        assertTrue(Pattern.compile("- waiting to lock <p[0-9a-f]{5}x[0-9a-f]{5}\\.p[0-9a-f]{5}x[0-9a-f]{5}"
+                + "\\.p[0-9a-f]{5}x[0-9a-f]{5}\\.C[0-9a-f]{5}x[0-9a-f]{5}@6e8cf4c6>").matcher(out).find(), out);
+    }
+
+    @Test
+    void parkBlockerOwnerTrailerSurvives() {
+        String out = mask("    - parking to wait for "
+                + "<java.util.concurrent.locks.ReentrantLock$NonfairSync@5e8f9a3b>, owner #30\n");
+
+        assertTrue(out.contains("<java.util.concurrent.locks.ReentrantLock$NonfairSync@5e8f9a3b>, owner #30"), out);
+    }
+
+    @Test
+    void eliminatedLockLineIsPreserved() {
+        String line = "    - lock is eliminated";
+        assertTrue(mask(line + "\n").contains(line));
+    }
+
+    @Test
+    void unknownAngleBracketContentFailsClosed() {
+        MaskResult result = rewriter.mask("\t- locked <session password=hunter2>\n");
+
+        assertEquals(1, result.redactedLines());
+        assertFalse(result.output().contains("hunter2"));
+    }
+
+    @Test
+    void unknownLockTrailerFailsClosed() {
+        MaskResult result = rewriter.mask("\t- locked <0x00000000e1a2b3c8> owned by tenant acme-prod\n");
+
+        assertEquals(1, result.redactedLines());
+        assertFalse(result.output().contains("acme-prod"));
     }
 
     @Test
@@ -371,6 +459,32 @@ class HotspotRewriterTest {
         String out = mask("      <virtual thread is mounted on carrier thread \"acme-carrier-1\">\n");
         assertFalse(out.contains("acme"));
         assertTrue(Pattern.compile("<virtual thread is mounted on carrier thread \"t[0-9a-f]{5}x[0-9a-f]{5}-1\">").matcher(out).find(), out);
+    }
+
+    /**
+     * A mounted carrier prints {@code Carrying virtual thread #N} INSTEAD of
+     * its {@code java.lang.Thread.State:} line. The number is a thread id, not
+     * a name, and the ThreadMine parser reads the line
+     * ({@code ParserHotSpotCore.CARRYING_VIRTUAL}) — so it stays byte for byte.
+     */
+    @Test
+    void carryingVirtualThreadLineIsVerbatim() {
+        String line = "   Carrying virtual thread #32";
+        assertTrue(mask(line + "\n").contains(line));
+    }
+
+    @Test
+    void carrierBlockWithoutStateLineIsFullyClassified() {
+        MaskResult result = rewriter.mask("""
+                "ForkJoinPool-1-worker-1" #33 [33539] daemon prio=5 os_prio=31 cpu=33651.61ms elapsed=33.65s tid=0x000000013289f000
+                   Carrying virtual thread #32
+                \tat java.lang.VirtualThread.runContinuation(java.base@25/VirtualThread.java:297)
+                \tat com.acme.order.OrderService.processOrder(OrderService.java:67)
+                """);
+
+        assertEquals(0, result.redactedLines(), result.warnings().toString());
+        assertTrue(result.output().contains("   Carrying virtual thread #32"));
+        assertFalse(result.output().contains("acme"));
     }
 
     @Test
