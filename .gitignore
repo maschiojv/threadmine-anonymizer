@@ -16,3 +16,6 @@ target/
 .classpath
 .project
 .settings/
+# e2e parity harness scratch output (contains a throwaway vault)
+e2e/work/
+e2e/out/
