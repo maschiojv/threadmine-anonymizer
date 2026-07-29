@@ -36,8 +36,13 @@ public final class ComplianceVerifier {
     private static final Pattern QUOTED = Pattern.compile("\"([^\"]*)\"");
     /** {@code (a com.acme.Lock)} in jstack, {@code , a com.acme.Lock)} inside a deadlock block. */
     private static final Pattern LOCK_CLASS = Pattern.compile("[(,]\\s*a\\s+([\\w.$]+)");
-    /** {@code com.acme.Lock@1f2e3d} in ThreadMXBean/VisualVM output. */
-    private static final Pattern CLASS_AT_HASH = Pattern.compile("([A-Za-z_$][\\w.$]*)@([0-9a-fA-F]+)\\b");
+    /**
+     * {@code com.acme.Lock@1f2e3d} in ThreadMXBean/VisualVM output. The
+     * identity hash is at least four hex digits and ends the token, which is
+     * what keeps module specs such as {@code java.base@21.0.3/} out.
+     */
+    private static final Pattern CLASS_AT_HASH =
+            Pattern.compile("([A-Za-z_$][\\w.$]*)@([0-9a-fA-F]{4,})(?![\\w.$/@])");
     /** Module or classloader prefix on a frame: {@code java.base@21.0.3/} or {@code app//}. */
     private static final Pattern MODULE_PREFIX = Pattern.compile("^(?:[\\w.$]+//|[\\w.$]+@[\\w.+-]+/)");
 

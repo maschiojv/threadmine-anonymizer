@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * {@code tm-anon verify <original> <masked> [--vault <path>]} — the compliance
+ * {@code tm-anon verify <original> <masked> [--vault <path>]} - the compliance
  * gate. It answers the question a security reviewer actually asks: can anything
  * in this file still be traced back to us, and is it still the same dump?
  *
@@ -62,7 +62,7 @@ final class VerifyCommand {
             return ExitCodes.UNSUPPORTED_INPUT;
         }
         if (!ComplianceVerifier.looksLikeThreadDump(original)) {
-            err.println("verify: " + originalFile + " is not a recognizable thread dump — refusing to guess");
+            err.println("verify: " + originalFile + " is not a recognizable thread dump - refusing to guess");
             return ExitCodes.UNSUPPORTED_INPUT;
         }
 
@@ -96,7 +96,7 @@ final class VerifyCommand {
     /**
      * The vault is optional here: it only adds the check that the masked file's
      * tokens belong to the vault kept for it. An explicit {@code --vault} that
-     * does not exist is still an error — the user asked for that file.
+     * does not exist is still an error - the user asked for that file.
      */
     private static Vault optionalVault(Args args, Path workingDir, PrintStream out) {
         Path vaultFile = Commands.vaultPath(args, workingDir);

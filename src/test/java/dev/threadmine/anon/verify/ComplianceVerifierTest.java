@@ -509,8 +509,70 @@ class ComplianceVerifierTest {
     }
 
     @Test
+    void seesThroughAByteOrderMarkLeftByAWindowsEditor() {
+        // A BOM is invisible and would otherwise hide the shape of line one,
+        // turning a perfectly good dump into an unsupported input.
+        String withBom = "\uFEFF" + ORIGINAL;
+
+        assertTrue(ComplianceVerifier.looksLikeThreadDump(withBom));
+        assertEquals(verifier.verify(ORIGINAL, MASKED).counts().originalThreads(),
+                verifier.verify(withBom, MASKED).counts().originalThreads());
+    }
+
+    @Test
     void refusesTextThatIsNotAThreadDump() {
         assertFalse(ComplianceVerifier.looksLikeThreadDump("{\"hello\": \"world\"}"));
         assertFalse(ComplianceVerifier.looksLikeThreadDump(""));
+    }
+
+    @Test
+    void doesNotMistakeQuotedJsonKeysForThreadHeaders() {
+        // A quoted string only opens a thread when thread metadata follows it.
+        // Without that rule any JSON file passes the gate and gets "verified".
+        String json = """
+                {
+                  "sumario": { "healthScore": 30 },
+                  "threads": [
+                    { "nome": "pgto-worker-1", "estado": "BLOCKED" }
+                  ]
+                }
+                """;
+
+        assertFalse(ComplianceVerifier.looksLikeThreadDump(json));
+        assertEquals(0, verifier.verify(json, json).counts().originalThreads());
+    }
+
+    @Test
+    void recognizesTheThreadHeaderShapesOfEveryDumpFlavour() {
+        assertEquals(1, verifier.verify(ORIGINAL,
+                "\"worker\" #15 prio=5 tid=0x1 nid=0x2 runnable").counts().maskedThreads());
+        assertEquals(1, verifier.verify(ORIGINAL,
+                "\"worker\" Id=31 BLOCKED on java.lang.Object@aabbccdd").counts().maskedThreads());
+        assertEquals(1, verifier.verify(ORIGINAL,
+                "\"VM Thread\" os_prio=31 cpu=188.21ms elapsed=412.09s tid=0x1 nid=0x2 runnable")
+                .counts().maskedThreads());
+        assertEquals(1, verifier.verify(ORIGINAL, "#53 \"order-vt-9\" VIRTUAL RUNNABLE")
+                .counts().maskedThreads());
+        assertEquals(1, verifier.verify(ORIGINAL, "\"\" #21 virtual prio=5 tid=0x1 nid=0x0 runnable")
+                .counts().maskedThreads());
+    }
+
+    @Test
+    void doesNotMistakeAModuleSpecForAnIdentityHash() {
+        // java.base@21.0.3/ is a module, not Class@hash: reading it as one
+        // would report "java.base" as a leftover on every single JDK frame.
+        String dump = """
+                Full thread dump OpenJDK 64-Bit Server VM (21.0.3+9-LTS mixed mode):
+
+                "t1a2b3xc4d5e" #15 prio=5 tid=0x1 nid=0x2 runnable
+                   java.lang.Thread.State: RUNNABLE
+                \tat p11111x11111.Caaaaaxbbbbb.mcccccxddddd(Caaaaaxbbbbb.java:41)
+                """;
+        ComplianceVerifier paranoid = new ComplianceVerifier(FakeAllowlistMatcher.denyingEverything());
+
+        String withModule = dump.replace("(Caaaaaxbbbbb.java:41)", "(java.base@21.0.3/Caaaaaxbbbbb.java:41)");
+
+        assertEquals(List.of(), paranoid.verify(withModule, withModule).residualIdentifiers(),
+                "a module spec is structure even when the allowlist allows nothing");
     }
 }

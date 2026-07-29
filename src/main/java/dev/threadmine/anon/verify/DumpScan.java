@@ -37,6 +37,15 @@ final class DumpScan {
     private static final Pattern JCMD_HEADER = Pattern.compile("^#\\d+\\s+\"([^\"]*)\"");
 
     /**
+     * What follows the quoted name on a real thread header. Without this the
+     * gate would accept any file whose lines start with a quote — JSON, for
+     * one — and tm-anon would happily "verify" something that is not a dump.
+     */
+    private static final Pattern THREAD_METADATA = Pattern.compile(
+            "^(?:#\\d+|Id=\\d+|daemon\\b|virtual\\b|prio=|os_prio=|tid=|nid=|cpu=|elapsed="
+                    + "|RUNNABLE|BLOCKED|WAITING|TIMED_WAITING|NEW|TERMINATED|VIRTUAL)");
+
+    /**
      * A frame with no {@code at } keyword, as emitted by jcmd
      * {@code Thread.dump_to_file -format=text}: an unbroken qualified name
      * followed by the location in parentheses. Requiring no whitespace before
@@ -50,6 +59,13 @@ final class DumpScan {
 
     static final String STRIPPED_MARKER = "# [tm-anon: stripped]";
     static final String REDACTED_MARKER = "# [tm-anon: redacted]";
+
+    /**
+     * Byte-order mark left by Windows editors. It is invisible, but it would
+     * sit in front of the first line and hide that line's shape from every
+     * {@code startsWith} below.
+     */
+    private static final char BOM = '\uFEFF';
 
     private final List<String> rawLines;
     private final List<String> collapsedLines;
@@ -65,7 +81,8 @@ final class DumpScan {
     }
 
     static DumpScan of(String text) {
-        List<String> raw = new ArrayList<>(List.of(LINE_SEPARATOR.split(text, -1)));
+        String body = !text.isEmpty() && text.charAt(0) == BOM ? text.substring(1) : text;
+        List<String> raw = new ArrayList<>(List.of(LINE_SEPARATOR.split(body, -1)));
         // A trailing newline is punctuation, not an extra blank line.
         if (!raw.isEmpty() && raw.get(raw.size() - 1).isEmpty()) {
             raw.remove(raw.size() - 1);
@@ -108,7 +125,8 @@ final class DumpScan {
 
     /**
      * The thread name when this line opens a thread, {@code null} otherwise.
-     * The quoted names inside a deadlock block ({@code "worker-1":}) are
+     * A quoted name only opens a thread when thread metadata follows it; the
+     * quoted names inside a deadlock block ({@code "worker-1":}) are
      * back-references, not new threads.
      */
     static String threadHeaderName(String collapsed) {
@@ -118,7 +136,7 @@ final class DumpScan {
                 return null;
             }
             String rest = collapsed.substring(closing + 1).strip();
-            return rest.equals(":") ? null : collapsed.substring(1, closing);
+            return THREAD_METADATA.matcher(rest).find() ? collapsed.substring(1, closing) : null;
         }
         Matcher jcmd = JCMD_HEADER.matcher(collapsed);
         return jcmd.find() ? jcmd.group(1) : null;

@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * {@code tm-anon init [--vault <path>]} — creates a fresh vault.
+ * {@code tm-anon init [--vault <path>]} - creates a fresh vault.
  *
  * <p>The vault is the only thing that can turn tokens back into real names, so
  * this command has two jobs beyond writing the file: tell the user to back it
@@ -98,7 +98,7 @@ final class InitCommand {
             }
             out.println("Added to .gitignore: " + entry);
         } catch (IOException e) {
-            err.println("init: warning — could not update .gitignore (" + e.getMessage()
+            err.println("init: warning - could not update .gitignore (" + e.getMessage()
                     + "); add '" + entry + "' by hand");
         }
     }

@@ -31,7 +31,7 @@ final class Commands {
     static Vault openVault(Path vaultFile) {
         if (!Files.exists(vaultFile)) {
             throw new VaultException("vault not found: " + vaultFile.toAbsolutePath()
-                    + " — run 'tm-anon init' first, or point --vault at an existing vault");
+                    + " - run 'tm-anon init' first, or point --vault at an existing vault");
         }
         return Vault.load(vaultFile);
     }
