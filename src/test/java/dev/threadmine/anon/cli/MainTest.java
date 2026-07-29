@@ -15,7 +15,9 @@ class MainTest {
     void noArgumentsPrintsUsageAndReturnsUsageExitCode() {
         ByteArrayOutputStream err = new ByteArrayOutputStream();
 
-        int exit = Main.run(new String[]{}, new PrintStream(err, true, StandardCharsets.UTF_8));
+        int exit = Main.run(new String[]{},
+                new PrintStream(new ByteArrayOutputStream(), true, StandardCharsets.UTF_8),
+                new PrintStream(err, true, StandardCharsets.UTF_8));
 
         String usage = err.toString(StandardCharsets.UTF_8);
         assertEquals(1, exit);
@@ -30,7 +32,9 @@ class MainTest {
     void unknownCommandPrintsUsageAndReturnsUsageExitCode() {
         ByteArrayOutputStream err = new ByteArrayOutputStream();
 
-        int exit = Main.run(new String[]{"frobnicate"}, new PrintStream(err, true, StandardCharsets.UTF_8));
+        int exit = Main.run(new String[]{"frobnicate"},
+                new PrintStream(new ByteArrayOutputStream(), true, StandardCharsets.UTF_8),
+                new PrintStream(err, true, StandardCharsets.UTF_8));
 
         assertEquals(1, exit);
         assertTrue(err.toString(StandardCharsets.UTF_8).contains("frobnicate"),

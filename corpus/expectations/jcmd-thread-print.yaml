@@ -6,13 +6,13 @@ ancoras_preservadas:
   - "Full thread dump OpenJDK 64-Bit Server VM (17.0.8+7-LTS mixed mode, sharing):"
   - "java.lang.Thread.State:"
 threads_allowlist_verbatim:
-  - "main"
   - "Reference Handler"
   - "Monitor Deflation Thread"
   - "VM Thread"
   - "GC Thread#0"
   - "VM Periodic Task Thread"
 threads_tokenizadas:
+  "main": {}   # corrigido na onda 2E: a allowlist-v1 real nao tem regra p/ "main" -> tokenizada
   "report-render-1": { preserva_sufixo: "-1" }
   "report-render-2": { preserva_sufixo: "-2" }
 classes_tokenizadas:

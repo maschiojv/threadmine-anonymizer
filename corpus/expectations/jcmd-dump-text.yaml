@@ -8,11 +8,11 @@ ancoras_preservadas:
   - "21.0.3+9-LTS"
   - "VIRTUAL"
 threads_allowlist_verbatim:
-  - "main"
   - "Reference Handler"
   - "Finalizer"
   - "ForkJoinPool-1-worker-1"
 threads_tokenizadas:
+  "main": {}   # corrigido na onda 2E: a allowlist-v1 real nao tem regra p/ "main" -> tokenizada
   "pgto-worker-1": { preserva_sufixo: "-1" }
   "pgto-worker-2": { preserva_sufixo: "-2" }
   "order-vt-9": { preserva_sufixo: "-9" }

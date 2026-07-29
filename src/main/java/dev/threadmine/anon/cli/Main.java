@@ -12,7 +12,7 @@ public final class Main {
     }
 
     public static void main(String[] args) {
-        System.exit(run(args, System.err));
+        System.exit(run(args, System.out, System.err));
     }
 
     /** Exit code for usage errors (0/2/3/4 are reserved by the command contract). */
@@ -29,14 +29,17 @@ public final class Main {
             """;
 
     /** Testable entry point; returns the process exit code instead of exiting. */
-    static int run(String[] args, PrintStream err) {
+    static int run(String[] args, PrintStream out, PrintStream err) {
         if (args.length == 0) {
             err.println(USAGE);
             return EXIT_USAGE;
         }
         String command = args[0];
         switch (command) {
-            case "init", "mask", "unmask", "verify" -> err.println(command + ": not implemented yet");
+            case "mask" -> {
+                return MaskCommand.run(args, out, err);
+            }
+            case "init", "unmask", "verify" -> err.println(command + ": not implemented yet");
             default -> {
                 err.println("unknown command: " + command);
                 err.println(USAGE);

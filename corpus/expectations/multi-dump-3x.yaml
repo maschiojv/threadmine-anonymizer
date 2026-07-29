@@ -8,9 +8,9 @@ ancoras_preservadas:
   - "Full thread dump OpenJDK 64-Bit Server VM (17.0.8+7-LTS mixed mode, sharing):"  # 3 ocorrencias
   - "java.lang.Thread.State:"
 threads_allowlist_verbatim:
-  - "main"
   - "Reference Handler"
 threads_tokenizadas:
+  "main": {}   # corrigido na onda 2E: a allowlist-v1 real nao tem regra p/ "main" -> tokenizada
   "pgto-worker-3": { preserva_sufixo: "-3" }
   "order-dispatcher": {}
 classes_tokenizadas:

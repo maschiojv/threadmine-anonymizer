@@ -42,6 +42,22 @@
     </dependencies>
 
     <build>
+        <!--
+          The allowlist artifact lives at allowlist/allowlist-v1.json (single
+          source of truth, reviewed in the open). It is copied into the jar
+          root so AllowlistMatcher.fromClasspath() can load it offline.
+        -->
+        <resources>
+            <resource>
+                <directory>allowlist</directory>
+                <includes>
+                    <include>allowlist-v1.json</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
