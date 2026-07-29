@@ -1,0 +1,270 @@
+NULL           ------------------------------------------------------------------------
+0SECTION       TITLE subcomponent dump routine
+NULL           ===============================
+1TISIGINFO     signal 3 received
+1TIDATETIME    Date:                 2007/03/14 at 09:30:11
+1TIFILENAME    Javacore filename:    D:\acme\payserver\javacore.20070314.093011.4812.txt
+NULL           ------------------------------------------------------------------------
+0SECTION       XHPI subcomponent dump routine
+NULL           ==============================
+1XHERROR2      XHPI dump section only produced for SIGSEGV, SIGILL or SIGFPE.
+NULL
+NULL           ------------------------------------------------------------------------
+0SECTION       CI subcomponent dump routine
+NULL           ============================
+1CIJAVAVERSION J2RE 1.4.2 IBM Windows 32 build cn142sr2w-20050810
+1CIRUNNINGAS   Running as a standalone JVM
+1CICMDLINE     D:\acme\jdk142\java\bin\java -Xms256m -Xmx1024m -Xverify:none -Dacme.server.name=payserver01 -Dacme.env=production -Dacme.db.url=jdbc:oracle:thin:@db01.pay.acme.example:1521:PAY -Dacme.db.user=svc_pagamento -Dacme.db.password=Sw0rdf1sh! -Djava.security.policy=D:\acme\payserver\lib\acme.policy com.acme.server.PayServer
+1CIJAVAHOMEDIR Java Home Dir:   D:\acme\jdk142\java\jre
+1CIJAVADLLDIR  Java DLL Dir:    D:\acme\jdk142\java\jre\bin
+1CISYSCP       Sys Classpath:   D:\acme\jdk142\java\jre\lib\core.jar;D:\acme\jdk142\java\jre\lib\graphics.jar;D:\acme\jdk142\java\jre\lib\security.jar;D:\acme\jdk142\java\jre\lib\server.jar;D:\acme\jdk142\java\jre\lib\xml.jar;D:\acme\jdk142\java\jre\lib\charsets.jar;D:\acme\jdk142\java\jre\lib\ibmcertpathprovider.jar;D:\acme\jdk142\java\jre\lib\ibmjcefw.jar;D:\acme\jdk142\java\jre\lib\ibmjsseprovider.jar;D:\acme\jdk142\java\jre\lib\ibmorb.jar;D:\acme\jdk142\java\jre\lib\ibmpkcs.jar
+1CIUSERARGS    UserArgs:
+2CIUSERARG               -Dconsole.encoding=Cp1252
+2CIUSERARG               vfprintf 0x402F60
+2CIUSERARG               -Xms256m
+2CIUSERARG               -Xmx1024m
+2CIUSERARG               -Xverify:none
+2CIUSERARG               -Dacme.server.name=payserver01
+2CIUSERARG               -Dacme.env=production
+2CIUSERARG               -Dacme.db.url=jdbc:oracle:thin:@db01.pay.acme.example:1521:PAY
+2CIUSERARG               -Dacme.db.user=svc_pagamento
+2CIUSERARG               -Dacme.db.password=Sw0rdf1sh!
+2CIUSERARG               -Djava.security.policy=D:\acme\payserver\lib\acme.policy
+2CIUSERARG               -Djava.class.path=D:\acme\payserver\lib\acme-pay-core-2.4.1.jar;D:\acme\payserver\lib\acme-ledger-1.9.0.jar;D:\acme\payserver\lib\acme-antifraud-3.2.0.jar;D:\acme\payserver\lib\vendor-scoring-5.1.jar;D:\acme\payserver\lib\cardswitch-client-7.0.2.jar;D:\acme\jdk142\java\lib\tools.jar;D:\acme\payserver\lib\oradriver-9.2.jar;.
+2CIUSERARG               vfprintf
+NULL
+1CIJVMMI       JVM Monitoring Interface (JVMMI)
+NULL           ------------------------
+2CIJVMMIOFF    No events are enabled.
+NULL
+NULL           ------------------------------------------------------------------------
+0SECTION       DC subcomponent dump routine
+NULL           ============================
+1DCHEADEREYE   Header eye catcher  DCST
+1DCHEADERLEN   Header length       24
+1DCHEADERVER   Header version      1
+1DCHEADERMOD   Header modification 0
+1DCINTERFACE   DC Interface at 0x1015DB9C with 3 entries
+2DCINTERFACE      1 - dcCString2JavaString           0x1006E820
+2DCINTERFACE      2 - dcJavaString2CString           0x1006EB30
+2DCINTERFACE      3 - dcDumpRoutine                  0x100701D0
+NULL           ------------------------------------------------------------------------
+0SECTION       DG subcomponent dump routine
+NULL           ============================
+1DGTRCENABLED  Trace enabled: Yes
+2DGTRCTYPE       Trace: Internal
+2DGTRCBUFFERS    Buffer specification: 8k
+2DGTRCBUFALLOC   Buffers allocated: 0
+2DGTRCBUFUSED    Buffers in use:    0
+1DGJDUMPBUFF   Javadump buffer size (allocated): 2621440
+NULL           ------------------------------------------------------------------------
+0SECTION       ST subcomponent dump routine
+NULL           ============================
+1STGCMODES     Resettable GC: No
+1STGCMODES     Concurrent GC: No
+1STCURHBASE    Current Heap Base: 0x28C01FC
+1STCURHLIM     Current Heap Limit: 0x4E5FBFC
+1STGCHELPERS   Number of GC Helper Threads: 2
+1STGCCTR       GC Counter: 47
+1STAFCTR       AF Counter: 47
+1STHEAPFREE    Bytes of Heap Space Free: 9a1c40
+1STHEAPALLOC   Bytes of Heap Space Allocated: 3f2e800
+1STCOMACTION   Compact Action: 0
+NULL           ------------------------------------------------------------------------
+0SECTION       XE subcomponent dump routine
+NULL           ============================
+1XETHRESHOLD   MMI threshold for java methods is set to 2000
+1XEJITINIT     JIT is initialized
+1XEJVMPIOFF    JVMPI is not activated
+1XEJNITHRESH   MMI threshold for JNI methods is set to 0
+1XETRCHIS      Trace history length is set to 4
+1XEJITDUMP     JIT dump routine is not yet implemented.
+NULL           ------------------------------------------------------------------------
+0SECTION       LK subcomponent dump routine
+NULL           ============================
+NULL
+1LKPOOLINFO    Monitor pool info:
+2LKPOOLINIT      Initial monitor count: 32
+2LKPOOLEXPNUM    Minimum number of free monitors before expansion: 5
+2LKPOOLEXPBY     Pool will next be expanded by: 36
+2LKPOOLTOTAL     Current total number of monitors: 68
+2LKPOOLFREE      Current number of free monitors: 21
+NULL
+1LKMONPOOLDUMP Monitor Pool Dump (flat & inflated object-monitors):
+2LKMONINUSE      sys_mon_t:0x00310AE8 infl_mon_t: 0x003109C0:
+3LKMONOBJECT       java.lang.ref.Reference$Lock@2A40598/2A405A0: <unowned>
+3LKNOTIFYQ            Waiting to be notified:
+3LKWAITNOTIFY            "Reference Handler" (0x1A1E9D8)
+2LKMONINUSE      sys_mon_t:0x00310B78 infl_mon_t: 0x00310A10:
+3LKMONOBJECT       java.lang.ref.ReferenceQueue$Lock@2A402D0/2A402D8: <unowned>
+3LKNOTIFYQ            Waiting to be notified:
+3LKWAITNOTIFY            "Finalizer" (0x1A8B788)
+2LKMONINUSE      sys_mon_t:0x00310BC0 infl_mon_t: 0x00310A38:
+3LKMONOBJECT       java.util.TaskQueue@387CFF8/387D000: <unowned>
+3LKNOTIFYQ            Waiting to be notified:
+3LKWAITNOTIFY            "Thread-1" (0xF537640)
+2LKMONINUSE      sys_mon_t:0x00038008 infl_mon_t: 0x00310A60:
+3LKMONOBJECT       com.acme.kernel.QueueWorker@2A29CF8/2A29D00: <unowned>
+3LKNOTIFYQ            Waiting to be notified:
+3LKWAITNOTIFY            "QueueWorker: '0' for queue: 'acme.kernel.Default'" (0x2412E78)
+2LKMONINUSE      sys_mon_t:0x00038050 infl_mon_t: 0x00310A88:
+3LKMONOBJECT       com.acme.kernel.QueueWorker@2A29C58/2A29C60: <unowned>
+3LKNOTIFYQ            Waiting to be notified:
+3LKWAITNOTIFY            "QueueWorker: '3' for queue: 'acme.kernel.Default'" (0x2413C08)
+2LKMONINUSE      sys_mon_t:0x00038098 infl_mon_t: 0x00310AB0:
+3LKMONOBJECT       com.acme.ledger.LedgerCache@2A29B18/2A29B20: owner "QueueWorker: '1' for queue: 'acme.kernel.Default'" (0x2413388), entry count 1
+3LKWAITERQ            Waiting to enter:
+3LKWAITER                "QueueWorker: '2' for queue: 'acme.kernel.Default'" (0x2413808)
+2LKMONINUSE      sys_mon_t:0x000380E0 infl_mon_t: 0x00310AD8:
+3LKMONOBJECT       com.acme.health.HealthBoard@2A29A78/2A29A80: <unowned>
+3LKNOTIFYQ            Waiting to be notified:
+3LKWAITNOTIFY            "com.acme.health.CoreHealthMonitor" (0x106CA1C8)
+NULL
+1LKREGMONDUMP  JVM System Monitor Dump (registered monitors):
+2LKREGMON          Heap lock (0x000397A8): <unowned>
+2LKREGMON          Monitor Cache lock (0x00039718): <unowned>
+2LKREGMON          JNI Global Reference lock (0x00039760): <unowned>
+2LKREGMON          Classloader lock (0x00039880): <unowned>
+2LKREGMON          Thread queue lock (0x003014C0): owner "Signal dispatcher" (0x1A875E0), entry count 1
+2LKREGMON          Sleep lock (0x00039910): <unowned>
+3LKNOTIFYQ            Waiting to be notified:
+3LKWAITNOTIFY            "com.acme.health.CoreHealthMonitor" (0x106CA1C8)
+NULL
+1LKFLATMONDUMP Thread identifiers (as used in flat monitors):
+2LKFLATMON         ident 0x0D "ListenThread.Default" (0x10D028D8) ee 0x10D02700
+2LKFLATMON         ident 0x0C "com.acme.health.CoreHealthMonitor" (0x106CA1C8) ee 0x106C9FF0
+2LKFLATMON         ident 0x0B "QueueWorker: '4' for queue: 'acme.kernel.Default'" (0x2414008) ee 0x02413E30
+2LKFLATMON         ident 0x0A "QueueWorker: '3' for queue: 'acme.kernel.Default'" (0x2413C08) ee 0x02413A30
+2LKFLATMON         ident 0x09 "QueueWorker: '2' for queue: 'acme.kernel.Default'" (0x2413808) ee 0x02413630
+2LKFLATMON         ident 0x08 "QueueWorker: '1' for queue: 'acme.kernel.Default'" (0x2413388) ee 0x024131B0
+2LKFLATMON         ident 0x07 "QueueWorker: '0' for queue: 'acme.kernel.Default'" (0x2412E78) ee 0x02412CA0
+2LKFLATMON         ident 0x06 "QueueWorker: '0' for queue: 'acme.kernel.System'" (0x2517C48) ee 0x02517A70
+2LKFLATMON         ident 0x05 "Thread-1" (0xF537640) ee 0x0F537468
+2LKFLATMON         ident 0x04 "Finalizer" (0x1A8B788) ee 0x01A8B5B0
+2LKFLATMON         ident 0x03 "Reference Handler" (0x1A1E9D8) ee 0x01A1E800
+2LKFLATMON         ident 0x02 "Signal dispatcher" (0x1A875E0) ee 0x01A87408
+2LKFLATMON         ident 0x01 "main" (0x3016E8) ee 0x00301510
+NULL
+1LKOBJMONDUMP  Java Object Monitor Dump (flat & inflated object-monitors):
+2LKINFLATEDMON     com.acme.ledger.LedgerCache@2A29B18/2A29B20
+3LKINFLDETAILS         locknflags 80000800 Monitor inflated infl_mon 0x00310AB0
+2LKINFLATEDMON     com.acme.kernel.QueueWorker@2A29CF8/2A29D00
+3LKINFLDETAILS         locknflags 80000600 Monitor inflated infl_mon 0x00310A60
+2LKINFLATEDMON     java.lang.ref.Reference$Lock@2A40598/2A405A0
+3LKINFLDETAILS         locknflags 80000200 Monitor inflated infl_mon 0x003109C0
+2LKFLATLOCKED      java.net.PlainSocketImpl@32C97E8/32C97F0
+3LKFLATDETAILS         locknflags 000D0000 Flat locked by thread ident 0x0D, entry count 1
+NULL           ------------------------------------------------------------------------
+0SECTION       XM subcomponent dump routine
+NULL           ============================
+NULL
+1XMCURTHDINFO  Current Thread Details
+NULL           ----------------------
+3XMTHREADINFO      "Signal dispatcher" (TID:0x2A2B960, sys_thread_t:0x1A875E0, state:R, native ID:0x1580) prio=5
+1XMTHDINFO     All Thread Details
+NULL           ------------------
+NULL
+2XMFULLTHDDUMP Full thread dump Classic VM (J2RE 1.4.2 IBM Windows 32 build cn142sr2w-20050810, native threads):
+3XMTHREADINFO      "QueueWorker: '0' for queue: 'acme.kernel.Default'" (TID:0x2A29CF8, sys_thread_t:0x2412E78, state:CW, native ID:0x107C) prio=5
+4XESTACKTRACE          at java.lang.Object.wait(Native Method)
+4XESTACKTRACE          at java.lang.Object.wait(Object.java:443)
+4XESTACKTRACE          at com.acme.kernel.QueueWorker.waitForRequest(QueueWorker.java:153)
+4XESTACKTRACE          at com.acme.kernel.QueueWorker.run(QueueWorker.java:172)
+3XMTHREADINFO      "QueueWorker: '1' for queue: 'acme.kernel.Default'" (TID:0x2A29B18, sys_thread_t:0x2413388, state:R, native ID:0xB2C) prio=5
+4XESTACKTRACE          at java.net.SocketInputStream.socketRead(Native Method)
+4XESTACKTRACE          at java.net.SocketInputStream.read(SocketInputStream.java:129)
+4XESTACKTRACE          at com.acme.gateway.CardSwitchClient.readResponse(CardSwitchClient.java:210)
+4XESTACKTRACE          at com.acme.ledger.LedgerCache.refresh(LedgerCache.java:88)
+4XESTACKTRACE          at com.acme.kernel.QueueWorker.execute(QueueWorker.java:219)
+4XESTACKTRACE          at com.acme.kernel.QueueWorker.run(QueueWorker.java:178)
+3XMTHREADINFO      "QueueWorker: '2' for queue: 'acme.kernel.Default'" (TID:0x2A29BB8, sys_thread_t:0x2413808, state:B, native ID:0x1294) prio=5
+4XESTACKTRACE          at com.acme.ledger.LedgerCache.lookup(LedgerCache.java:61)
+4XESTACKTRACE          at com.acme.pay.PaymentRouter.route(PaymentRouter.java:145)
+4XESTACKTRACE          at com.acme.kernel.QueueWorker.execute(QueueWorker.java:219)
+4XESTACKTRACE          at com.acme.kernel.QueueWorker.run(QueueWorker.java:178)
+3XMTHREADINFO      "QueueWorker: '3' for queue: 'acme.kernel.Default'" (TID:0x2A29C58, sys_thread_t:0x2413C08, state:CW, native ID:0x1654) prio=5
+4XESTACKTRACE          at java.lang.Object.wait(Native Method)
+4XESTACKTRACE          at java.lang.Object.wait(Object.java:443)
+4XESTACKTRACE          at com.acme.kernel.QueueWorker.waitForRequest(QueueWorker.java:153)
+4XESTACKTRACE          at com.acme.kernel.QueueWorker.run(QueueWorker.java:172)
+3XMTHREADINFO      "QueueWorker: '4' for queue: 'acme.kernel.Default'" (TID:0x2A29D98, sys_thread_t:0x2414008, state:CW, native ID:0x1180) prio=5
+4XESTACKTRACE          at java.lang.Object.wait(Native Method)
+4XESTACKTRACE          at java.lang.Object.wait(Object.java:443)
+4XESTACKTRACE          at com.acme.kernel.QueueWorker.waitForRequest(QueueWorker.java:153)
+4XESTACKTRACE          at com.acme.kernel.QueueWorker.run(QueueWorker.java:172)
+3XMTHREADINFO      "QueueWorker: '0' for queue: 'acme.kernel.System'" (TID:0x2A29398, sys_thread_t:0x2517C48, state:CW, native ID:0x103C) prio=5
+4XESTACKTRACE          at java.lang.Object.wait(Native Method)
+4XESTACKTRACE          at java.lang.Object.wait(Object.java:443)
+4XESTACKTRACE          at com.acme.kernel.QueueWorker.waitForRequest(QueueWorker.java:153)
+4XESTACKTRACE          at com.acme.kernel.QueueWorker.run(QueueWorker.java:172)
+3XMTHREADINFO      "ListenThread.Default" (TID:0x2BD97C8, sys_thread_t:0x10D028D8, state:R, native ID:0x1044) prio=5
+4XESTACKTRACE          at java.net.PlainSocketImpl.socketAccept(Native Method)
+4XESTACKTRACE          at java.net.PlainSocketImpl.accept(PlainSocketImpl.java:379)
+4XESTACKTRACE          at java.net.ServerSocket.implAccept(ServerSocket.java:471)
+4XESTACKTRACE          at java.net.ServerSocket.accept(ServerSocket.java:442)
+4XESTACKTRACE          at com.acme.server.AcmeServerSocket.accept(AcmeServerSocket.java:26)
+4XESTACKTRACE          at com.acme.server.ListenThread.accept(ListenThread.java:735)
+4XESTACKTRACE          at com.acme.server.ListenThread.run(ListenThread.java:301)
+3XMTHREADINFO      "com.acme.health.CoreHealthMonitor" (TID:0x2A378F8, sys_thread_t:0x106CA1C8, state:CW, native ID:0x14C8) prio=5
+4XESTACKTRACE          at java.lang.Thread.sleep(Native Method)
+4XESTACKTRACE          at com.acme.health.CoreHealthMonitorThread.run(CoreHealthMonitorThread.java:127)
+3XMTHREADINFO      "Thread-1" (TID:0x2A2B5D8, sys_thread_t:0xF537640, state:CW, native ID:0xE30) prio=5
+4XESTACKTRACE          at java.lang.Object.wait(Native Method)
+4XESTACKTRACE          at java.lang.Object.wait(Object.java:443)
+4XESTACKTRACE          at java.util.TimerThread.mainLoop(Timer.java:418)
+4XESTACKTRACE          at java.util.TimerThread.run(Timer.java:397)
+3XMTHREADINFO      "Finalizer" (TID:0x2A2B8B0, sys_thread_t:0x1A8B788, state:CW, native ID:0xC18) prio=8
+4XESTACKTRACE          at java.lang.Object.wait(Native Method)
+4XESTACKTRACE          at java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:144)
+4XESTACKTRACE          at java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:160)
+4XESTACKTRACE          at java.lang.ref.Finalizer$FinalizerThread.run(Finalizer.java:211)
+3XMTHREADINFO      "Reference Handler" (TID:0x2A2B908, sys_thread_t:0x1A1E9D8, state:CW, native ID:0x33C) prio=10
+4XESTACKTRACE          at java.lang.ref.Reference.process(Native Method)
+4XESTACKTRACE          at java.lang.ref.Reference.access$300(Reference.java:50)
+4XESTACKTRACE          at java.lang.ref.Reference$ReferenceHandler.run(Reference.java:130)
+3XMTHREADINFO      "Signal dispatcher" (TID:0x2A2B960, sys_thread_t:0x1A875E0, state:R, native ID:0x1580) prio=5
+3XMTHREADINFO      "main" (TID:0x2A2B9B8, sys_thread_t:0x3016E8, state:CW, native ID:0xCA4) prio=5
+4XESTACKTRACE          at java.lang.Object.wait(Native Method)
+4XESTACKTRACE          at java.lang.Object.wait(Object.java:443)
+4XESTACKTRACE          at com.acme.server.PayServer.waitForShutdown(PayServer.java:1208)
+4XESTACKTRACE          at com.acme.server.PayServer.run(PayServer.java:390)
+4XESTACKTRACE          at com.acme.server.PayServer.main(PayServer.java:32)
+NULL           ------------------------------------------------------------------------
+0SECTION       CL subcomponent dump routine
+NULL           ============================
+1CLCLASSPATH   	Classpath Z(D:\acme\jdk142\java\jre\lib\core.jar),Z(D:\acme\jdk142\java\jre\lib\graphics.jar),Z(D:\acme\jdk142\java\jre\lib\security.jar),Z(D:\acme\jdk142\java\jre\lib\server.jar),Z(D:\acme\jdk142\java\jre\lib\xml.jar),Z(D:\acme\jdk142\java\jre\lib\charsets.jar),Z(D:\acme\jdk142\java\jre\lib\ibmcertpathprovider.jar),Z(D:\acme\jdk142\java\jre\lib\ibmjcefw.jar),Z(D:\acme\jdk142\java\jre\lib\ibmjsseprovider.jar),Z(D:\acme\jdk142\java\jre\lib\ibmorb.jar),Z(D:\acme\jdk142\java\jre\lib\ibmpkcs.jar)
+1CLFLAGOLDJAVA 	Oldjava mode false
+1CLFLAGBOOTSTRP	Bootstrapping false
+1CLFLAGVERBOSE 	Verbose class dependencies false
+1CLENUMVERIFY  	Class verification VERIFY_NONE
+1CLPNTRNAMECLLO	Namespace to classloader 0x00000000
+1CLPNTRCLSEXT  	Extension loader 0x02A2B830
+1CLPNTRSYSLOADR	System classloader 0x02A2B7B0
+1CLTEXTCLLOS   	Classloader summaries
+1CLTEXTCLLSS   		12345678: 1=primordial,2=extension,3=shareable,4=middleware,5=system,6=trusted,7=application,8=delegating
+2CLTEXTCLLOADER		p---s-a- Loader sun/misc/Launcher$AppClassLoader(0x02A2B7B0), Shadow 0x02BEE9F8, Parent sun/misc/Launcher$ExtClassLoader(0x02A2B830)
+3CLNMBRLOADEDCL			Number of loaded classes 412
+3CLNMBRCACHECLS			Number of cached classes 412
+3CLHEXDALLOCTIO			Allocation used for loaded classes 412
+3CLHEXDPCKGEOWN			Package owner 0x02BEE9F8
+2CLTEXTCLLOADER		------a- Loader com/acme/kernel/AcmeModuleClassLoader(0x10EFAE90), Shadow 0x02BEDFC0, Parent sun/misc/Launcher$AppClassLoader(0x02A2B7B0)
+3CLNMBRLOADEDCL			Number of loaded classes 187
+3CLNMBRCACHECLS			Number of cached classes 187
+3CLHEXDALLOCTIO			Allocation used for loaded classes 187
+3CLHEXDPCKGEOWN			Package owner 0x02BEDFC0
+2CLTEXTCLLOADER		-----tad Loader sun/reflect/DelegatingClassLoader(0x10EFA7C8), Shadow 0x02BED280, Parent sun/misc/Launcher$AppClassLoader(0x02A2B7B0)
+3CLNMBRLOADEDCL			Number of loaded classes 1
+3CLNMBRCACHECLS			Number of cached classes 3
+3CLHEXDALLOCTIO			Allocation used for loaded classes 1
+3CLHEXDPCKGEOWN			Package owner 0x02BED280
+1CLTEXTCLLOD   	ClassLoader loaded classes
+2CLTEXTCLLOD   	Loader com/acme/kernel/AcmeModuleClassLoader(0x10EFAE90)
+3CLTEXTCLASS   			com/acme/kernel/QueueWorker(0x029D28E8)
+3CLTEXTCLASS   			com/acme/ledger/LedgerCache(0x0293E428)
+3CLTEXTCLASS   			com/acme/pay/PaymentRouter(0x0293BAF8)
+3CLTEXTCLASS   			com/acme/gateway/CardSwitchClient(0x0291F8E0)
+3CLTEXTCLASS   			com/acme/health/HealthBoard(0x02926F90)
+3CLTEXTCLASS   			com/acme/antifraud/ScoreMatrix(0x02927A10)
+NULL           ------------------------------------------------------------------------
+0SECTION       Javadump End section
+NULL           ---------------------- END OF DUMP -------------------------------------
