@@ -139,7 +139,7 @@ final class MaskCommand {
         for (String warning : result.warnings()) {
             out.println("warning: " + warning);
         }
-        out.println("Reminder: upload the masked file under a neutral file name and title —");
+        out.println("Reminder: upload the masked file under a neutral file name and title -");
         out.println("the original name often carries the very identifiers you just masked.");
 
         if (reportPath != null) {
