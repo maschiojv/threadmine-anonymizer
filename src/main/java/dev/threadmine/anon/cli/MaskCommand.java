@@ -105,7 +105,7 @@ final class MaskCommand {
                 Files.writeString(target, result.output(), StandardCharsets.UTF_8);
             } catch (IOException e) {
                 err.println("tm-anon: cannot write output file: " + target);
-                return Main.EXIT_USAGE;
+                return ExitCodes.USAGE;
             }
             vault.save();
             return finish(result, target, input, reportPath, out, false);
@@ -115,14 +115,14 @@ final class MaskCommand {
             return EXIT_VAULT_ERROR;
         } catch (IOException e) {
             err.println("tm-anon: cannot write report: " + e.getMessage());
-            return Main.EXIT_USAGE;
+            return ExitCodes.USAGE;
         }
     }
 
     private static int usage(PrintStream err, String message) {
         err.println("tm-anon mask: " + message);
         err.println("usage: tm-anon mask <dump> [-o <out>] [--vault <path>] [--strict] [--report <path>] [--dry-run]");
-        return Main.EXIT_USAGE;
+        return ExitCodes.USAGE;
     }
 
     private static int finish(MaskResult result, Path target, Path input, Path reportPath,

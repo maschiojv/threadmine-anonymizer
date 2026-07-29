@@ -254,8 +254,9 @@ class VerifyCommandTest {
     }
 
     @Test
-    void withoutAnAllowlistNothingCountsAsPublicInfrastructure(@TempDir Path dir) throws IOException {
-        // The production default until 2E lands: fail-closed, never a rubber stamp.
+    void withTheRealAllowlistJdkFramesCountAsPublicInfrastructure(@TempDir Path dir) throws IOException {
+        // Wired since the 2E merge: the bundled allowlist-v1 recognizes JDK frames,
+        // so a properly masked dump passes instead of tripping fail-closed noise.
         writePair(dir, ORIGINAL, MASKED);
 
         int exit = VerifyCommand.execute(new String[]{"dump.txt", "dump.anon.txt"}, dir,
@@ -263,7 +264,6 @@ class VerifyCommandTest {
                 new PrintStream(err, true, StandardCharsets.UTF_8),
                 AllowlistBridge.fromClasspath(), AllowlistBridge.AVAILABLE);
 
-        assertEquals(4, exit);
-        assertTrue(stdout().contains("java.lang.Thread.run"), stdout());
+        assertEquals(0, exit, stdout());
     }
 }
