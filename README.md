@@ -53,9 +53,9 @@ token.
 curl -LO https://github.com/maschiojv/threadmine-anonymizer/releases/latest/download/tm-anon.jar
 java -jar tm-anon.jar
 
-# 2. jbang (nothing to install beyond a JDK)
-jbang catalog add --name=threadmine https://github.com/maschiojv/threadmine-anonymizer/blob/master/jbang-catalog.json
-jbang tm-anon@threadmine mask dump.txt
+# 2. jbang (nothing to install beyond a JDK) - resolves this repo's catalog
+jbang tm-anon@maschiojv/threadmine-anonymizer mask dump.txt
+jbang alias add --name tm-anon tm-anon@maschiojv/threadmine-anonymizer   # then just: jbang tm-anon ...
 
 # 3. native binary, no JVM needed to run it: tm-anon-linux-amd64,
 #    tm-anon-macos-arm64, tm-anon-windows-amd64.exe — attached to each release
