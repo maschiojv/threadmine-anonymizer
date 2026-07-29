@@ -36,7 +36,11 @@ public record VerifyReport(List<Finding> residualIdentifiers,
             FRAME_CLASS,
             SOURCE_FILE,
             THREAD_NAME,
-            LOCK_CLASS
+            LOCK_CLASS,
+            /** A line of a forbidden javacore section (CI/LK/CL/DC/DG/ST/XE) survived — SPEC §5-B.9. */
+            FORBIDDEN_SECTION,
+            /** {@code 1TIFILENAME} still carries content — SPEC §5-B.9. */
+            FILENAME_CONTENT
         }
     }
 

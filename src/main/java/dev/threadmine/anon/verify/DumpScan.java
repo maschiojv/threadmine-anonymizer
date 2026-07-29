@@ -18,7 +18,11 @@ import java.util.regex.Pattern;
  */
 final class DumpScan {
 
-    /** Markers that carry meaning for the ThreadMine parsers and detectors (SPEC §5.6). */
+    /**
+     * Markers that carry meaning for the ThreadMine parsers and detectors
+     * (SPEC §5.6; the last three are the OpenJ9 javacore anchors of §5-B.1
+     * and the {@code 3XMTHREADBLOCK} lock reference of §5-B.5).
+     */
     static final List<String> ANCHOR_MARKERS = List.of(
             "Full thread dump",
             "java.lang.Thread.State:",
@@ -31,10 +35,23 @@ final class DumpScan {
             "- waiting to lock",
             "- waiting on",
             "- parking to wait for",
-            "- blocked on");
+            "- blocked on",
+            "1TISIGINFO",
+            "1XMJAVAVERSION",
+            "Blocked on:");
 
     /** jcmd {@code Thread.dump_to_file -format=text} header: {@code #12 "name" RUNNABLE}. */
     private static final Pattern JCMD_HEADER = Pattern.compile("^#\\d+\\s+\"([^\"]*)\"");
+
+    /**
+     * OpenJ9 javacore thread header (SPEC §5-B.4). Only the quoted form opens
+     * a thread: {@code Anonymous native thread} has no Java identity and the
+     * thread names quoted inside LK monitor lines sit on other tokens.
+     */
+    private static final Pattern JAVACORE_HEADER = Pattern.compile("^3XMTHREADINFO \"([^\"]*)\"");
+
+    /** OpenJ9 javacore frame: the column-0 token carries an ordinary {@code at} frame. */
+    private static final String JAVACORE_FRAME_TOKEN = "4XESTACKTRACE at ";
 
     /**
      * What follows the quoted name on a real thread header. Without this the
@@ -104,7 +121,7 @@ final class DumpScan {
                 blankLines++;
                 continue;
             }
-            if (line.equals(STRIPPED_MARKER)) {
+            if (line.equals(STRIPPED_MARKER) || line.startsWith("# [tm-anon: stripped section ")) {
                 strippedLines++;
                 continue;
             }
@@ -130,6 +147,10 @@ final class DumpScan {
      * back-references, not new threads.
      */
     static String threadHeaderName(String collapsed) {
+        Matcher javacore = JAVACORE_HEADER.matcher(collapsed);
+        if (javacore.find()) {
+            return javacore.group(1);
+        }
         if (collapsed.startsWith("\"")) {
             int closing = collapsed.indexOf('"', 1);
             if (closing < 0) {
@@ -143,11 +164,16 @@ final class DumpScan {
     }
 
     static boolean isFrame(String collapsed) {
-        return collapsed.startsWith("at ") || BARE_FRAME.matcher(collapsed).matches();
+        return collapsed.startsWith("at ")
+                || collapsed.startsWith(JAVACORE_FRAME_TOKEN)
+                || BARE_FRAME.matcher(collapsed).matches();
     }
 
     /** The frame without its {@code at } keyword, ready to be split into name and location. */
     static String frameBody(String collapsed) {
+        if (collapsed.startsWith(JAVACORE_FRAME_TOKEN)) {
+            return collapsed.substring(JAVACORE_FRAME_TOKEN.length()).strip();
+        }
         return collapsed.startsWith("at ") ? collapsed.substring(3).strip() : collapsed;
     }
 
