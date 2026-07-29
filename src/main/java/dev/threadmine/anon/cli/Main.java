@@ -48,7 +48,10 @@ public final class Main {
             case "mask" -> {
                 return MaskCommand.run(args, out, err);
             }
-            case "unmask", "verify" -> err.println(command + ": not implemented yet");
+            case "unmask" -> {
+                return UnmaskCommand.execute(rest, workingDir, out, err);
+            }
+            case "verify" -> err.println(command + ": not implemented yet");
             default -> {
                 err.println("unknown command: " + command);
                 err.println(USAGE);
