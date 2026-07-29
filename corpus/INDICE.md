@@ -6,14 +6,20 @@ Cada `fixtures/<nome>.txt` tem um `expectations/<nome>.yaml` (schema da SPEC §6
 um `mask` correto DEVE fazer. Global (vale para todos): 1ª linha do output = `# tm-anon v1`;
 linha não classificada → `# [tm-anon: redacted]`; endereços `<0x…>` sempre verbatim.
 
-**20 fixtures**, todas verdes em dois testes independentes: `CorpusGoldenTest` (o mask faz o que a
-expectation manda) e `CorpusMaskVerifyTest` (o resultado do mask passa no `verify`, com a mesma
-allowlist dos dois lados — foi ele que pegou o vazamento de `<FQCN@hash>` do JDK 24+).
+**23 fixtures**: as 20 HotSpot verdes em dois testes independentes: `CorpusGoldenTest` (o mask faz
+o que a expectation manda) e `CorpusMaskVerifyTest` (o resultado do mask passa no `verify`, com a
+mesma allowlist dos dois lados — foi ele que pegou o vazamento de `<FQCN@hash>` do JDK 24+); e
+**3 OpenJ9 javacore** (`formato: openj9-javacore`, contrato SPEC §5-B) que são o golden set da
+onda 4 — ainda SEM implementação que as consuma.
 
 Vocabulário de `invariantes`: `determinismo_intra_dump`, `determinismo_inter_dump`,
 `deadlock_nomes_consistentes`, `blank_lines_preservadas`, `enderecos_lock_verbatim`,
 `sufixo_numerico_preservado`, `marcador_rota_q`, `ordem_linhas_preservada`,
-`aceita_sem_header_full_thread_dump`.
+`aceita_sem_header_full_thread_dump`; javacore (§5-B): `ids_nativos_verbatim`,
+`ordem_threadinfo_stacktrace_preservada`, `frames_com_barra_tokenizados`,
+`blocked_on_consistente`, `verify_exit4_se_secao_proibida_sobrevive`,
+`verify_exit4_se_1tifilename_com_conteudo`. Expectations javacore têm campos extras:
+`ancoras_deteccao_4kb`, `secoes_preservadas`, `secoes_stripadas`, `linhas_redigidas`.
 
 | Fixture | O que exercita | Armadilha de design coberta |
 |---|---|---|
@@ -37,6 +43,9 @@ Vocabulário de `invariantes`: `determinismo_intra_dump`, `determinismo_inter_du
 | `edge-thread-names-route-uuid.txt` | Threads nomeadas por rota c/ query (`sync-/api/orders?id=…`), UUID, hex≥16 + espaços, sufixo `#4`, `Thread-7` | heurística de rota ANTES da regra de sufixo (UUID não pode ser fatiado); token único `t…/q`; allowlist vence heurística |
 | `edge-pool-starvation.txt` | Starvation real: `pgto-worker-1..8` todos BLOCKED no mesmo monitor, dono em IO; http-nio ociosos de contraste | prefixo comum ⇒ mesmo token base + sufixos: preserva agrupamento de pool e a detecção de starvation no servidor |
 | `edge-relock-compiling.txt` | `waiting to re-lock in wait()`, `<no object reference available>`, `Compiling: com.acme…` (com e sem `%` OSR), `process reaper (pid 4242)`, `gc-notifier-1` | strip do Compiling (vaza FQCN::método fora do formato de frame); sentinela verbatim; `gc-` minúsculo ≠ prefixo infra `GC ` |
+| `openj9-javacore-classic.txt` | Javacore IBM clássico (J2RE 1.4.2, como o real do ThreadMine): sem `1XMJAVAVERSION`, threads `state:R/CW/B` com `TID/sys_thread_t/native ID` na linha, `1TIFILENAME` com path local, `1CICMDLINE` com `-D` de senha/host, `1CISYSCP` gigante, LK com monitores `classe@endereço` + nomes de thread, CL com classloaders/classes | superfície-monstro do §3 da AVALIACAO inteira num arquivo: strip por seção (CI/DC/DG/ST/XE/LK/CL + XHPI/End por fail-closed §5-B.6); `1TISIGINFO` é a ÚNICA âncora nos 4KB; pool clássico `X: 'N' for queue: 'Q'` não tem sufixo `-N` ⇒ 1 token por thread (agrupamento de pool se perde — limitação registrada); thread sem stack não quebra o lexer |
+| `openj9-javacore-moderno.txt` | OpenJ9 0.41 em container: seções `ENVINFO/LOCKS/THREADS/CLASSES` (mesmas famílias CI/LK/XM/CL), `1XMJAVAVERSION`, `3XMTHREADINFO3 Java.lang.Thread.State:`, `3XMTHREADBLOCK Blocked on: … Owned by: "…"`, frames com **barra** + `(Compiled Code)`, pool `pgto-worker-N`, thread de rota com `?` e espaços, `2CIENVVAR` com `HOSTNAME`/senha, `Anonymous native thread`, `4XENATIVESTACK` | nomes de seção modernos ≠ clássicos (identificação por família de token, não pelo texto do `0SECTION`); `com/acme/...` deve normalizar p/ o MESMO token do canônico pontilhado (e `java/util/...` continua allowlist); nome citado em `Owned by:` = token do cabeçalho; linhas sem regra (nativas) caem no fail-closed sem derrubar o arquivo |
+| `openj9-javacore-deadlock.txt` | Deadlock OpenJ9: `1LKDEADLOCK`/`2LKDEADLOCKTHR`/`4LKDEADLOCKOBJ` + monitores com `3LKWAITERQ/3LKWAITER` dentro de LOCKS, e as duas threads `state:B` com `3XMTHREADBLOCK` cruzadas no THREADS | o strip integral do LOCKS (§5-B.2) apaga o anúncio "Deadlock detected !!!" — a evidência sobrevivente é o ciclo fechado das `3XMTHREADBLOCK`, que TEM que continuar fechado após o mask (mesmos tokens de thread/classe nos dois lados); `verify` exit 4 se qualquer linha `*LKDEADLOCK*` sobreviver |
 
 ## Lacunas — status
 
@@ -55,7 +64,36 @@ Vocabulário de `invariantes`: `determinismo_intra_dump`, `determinismo_inter_du
   `java.util.concurrent.ThreadPerTaskExecutor@…` só aparecem no `-format=json`, que está fora da
   SPEC. Nada a implementar; fixture de container seria ficção. O que o dialeto texto REALMENTE
   tinha de não coberto virou `jcmd-dump-text-jdk21.txt` e `jcmd-dump-text-jdk25.txt`.
-- **Dialetos não-HotSpot** (OpenJ9, Zing, GraalVM/Isolates) fora do escopo do MVP (SPEC §6 é só HotSpot).
+- ~~**Dialetos não-HotSpot**~~ **OpenJ9 javacore COBERTO** (3 fixtures `openj9-javacore-*`, contrato
+  SPEC §5-B, golden set da onda 4). Zing e GraalVM/Isolates seguem fora do escopo.
+- **Notas de formato do javacore (decisões tomadas ao construir o corpus — ler antes de implementar a onda 4):**
+  1. **`1XMJAVAVERSION` e `3XMTHREADINFO3 Java.lang.Thread.State:` são dialeto do PARSER do
+     ThreadMine, não do OpenJ9 real.** Javacore de verdade tem a versão em `1CIJAVAVERSION`
+     (seção ENVINFO/CI — que a §5-B manda stripar) e usa `3XMTHREADINFO3` como cabeçalho
+     `Java callstack:`; o estado real vive no `state:X` da própria `3XMTHREADINFO`. As fixtures
+     modernas incluem os dois tokens do parser (o golden set serve à paridade com o ThreadMine),
+     mas o mask precisa aceitar javacores SEM eles — e stripar a CI mata a única fonte de versão
+     de um javacore real. Candidato a emenda da §5-B: preservar (ou reemitir) `1CIJAVAVERSION`.
+  2. **Nomes de `0SECTION` mudam entre gerações** (clássico: `CI/LK/XM/CL`; moderno:
+     `ENVINFO/LOCKS/THREADS/CLASSES`). A §5-B nomeia seções pela família de token — a
+     identificação DEVE ser pela família (prefixo alfabético do token de coluna 0), nunca pelo
+     texto do `0SECTION`, senão o fail-closed §5-B.6 stripa a seção THREADS inteira de um
+     javacore moderno.
+  3. **Frames modernos usam barra** (`com/acme/...`) e admitem `(Compiled Code)` dentro do
+     parêntese `(Arquivo.java:NN(Compiled Code))` — a §5.1 (escrita para FQCN com ponto) precisa
+     de normalização barra→ponto antes de allowlist/canônico, inclusive para RECONHECER
+     `java/util/...` como allowlist.
+  4. **Strip do LOCKS apaga a declaração explícita de deadlock** (`1LKDEADLOCK`). Custo aceito
+     pela §5-B (o `ParserOpenJ9Impl` ignora LK); a detecção sobrevive pelas `3XMTHREADBLOCK`
+     cruzadas — pinado pela fixture de deadlock.
+  5. Linhas sem regra dentro do XM/THREADS (`Anonymous native thread` sem aspas,
+     `4XENATIVESTACK`, `3XMJAVALTHREAD`/`3XMTHREADINFO1`/`3XMCPUTIME`) — as três últimas são
+     metadados neutros preserváveis, mas a §5-B não as cita; as expectations tratam só as duas
+     primeiras como fail-closed e deixam as demais como decisão da onda 4 (preservar é seguro:
+     não carregam identificador de app).
+  6. **Allowlist v2 (candidatos OpenJ9):** `JIT Compilation Thread-`, `IProfiler`,
+     `Attach API wait loop`, marcador estrutural p/ `Anonymous native thread`. Hoje as
+     expectations declaram esses nomes como tokenizados (allowlist-v1 não os cobre).
 - **JSON format** do `Thread.dump_to_file -format=json` não coberto (formato de saída ≠ text, fora
   da SPEC) — é o único formato onde vivem os containers, e onde o `toString()` de um
   `StructuredTaskScope` da aplicação vazaria FQCN. Candidato natural a uma onda futura.
