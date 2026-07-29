@@ -59,10 +59,11 @@ public final class HotspotRewriter {
      * trailer is enumerated rather than left as {@code .*} so that a line only
      * shaped like a header cannot smuggle text past the fail-closed rule.
      */
-    private static final Pattern JCMD_HEADER = Pattern.compile(
+    static final Pattern JCMD_HEADER = Pattern.compile(
             "^(#\\d+\\s+\")(.*?)(\"(?:\\s+(?i:VIRTUAL))?"
                     + "(?:\\s+(?:RUNNABLE|BLOCKED|WAITING|TIMED_WAITING|NEW|TERMINATED))?"
-                    + "(?:\\s+\\d{4}-\\d{2}-\\d{2}T[0-9:.]+Z?)?\\s*)$");
+                    + "(?:\\s+\\d{4}-\\d{2}-\\d{2}T[0-9:.]+Z?)?\\s*)$",
+            Pattern.MULTILINE);
     private static final Pattern HEADER_MONITOR_REF =
             Pattern.compile("\\bon ([A-Za-z_$][\\w.$]*)@([0-9a-fA-F]+)");
     private static final Pattern HEADER_OWNED_BY = Pattern.compile("owned by \"([^\"]*)\"");
