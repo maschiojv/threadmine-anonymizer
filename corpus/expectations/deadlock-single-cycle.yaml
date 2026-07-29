@@ -10,7 +10,6 @@ ancoras_preservadas:
   - "==================================================="
   - "Found 1 deadlock."
 threads_allowlist_verbatim:
-  - "main"
   - "Reference Handler"
   - "Finalizer"
   - "Attach Listener"
@@ -18,6 +17,7 @@ threads_allowlist_verbatim:
   - "GC Thread#0"
   - "VM Periodic Task Thread"
 threads_tokenizadas:
+  "main": {}   # corrigido na onda 2E: a allowlist-v1 real nao tem regra p/ "main" -> tokenizada
   "pgto-worker-1": { preserva_sufixo: "-1" }
   "pgto-worker-2": { preserva_sufixo: "-2" }
 classes_tokenizadas:

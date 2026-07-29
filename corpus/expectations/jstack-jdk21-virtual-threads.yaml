@@ -9,13 +9,13 @@ ancoras_preservadas:
   - "<virtual thread is mounted on carrier thread \"ForkJoinPool-1-worker-2\">"
   - "<virtual thread is mounted on carrier thread \"ForkJoinPool-1-worker-3\">"
 threads_allowlist_verbatim:
-  - "main"
   - "ForkJoinPool-1-worker-1"
   - "ForkJoinPool-1-worker-2"
   - "ForkJoinPool-1-worker-3"
   - "Reference Handler"
   - "Finalizer"
 threads_tokenizadas:
+  "main": {}   # corrigido na onda 2E: a allowlist-v1 real nao tem regra p/ "main" -> tokenizada
   "order-vt-9": { preserva_sufixo: "-9" }   # VT nomeada: cabecalho `"order-vt-9" #23 virtual` tokeniza so o nome
 classes_tokenizadas:
   - "com.acme.gateway.Bootstrap"

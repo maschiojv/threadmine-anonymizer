@@ -5,7 +5,6 @@ ancoras_preservadas:
   - "Full thread dump OpenJDK 64-Bit Server VM (11.0.16+8-LTS mixed mode):"
   - "java.lang.Thread.State:"
 threads_allowlist_verbatim:
-  - "main"
   - "Reference Handler"
   - "Finalizer"
   - "Signal Dispatcher"
@@ -21,6 +20,7 @@ threads_allowlist_verbatim:
   - "G1 Young RemSet Sampling"
   - "VM Periodic Task Thread"
 threads_tokenizadas:
+  "main": {}   # corrigido na onda 2E: a allowlist-v1 real nao tem regra p/ "main" -> tokenizada
   "cache-refresher-2": { preserva_sufixo: "-2" }
   "billing-sched-1": { preserva_sufixo: "-1" }
 classes_tokenizadas:

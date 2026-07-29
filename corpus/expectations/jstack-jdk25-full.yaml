@@ -6,7 +6,6 @@ ancoras_preservadas:
   - "Full thread dump OpenJDK 64-Bit Server VM (25+36-LTS mixed mode, sharing):"
   - "java.lang.Thread.State:"
 threads_allowlist_verbatim:
-  - "main"
   - "Reference Handler"
   - "Finalizer"
   - "Signal Dispatcher"
@@ -14,8 +13,6 @@ threads_allowlist_verbatim:
   - "C1 CompilerThread0"
   - "VirtualThread-unblocker"
   - "ForkJoinPool-1-worker-1"
-  - "ForkJoinPool-1-delayScheduler"
-  - "process reaper (pid 4242)"     # prefixo "process reaper" allowlist; pid e run de 4 digitos, ok
   - "Attach Listener"
   - "GC Thread#0"
   - "GC Thread#1"
@@ -26,6 +23,9 @@ threads_allowlist_verbatim:
   - "G1 Conc#0"
   - "G1 Main Marker"
 threads_tokenizadas:
+  "main": {}   # corrigido na onda 2E: a allowlist-v1 real nao tem regra p/ "main" -> tokenizada
+  "ForkJoinPool-1-delayScheduler": {}   # corrigido na onda 2E: regex da allowlist cobre so -worker-N
+  "process reaper (pid 4242)": {}   # corrigido na onda 2E: allowlist-v1 nao tem prefixo "process reaper"
   "pgto-worker-4": { preserva_sufixo: "-4" }
 classes_tokenizadas:
   - "com.acme.gateway.Bootstrap"
