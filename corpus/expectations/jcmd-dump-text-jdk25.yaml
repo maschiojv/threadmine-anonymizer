@@ -1,0 +1,56 @@
+# jcmd <pid> Thread.dump_to_file -format=text no JDK 24+ (jdk.internal.vm.ThreadDumper):
+#   writer.println("#" + threadId + " \"" + name + "\" " + (isVirtual ? "virtual " : "")
+#                  + state + " " + Instant.now());
+#   writer.print("    at "); writer.println(stackTraceElement);
+#   writer.println("    - locked " + decorateObject(o));      // decorateObject = "<" + Objects.toIdentityString(obj) + ">"
+#   writer.println("    - lock is eliminated");
+#   writer.println("    - parking to wait for " + decorateObject(parkBlocker) + ", owner #N");
+# Duas diferencas duras em relacao ao jstack: `virtual ` vem ANTES do estado (minusculo) e o
+# monitor entre <> NAO e um endereco, e sim FQCN@identityHash — ou seja, o nome da classe da
+# aplicacao mora dentro dos <>. Preservar o conteudo dos <> verbatim (correto para endereco)
+# vazaria a classe; por isso o conteudo e classificado antes (SPEC 5.4/5.8).
+formato: hotspot-jcmd-text
+ancoras_preservadas:
+  - "41215"
+  - "2026-07-24T13:44:02.113921Z"
+  - "25.0.1+9-LTS"
+  - "2026-07-24T13:44:02.114003Z"
+  - "TIMED_WAITING"
+  - " virtual WAITING "
+  - " virtual RUNNABLE "
+  - "- lock is eliminated"
+  - ", owner #30"
+  - "@6e8cf4c6>"
+  - "- locked <java.util.concurrent.ThreadPoolExecutor$Worker@1a2b3c4d>"
+  - "- parking to wait for <java.util.concurrent.locks.ReentrantLock$NonfairSync@5e8f9a3b>"
+threads_allowlist_verbatim:
+  - "ForkJoinPool-1-worker-1"
+threads_tokenizadas:
+  "main": {}
+  "pgto-worker-1": { preserva_sufixo: "-1" }
+  "pgto-worker-2": { preserva_sufixo: "-2" }
+  "pgto-worker-3": { preserva_sufixo: "-3" }
+  "order-dispatcher": {}
+  "sync-/api/orders?tenant=99887766": { marcador_rota: true }
+classes_tokenizadas:
+  - "com.acme.gateway.Bootstrap"
+  - "com.acme.payment.LedgerService"
+  - "com.acme.payment.LedgerLock"
+  - "com.acme.payment.PaymentFacade"
+  - "com.acme.payment.gateway.AcquirerClient"
+  - "com.acme.order.queue.OrderQueue"
+  - "com.acme.order.queue.EventConsumer"
+  - "com.acme.order.OrderDispatcher"
+linhas_stripadas: []
+invariantes:
+  - determinismo_intra_dump
+  - determinismo_inter_dump
+  - blank_lines_preservadas
+  - sufixo_numerico_preservado
+  - marcador_rota_q
+# Armadilhas cobertas: `<com.acme.payment.LedgerLock@6e8cf4c6>` tem que virar classe
+# tokenizada + @hash verbatim (mesmo token da classe citada em frame), enquanto
+# `<java.util.concurrent...@hash>` fica intacto por allowlist; o trailer `, owner #30`
+# sobrevive mas qualquer outro trailer derruba a linha por fail-closed; `- lock is
+# eliminated` nao tem identificador e e estrutura; frames aqui tem `at ` com 4 espacos
+# (o dialeto JDK 21 usa 6 espacos e nenhum `at `).

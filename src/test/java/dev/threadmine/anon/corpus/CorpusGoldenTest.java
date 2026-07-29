@@ -47,7 +47,7 @@ class CorpusGoldenTest {
                     .map(n -> n.substring(0, n.length() - 4))
                     .sorted()
                     .toList();
-            assertEquals(17, names.size(), "the corpus must have its 17 fixtures");
+            assertEquals(20, names.size(), "the corpus must have its 20 fixtures");
             return names.stream();
         }
     }
@@ -67,7 +67,8 @@ class CorpusGoldenTest {
         String out = result.output();
 
         // global contract: marker line, nothing redacted, no fixture namespace leak
-        assertTrue(out.startsWith("# tm-anon v1\n"), "first output line must be the tm-anon marker");
+        assertEquals("# tm-anon v1", out.lines().findFirst().orElse(""),
+                "first output line must be the tm-anon marker");
         assertEquals(0, result.redactedLines(),
                 "corpus lines must all be classified; warnings: " + result.warnings());
         assertFalse(out.contains("acme"), "the com.acme namespace must never survive masking");

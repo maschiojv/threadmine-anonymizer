@@ -1,0 +1,44 @@
+# jstack/jcmd Thread.print de JDK 21+ com virtual threads MONTADAS: o carrier imprime
+# `Carrying virtual thread #N` NO LUGAR da linha `java.lang.Thread.State:` (HotSpot so
+# imprime uma das duas), e o bloco da VT montada traz o marcador
+# `<virtual thread is mounted on carrier thread "...">`. O numero apos `#` e o threadId da
+# VT, nao um nome — nada a tokenizar, tudo a preservar: o ParserHotSpotCore do ThreadMine
+# le a linha (CARRYING_VIRTUAL) e a allowlist v1 a lista como structuralMarker.
+# Tambem exercita a forma de cabecalho JDK 21+ com `#N [nid]` entre colchetes e sem nid=.
+formato: hotspot-vt
+ancoras_preservadas:
+  - "Full thread dump"
+  - "java.lang.Thread.State:"
+  - "Carrying virtual thread #32"
+  - "Carrying virtual thread #35"
+  - "<pinned: synchronized>"
+  - "<virtual thread is mounted on carrier thread \"ForkJoinPool-1-worker-1\">"
+  - "<virtual thread is mounted on carrier thread \"ForkJoinPool-1-worker-2\">"
+threads_allowlist_verbatim:
+  - "ForkJoinPool-1-worker-1"
+  - "ForkJoinPool-1-worker-2"
+  - "ForkJoinPool-1-worker-3"
+  - "VirtualThread-unblocker"
+  - "Reference Handler"
+threads_tokenizadas:
+  "main": {}
+  "pedido-vt-7": { preserva_sufixo: "-7" }
+classes_tokenizadas:
+  - "com.acme.gateway.Bootstrap"
+  - "com.acme.order.OrderService"
+  - "com.acme.order.handler.OrderHandler"
+  - "com.acme.stock.StockSync"
+  - "com.acme.stock.StockLatch"
+linhas_stripadas:
+  - "JNI global refs"
+invariantes:
+  - determinismo_intra_dump
+  - blank_lines_preservadas
+  - enderecos_lock_verbatim
+  - ordem_linhas_preservada
+  - sufixo_numerico_preservado
+# Armadilhas cobertas: um bloco de thread SEM linha de estado (o carrier montado) nao pode
+# derrubar o lexer nem virar `redacted`; o nome do carrier dentro do marcador Loom recebe o
+# MESMO tratamento do cabecalho (aqui: allowlist, entao verbatim nas duas pontas); a VT
+# anonima `"" #32 virtual` nao tem nada a tokenizar; `#N [nid]` (colchetes, sem nid=) e a
+# forma de cabecalho do JDK 21+ em macOS/Linux recentes.

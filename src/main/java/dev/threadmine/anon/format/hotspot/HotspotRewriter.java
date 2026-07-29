@@ -51,8 +51,19 @@ public final class HotspotRewriter {
     // --- thread headers (SPEC §5.3) ---------------------------------------
     private static final Pattern QUOTED_HEADER = Pattern.compile(
             "^\"(.*?)\"(\\s+(?:#\\d|Id=\\d|daemon\\b|virtual\\b|prio=|os_prio=).*)$");
-    private static final Pattern JCMD_HEADER = Pattern.compile(
-            "^(#\\d+\\s+\")(.*?)(\"\\s+(?:VIRTUAL\\s+)?(?:RUNNABLE|BLOCKED|WAITING|TIMED_WAITING|NEW|TERMINATED)\\b.*)$");
+    /**
+     * jcmd {@code Thread.dump_to_file -format=text}, all three shapes emitted
+     * by {@code jdk.internal.vm.ThreadDumper#dumpThread}: JDK 21..23 printed
+     * {@code #N "name"} plus a lowercase {@code virtual} suffix and no state
+     * at all; JDK 24+ prints {@code #N "name" [virtual ]STATE <Instant>}. The
+     * trailer is enumerated rather than left as {@code .*} so that a line only
+     * shaped like a header cannot smuggle text past the fail-closed rule.
+     */
+    static final Pattern JCMD_HEADER = Pattern.compile(
+            "^(#\\d+\\s+\")(.*?)(\"(?:\\s+(?i:VIRTUAL))?"
+                    + "(?:\\s+(?:RUNNABLE|BLOCKED|WAITING|TIMED_WAITING|NEW|TERMINATED))?"
+                    + "(?:\\s+\\d{4}-\\d{2}-\\d{2}T[0-9:.]+Z?)?\\s*)$",
+            Pattern.MULTILINE);
     private static final Pattern HEADER_MONITOR_REF =
             Pattern.compile("\\bon ([A-Za-z_$][\\w.$]*)@([0-9a-fA-F]+)");
     private static final Pattern HEADER_OWNED_BY = Pattern.compile("owned by \"([^\"]*)\"");
@@ -71,6 +82,19 @@ public final class HotspotRewriter {
             "^(\\s*- (?:locked|waiting on|waiting to lock|parking to wait for|waiting to re-lock in wait\\(\\))\\s+)"
                     + "<([^>]+)>(.*)$");
     private static final Pattern LOCK_CLASS_SUFFIX = Pattern.compile("^ \\(a ([^)]+)\\)\\s*$");
+    /** jstack monitor address: the only angle content SPEC §5.4 pins as verbatim. */
+    private static final Pattern LOCK_ADDRESS = Pattern.compile("^0x[0-9a-fA-F]+$");
+    /**
+     * {@code Objects.toIdentityString(obj)} — what the JDK 24+ jcmd text dump
+     * puts between the angle brackets instead of an address
+     * ({@code ThreadDumper#decorateObject}).
+     */
+    private static final Pattern IDENTITY_STRING = Pattern.compile("^([A-Za-z_$][\\w.$]*)@([0-9a-fA-F]+)$");
+    private static final String NO_OBJECT_REFERENCE = "no object reference available";
+    /** {@code - parking to wait for <…>, owner #30} in the JDK 24+ text dump. */
+    private static final Pattern LOCK_OWNER_TRAILER = Pattern.compile("^,\\s*owner #\\d+$");
+    /** A monitor the JIT proved unnecessary; carries no identifier at all. */
+    private static final Pattern LOCK_ELIMINATED = Pattern.compile("^\\s*-\\s+lock is eliminated\\s*$");
     private static final Pattern LOCK_MXBEAN = Pattern.compile(
             "^(\\s*-\\s+(?:blocked on|waiting on|locked)\\s+)([A-Za-z_$][\\w.$]*)@([0-9a-fA-F]+)\\s*$");
     private static final Pattern SYNCHRONIZER_ENTRY =
@@ -101,7 +125,9 @@ public final class HotspotRewriter {
         String[] lines = text.split("\n", -1);
         List<String> out = new ArrayList<>(lines.length + 1);
         List<String> warnings = new ArrayList<>();
-        out.add(OUTPUT_MARKER);
+        // The marker is prepended, so it inherits the file's line ending:
+        // emitting LF into a CRLF dump would hand the server a mixed-ending file.
+        out.add(OUTPUT_MARKER + (lines.length > 0 && lines[0].endsWith("\r") ? "\r" : ""));
 
         int preserved = 0;
         int tokenized = 0;
@@ -221,6 +247,7 @@ public final class HotspotRewriter {
                 || PID_OR_VERSION.matcher(trimmed).matches()
                 || PINNED.matcher(line).matches()
                 || CARRYING.matcher(line).matches()
+                || LOCK_ELIMINATED.matcher(line).matches()
                 || SYNCHRONIZER_COUNT.matcher(line).matches()
                 || DASH_NONE.matcher(line).matches()
                 || DEADLOCK_ANNOUNCE.matcher(trimmed).matches()
@@ -263,12 +290,18 @@ public final class HotspotRewriter {
 
         Matcher lockAngle = LOCK_ANGLE.matcher(line);
         if (lockAngle.matches()) {
+            String monitorRef = rewriteMonitorReference(lockAngle.group(2));
+            if (monitorRef == null) {
+                return null; // unknown angle content; fail closed rather than ship it
+            }
             String tail = lockAngle.group(3);
             Matcher lockClass = LOCK_CLASS_SUFFIX.matcher(tail);
             if (lockClass.matches()) {
                 tail = " (a " + rewriteClassReference(lockClass.group(1)) + ")";
+            } else if (!tail.isBlank() && !LOCK_OWNER_TRAILER.matcher(tail.strip()).matches()) {
+                return null; // unknown trailer; fail closed
             }
-            return lockAngle.group(1) + "<" + lockAngle.group(2) + ">" + tail;
+            return lockAngle.group(1) + "<" + monitorRef + ">" + tail;
         }
 
         Matcher lockMxbean = LOCK_MXBEAN.matcher(line);
@@ -338,6 +371,25 @@ public final class HotspotRewriter {
     }
 
     // --- classes and frames (SPEC §5.1/§5.2) -----------------------------------
+
+    /**
+     * The content between the angle brackets of a monitor line. jstack writes
+     * a raw address there and SPEC §5.4 pins it as verbatim; the JDK 24+ jcmd
+     * text dump writes {@code FQCN@identityHash} instead, which carries an
+     * application class name and gets the same treatment as any other class
+     * reference. Anything else returns {@code null} so the caller redacts the
+     * line (SPEC §5.8) — an unrecognized monitor is not worth a leak.
+     */
+    private String rewriteMonitorReference(String inside) {
+        if (LOCK_ADDRESS.matcher(inside).matches() || inside.equals(NO_OBJECT_REFERENCE)) {
+            return inside;
+        }
+        Matcher identity = IDENTITY_STRING.matcher(inside);
+        if (identity.matches()) {
+            return rewriteClassReference(identity.group(1)) + "@" + identity.group(2);
+        }
+        return null;
+    }
 
     /** Rewrites a bare FQCN reference (lock lines, deadlock monitors, MXBean headers). */
     String rewriteClassReference(String fqcn) {

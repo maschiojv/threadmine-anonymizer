@@ -46,7 +46,8 @@ public final class ComplianceVerifier {
     /** Module or classloader prefix on a frame: {@code java.base@21.0.3/} or {@code app//}. */
     private static final Pattern MODULE_PREFIX = Pattern.compile("^(?:[\\w.$]+//|[\\w.$]+@[\\w.+-]+/)");
 
-    private static final Pattern ATOM_SEPARATOR = Pattern.compile("[.$]");
+    private static final Pattern SEGMENT_SEPARATOR = Pattern.compile("\\.");
+    private static final Pattern ATOM_SEPARATOR = Pattern.compile("\\$");
     private static final Pattern DIGITS = Pattern.compile("\\d+");
     private static final Pattern HEX_ADDRESS = Pattern.compile("0x[0-9a-fA-F]+");
 
@@ -57,7 +58,8 @@ public final class ComplianceVerifier {
     private static final Set<String> STRUCTURAL_ATOMS = Set.of(
             "lambda", "Lambda", "<init>", "<clinit>", "init", "clinit", "java", "class");
 
-    private static final Set<String> NON_LOCATIONS = Set.of("Native Method", "Unknown Source", "");
+    private static final Set<String> NON_LOCATIONS =
+            Set.of("Native Method", "Unknown Source", "<generated>", "");
 
     private final AllowlistLookup allowlist;
 
@@ -192,7 +194,27 @@ public final class ComplianceVerifier {
      * tokens are structure, not names.
      */
     private static boolean isMaskedIdentifier(String value) {
-        for (String atom : ATOM_SEPARATOR.split(value, -1)) {
+        for (String segment : SEGMENT_SEPARATOR.split(value, -1)) {
+            if (!segmentIsSafe(segment)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * One dot-separated piece of a qualified name. Everything from the first
+     * {@code $$} is a generated-class moulding — {@code $$Lambda/0x…},
+     * {@code $$EnhancerBySpringCGLIB$$aa11bb22} — which the rewriter keeps
+     * verbatim by design (SPEC §5.2): it names the proxy machinery, not
+     * application code, and the ThreadMine parsers read it. Only what precedes
+     * the moulding still has to be a token, so an unmasked class wearing a
+     * proxy suffix is still reported.
+     */
+    private static boolean segmentIsSafe(String segment) {
+        int moulding = segment.indexOf("$$");
+        String base = moulding < 0 ? segment : segment.substring(0, moulding);
+        for (String atom : ATOM_SEPARATOR.split(base, -1)) {
             if (!atomIsSafe(atom)) {
                 return false;
             }

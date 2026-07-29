@@ -15,8 +15,15 @@ public final class FormatDetector {
 
     private static final Pattern JSTACK_HEADER =
             Pattern.compile("(?m)^\"[^\"]*\"\\s+.*(#\\d+|prio=\\d|os_prio=\\d|Id=\\d)");
-    private static final Pattern JCMD_TEXT_HEADER =
-            Pattern.compile("(?m)^#\\d+\\s+\"[^\"]*\"\\s+(VIRTUAL\\s+)?(RUNNABLE|BLOCKED|WAITING|TIMED_WAITING|NEW|TERMINATED)\\b");
+    /**
+     * The jcmd text header, taken from the rewriter so detection and rewriting
+     * can never disagree about what that dialect looks like. It matters for
+     * JDK 21..23, whose {@code Thread.dump_to_file -format=text} output has no
+     * state on the header and no {@code java.lang.Thread.State:} line at all:
+     * every other rule here misses it, and refusing the file would leave the
+     * user with no way to anonymize a perfectly ordinary dump.
+     */
+    private static final Pattern JCMD_TEXT_HEADER = HotspotRewriter.JCMD_HEADER;
 
     private FormatDetector() {
     }
