@@ -11,13 +11,18 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class MainTest {
 
+    private final ByteArrayOutputStream out = new ByteArrayOutputStream();
+    private final ByteArrayOutputStream err = new ByteArrayOutputStream();
+
+    private int run(String... args) {
+        return Main.run(args,
+                new PrintStream(out, true, StandardCharsets.UTF_8),
+                new PrintStream(err, true, StandardCharsets.UTF_8));
+    }
+
     @Test
     void noArgumentsPrintsUsageAndReturnsUsageExitCode() {
-        ByteArrayOutputStream err = new ByteArrayOutputStream();
-
-        int exit = Main.run(new String[]{},
-                new PrintStream(new ByteArrayOutputStream(), true, StandardCharsets.UTF_8),
-                new PrintStream(err, true, StandardCharsets.UTF_8));
+        int exit = run();
 
         String usage = err.toString(StandardCharsets.UTF_8);
         assertEquals(1, exit);
@@ -29,12 +34,17 @@ class MainTest {
     }
 
     @Test
-    void unknownCommandPrintsUsageAndReturnsUsageExitCode() {
-        ByteArrayOutputStream err = new ByteArrayOutputStream();
+    void usageDocumentsTheExitCodeContract() {
+        run();
 
-        int exit = Main.run(new String[]{"frobnicate"},
-                new PrintStream(new ByteArrayOutputStream(), true, StandardCharsets.UTF_8),
-                new PrintStream(err, true, StandardCharsets.UTF_8));
+        String usage = err.toString(StandardCharsets.UTF_8);
+        assertTrue(usage.contains("Exit codes"), usage);
+        assertTrue(usage.contains("4"), "exit code 4 (verify failed) must be documented");
+    }
+
+    @Test
+    void unknownCommandPrintsUsageAndReturnsUsageExitCode() {
+        int exit = run("frobnicate");
 
         assertEquals(1, exit);
         assertTrue(err.toString(StandardCharsets.UTF_8).contains("frobnicate"),
