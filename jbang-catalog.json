@@ -1,0 +1,10 @@
+{
+  "catalogs": {},
+  "aliases": {
+    "tm-anon": {
+      "script-ref": "https://github.com/maschiojv/threadmine-anonymizer/releases/latest/download/tm-anon.jar",
+      "description": "Local, offline anonymizer for JVM thread dumps. Masks application packages, classes, methods and thread names before a dump leaves your machine; unmasks the analysis output afterwards. Zero network code.",
+      "java": "21+"
+    }
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "resources": {
+    "includes": [
+      { "pattern": "\\Qallowlist-v1.json\\E" }
+    ]
+  }
+}

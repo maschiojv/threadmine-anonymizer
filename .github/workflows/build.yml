@@ -1,0 +1,56 @@
+name: build
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, windows-latest ]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      # The audit test runs first and alone: if network code ever gets into
+      # this jar, that is the failure worth seeing at the top of the log.
+      - name: Audit gate - no network code
+        shell: bash
+        run: ./mvnw --batch-mode --no-transfer-progress test -Dtest=NoNetworkArchitectureTest
+
+      - name: Build and test
+        shell: bash
+        run: ./mvnw --batch-mode --no-transfer-progress verify
+
+      # End-to-end on the artifact that actually ships, not on test classes:
+      # a real fixture must mask, verify clean and round-trip through unmask.
+      - name: Smoke test the shaded jar
+        shell: bash
+        run: |
+          set -euo pipefail
+          jar=$(ls target/tm-anon-*.jar | head -n 1)
+          bash ci/smoke.sh java -jar "$jar"
+
+      - name: Upload jar
+        if: matrix.os == 'ubuntu-latest'
+        uses: actions/upload-artifact@v4
+        with:
+          name: tm-anon-jar
+          path: target/tm-anon-*.jar
+          if-no-files-found: error
