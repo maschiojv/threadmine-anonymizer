@@ -170,16 +170,8 @@ final class DumpScan {
         return !threadNames.isEmpty() || anchorCount("Full thread dump") > 0;
     }
 
-    List<String> rawLines() {
-        return rawLines;
-    }
-
     List<String> collapsedLines() {
         return collapsedLines;
-    }
-
-    List<String> threadNames() {
-        return threadNames;
     }
 
     int threads() {

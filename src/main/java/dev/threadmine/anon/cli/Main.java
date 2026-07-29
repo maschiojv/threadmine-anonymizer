@@ -17,9 +17,6 @@ public final class Main {
         System.exit(run(args, System.out, System.err));
     }
 
-    /** Exit code for usage errors (0/2/3/4 are reserved by the command contract). */
-    static final int EXIT_USAGE = ExitCodes.USAGE;
-
     private static final String USAGE = """
             tm-anon - local, offline anonymizer for JVM thread dumps
 
