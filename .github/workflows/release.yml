@@ -1,0 +1,164 @@
+name: release
+
+# Cut a release from a tag: v0.1.0, v1.2.3-rc1, ...
+#
+# The jar is the primary artifact - it is what the README, jbang and the
+# documentation point at, and it is the one every user can reproduce with
+# `./mvnw package`. The native binaries are a convenience for people who do not
+# want a JVM on the machine holding the dump; if a native build breaks, the
+# release still ships the jar.
+#
+# Nothing is published before it has been smoke-tested: every artifact, jar and
+# each native binary, masks a real corpus fixture and passes verify on the OS it
+# was built for.
+
+on:
+  push:
+    tags: [ 'v*' ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  jar:
+    name: fat jar
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Build and test
+        run: ./mvnw --batch-mode --no-transfer-progress verify
+
+      - name: Stage the jar under a stable name
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          cp "$(ls target/tm-anon-*.jar | head -n 1)" dist/tm-anon.jar
+
+      - name: Smoke test
+        shell: bash
+        run: bash ci/smoke.sh java -jar dist/tm-anon.jar
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist-jar
+          path: dist/tm-anon.jar
+          if-no-files-found: error
+
+  native:
+    name: native (${{ matrix.label }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            label: linux-amd64
+            binary: tm-anon
+            asset: tm-anon-linux-amd64
+          - os: macos-latest
+            label: macos-arm64
+            binary: tm-anon
+            asset: tm-anon-macos-arm64
+          - os: windows-latest
+            label: windows-amd64
+            binary: tm-anon.exe
+            asset: tm-anon-windows-amd64.exe
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # setup-graalvm also configures the MSVC toolchain that native-image
+      # needs on Windows runners.
+      - name: Set up GraalVM 21
+        uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '21'
+          distribution: graalvm
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          cache: maven
+
+      - name: Build the jar
+        shell: bash
+        run: ./mvnw --batch-mode --no-transfer-progress -DskipTests package
+
+      # tm-anon uses no reflection, no proxies and no JNI. The only metadata a
+      # native build needs is the allowlist resource, declared in
+      # src/main/resources/META-INF/native-image/. --no-fallback makes a missing
+      # piece of metadata a build failure instead of a jar-in-disguise binary.
+      - name: Build the native binary
+        shell: bash
+        run: |
+          set -euo pipefail
+          jar=$(ls target/tm-anon-*.jar | head -n 1)
+          mkdir -p dist
+          native-image \
+            --no-fallback \
+            -H:+ReportExceptionStackTraces \
+            -jar "$jar" \
+            -o dist/tm-anon
+
+      - name: Smoke test the native binary
+        shell: bash
+        run: bash ci/smoke.sh "./dist/${{ matrix.binary }}"
+
+      - name: Stage the asset
+        shell: bash
+        run: mv "dist/${{ matrix.binary }}" "dist/${{ matrix.asset }}"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist-${{ matrix.label }}
+          path: dist/${{ matrix.asset }}
+          if-no-files-found: error
+
+  publish:
+    name: publish release
+    needs: [ jar, native ]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: dist-*
+          merge-multiple: true
+          path: dist
+
+      - name: List assets
+        run: ls -l dist
+
+      - name: Publish
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          draft: true
+          generate_release_notes: true
+          body: |
+            `tm-anon` — local, offline anonymizer for JVM thread dumps.
+
+            **Primary artifact: `tm-anon.jar`** (requires Java 21+).
+
+            ```
+            curl -LO https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/tm-anon.jar
+            java -jar tm-anon.jar
+            ```
+
+            Native binaries (`tm-anon-linux-amd64`, `tm-anon-macos-arm64`,
+            `tm-anon-windows-amd64.exe`) run without a JVM. Every asset here was
+            built from this tag and smoke-tested on its own OS: mask a corpus
+            fixture, `verify` must PASS, `unmask` must round-trip, and a
+            non-dump input must be refused with exit 2.
+
+            See [README](https://github.com/${{ github.repository }}/blob/${{ github.ref_name }}/README.md)
+            and [THREAT_MODEL](https://github.com/${{ github.repository }}/blob/${{ github.ref_name }}/THREAT_MODEL.md).

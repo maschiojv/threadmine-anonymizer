@@ -3,5 +3,8 @@
 *.md text
 *.xml text
 *.json text
+*.yml text eol=lf
 mvnw text eol=lf
+# CI scripts run on Linux and macOS runners; CRLF would break the shebang.
+*.sh text eol=lf
 *.cmd text eol=crlf
