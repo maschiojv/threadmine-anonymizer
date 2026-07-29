@@ -259,6 +259,49 @@ class ComplianceVerifierTest {
         assertEquals(List.of(), report.residualIdentifiers(), report.residualIdentifiers().toString());
     }
 
+    /**
+     * The rewriter keeps a generated-class moulding verbatim on purpose
+     * (SPEC §5.2): it names the proxy machinery, not application code, and it
+     * is what the ThreadMine parsers use to tell a proxy frame apart. The
+     * verifier has to agree — otherwise every Spring application gets a
+     * "leak" verdict on a perfectly masked dump and the tool is unusable.
+     */
+    @Test
+    void acceptsMaskedCglibAndGeneratedProxyFrames() {
+        String masked = """
+                # tm-anon v1
+                Full thread dump OpenJDK 64-Bit Server VM (21.0.3+9-LTS mixed mode):
+
+                "t1a2b3xc4d5e" #15 prio=5 tid=0x1 nid=0x2 runnable
+                   java.lang.Thread.State: RUNNABLE
+                \tat p11111x11111.Caaaaaxbbbbb$$FastClassBySpringCGLIB$$1a2b3c4d.mcccccxddddd(<generated>)
+                \tat p11111x11111.Caaaaaxbbbbb$$EnhancerBySpringCGLIB$$aa11bb22.meeeeexfffff(<generated>)
+                \tat p11111x11111.Caaaaaxbbbbb$$Lambda/0x00003800011ad400.mcccccxddddd(Unknown Source)
+                """;
+
+        VerifyReport report = verifier.verify(masked, masked);
+
+        assertEquals(List.of(), report.residualIdentifiers(), report.residualIdentifiers().toString());
+    }
+
+    /** Cutting the moulding must not blind the check to what precedes it. */
+    @Test
+    void stillReportsAnUnmaskedClassCarryingAProxyMoulding() {
+        String dump = """
+                # tm-anon v1
+                Full thread dump OpenJDK 64-Bit Server VM (21.0.3+9-LTS mixed mode):
+
+                "t1a2b3xc4d5e" #15 prio=5 tid=0x1 nid=0x2 runnable
+                   java.lang.Thread.State: RUNNABLE
+                \tat com.acme.web.OrderController$$EnhancerBySpringCGLIB$$aa11bb22.confirm(<generated>)
+                """;
+
+        VerifyReport report = verifier.verify(dump, dump);
+
+        assertTrue(report.residualIdentifiers().stream().anyMatch(f -> f.value().contains("acme")),
+                report.residualIdentifiers().toString());
+    }
+
     @Test
     void acceptsEveryTokenFormWhereAThreadNameCanAppear() {
         String masked = """
