@@ -1,0 +1,146 @@
+NULL           ------------------------------------------------------------------------
+0SECTION       TITLE subcomponent dump routine
+NULL           ===============================
+1TICHARSET     UTF-8
+1TISIGINFO     Dump Event "user" (00004000) received
+1TIDATETIME    Date: 2026/02/11 at 14:02:47:918 (UTC)
+1TITIMEZONE    Timezone: UTC
+1TINANOTIME    System nanotime: 8223344556677889
+1TIFILENAME    Javacore filename:    /opt/acme/payments/javacore.20260211.140247.1.0002.txt
+1TIREQFLAGS    Request Flags: 0x81 (exclusive+preempt)
+1TIPREPSTATE   Prep State: 0x104 (exclusive_vm_access+trace_disabled)
+NULL           ------------------------------------------------------------------------
+0SECTION       GPINFO subcomponent dump routine
+NULL           ================================
+NULL
+2XHOSLEVEL     OS Level         : Linux 5.15.0-91-generic
+2XHCPUS        Processors -
+3XHCPUARCH       Architecture   : amd64
+3XHNUMCPUS       How Many       : 8
+NULL           ------------------------------------------------------------------------
+0SECTION       ENVINFO subcomponent dump routine
+NULL           =================================
+1CIJAVAVERSION JRE 17 Linux amd64-64 (build 17.0.9+9)
+1CIVMVERSION   openj9-0.41.0
+1CIRUNNINGAS   Running as a standalone JVM
+1CIPROCESSID   Process ID: 1 (0x1)
+1CICMDLINE     /opt/java/openjdk/bin/java -Xmx2g -Dacme.tenant=acme-payments -Dacme.db.password=Hunter2! -jar /opt/acme/payments/acme-payments-svc-4.12.0.jar
+1CIJAVAHOMEDIR Java Home Dir:   /opt/java/openjdk
+NULL           ------------------------------------------------------------------------
+0SECTION       MEMINFO subcomponent dump routine
+NULL           =================================
+1STHEAPTOTAL   Total memory:                 2147483648 (0x0000000080000000)
+1STHEAPINUSE   Total memory in use:           851443712 (0x0000000032C00000)
+1STHEAPFREE    Total memory free:            1296039936 (0x000000004D400000)
+NULL           ------------------------------------------------------------------------
+0SECTION       LOCKS subcomponent dump routine
+NULL           ===============================
+NULL
+1LKPOOLINFO    Monitor pool info:
+2LKPOOLTOTAL     Current total number of monitors: 4
+NULL
+1LKMONPOOLDUMP Monitor Pool Dump (flat & inflated object-monitors):
+2LKMONINUSE      sys_mon_t:0x00007F30C4041D08 infl_mon_t: 0x00007F30C4041D88:
+3LKMONOBJECT       com/acme/payment/WalletService@0x00000000E00A2C48/0x00000000E00A2C50: Flat locked by "pgto-worker-2" (J9VMThread:0x0000000000ABD200), entry count 1
+3LKWAITERQ            Waiting to enter:
+3LKWAITER                "pgto-worker-1" (J9VMThread:0x0000000000ABC100)
+NULL
+2LKMONINUSE      sys_mon_t:0x00007F30C4042B18 infl_mon_t: 0x00007F30C4042B98:
+3LKMONOBJECT       com/acme/ledger/LedgerBook@0x00000000E00A2D58/0x00000000E00A2D60: Flat locked by "pgto-worker-1" (J9VMThread:0x0000000000ABC100), entry count 1
+3LKWAITERQ            Waiting to enter:
+3LKWAITER                "pgto-worker-2" (J9VMThread:0x0000000000ABD200)
+NULL
+1LKREGMONDUMP  JVM System Monitor Dump (registered monitors):
+2LKREGMON          Thread global lock (0x00007F30C4004F58): <unowned>
+2LKREGMON          NLS hash table lock (0x00007F30C4005058): <unowned>
+NULL
+1LKDEADLOCK    Deadlock detected !!!
+NULL           ---------------------
+NULL
+2LKDEADLOCKTHR  Thread "pgto-worker-1" (0x0000000000ABC100)
+3LKDEADLOCKWTR    is waiting for:
+4LKDEADLOCKMON      sys_mon_t:0x00007F30C4041D08 infl_mon_t: 0x00007F30C4041D88:
+4LKDEADLOCKOBJ      com/acme/payment/WalletService@0x00000000E00A2C48/0x00000000E00A2C50
+3LKDEADLOCKOWN    which is owned by:
+2LKDEADLOCKTHR  Thread "pgto-worker-2" (0x0000000000ABD200)
+3LKDEADLOCKWTR    which is waiting for:
+4LKDEADLOCKMON      sys_mon_t:0x00007F30C4042B18 infl_mon_t: 0x00007F30C4042B98:
+4LKDEADLOCKOBJ      com/acme/ledger/LedgerBook@0x00000000E00A2D58/0x00000000E00A2D60
+3LKDEADLOCKOWN    which is owned by:
+2LKDEADLOCKTHR  Thread "pgto-worker-1" (0x0000000000ABC100)
+NULL           ------------------------------------------------------------------------
+0SECTION       THREADS subcomponent dump routine
+NULL           =================================
+NULL
+1XMJAVAVERSION JRE 17 Linux amd64-64 build 17.0.9+9 (openj9-0.41.0)
+NULL
+1XMPOOLINFO    JVM Thread pool info:
+2XMPOOLTOTAL             Current total number of pooled threads: 6
+2XMPOOLLIVE              Current total number of live threads: 6
+2XMPOOLDAEMON            Current total number of live daemon threads: 5
+NULL
+1XMCURTHDINFO  Current thread
+3XMTHREADINFO      "main" J9VMThread:0x000000000004E100, omrthread_t:0x00007F30C40089A8, java/lang/Thread:0x00000000FFE1D3F8, state:R, prio=5
+3XMJAVALTHREAD            (java/lang/Thread getId:0x1, isDaemon:false)
+3XMTHREADINFO1            (native thread ID:0x2B10, native priority:0x5, native policy:UNKNOWN, vmstate:R, vm thread flags:0x00000020)
+3XMCPUTIME               CPU usage total: 1.918273600 secs, current category="Application"
+3XMTHREADINFO3           Java.lang.Thread.State: RUNNABLE
+4XESTACKTRACE                at com/acme/boot/Application.awaitShutdown(Application.java:112)
+4XESTACKTRACE                at com/acme/boot/Application.main(Application.java:41)
+NULL
+1XMTHDINFO     All Thread Details
+NULL           ------------------
+NULL
+3XMTHREADINFO      "pgto-worker-1" J9VMThread:0x0000000000ABC100, omrthread_t:0x00007F30C4108908, java/lang/Thread:0x00000000FFE1D5A0, state:B, prio=5
+3XMJAVALTHREAD            (java/lang/Thread getId:0x21, isDaemon:true)
+3XMTHREADINFO1            (native thread ID:0x2B31, native priority:0x5, native policy:UNKNOWN, vmstate:B, vm thread flags:0x00000081)
+3XMCPUTIME               CPU usage total: 22.481920100 secs, current category="Application"
+3XMTHREADBLOCK     Blocked on: com/acme/payment/WalletService@0x00000000E00A2C48 Owned by: "pgto-worker-2" (J9VMThread:0x0000000000ABD200, java/lang/Thread:0x00000000FFE1D6B0)
+3XMTHREADINFO3           Java.lang.Thread.State: BLOCKED
+4XESTACKTRACE                at com/acme/payment/WalletService.debit(WalletService.java:88(Compiled Code))
+4XESTACKTRACE                at com/acme/ledger/LedgerBook.append(LedgerBook.java:57)
+4XESTACKTRACE                at com/acme/payment/PaymentWorker.process(PaymentWorker.java:141)
+4XESTACKTRACE                at com/acme/payment/PaymentWorker.run(PaymentWorker.java:63)
+4XESTACKTRACE                at java/lang/Thread.run(Thread.java:857)
+NULL
+3XMTHREADINFO      "pgto-worker-2" J9VMThread:0x0000000000ABD200, omrthread_t:0x00007F30C4109A18, java/lang/Thread:0x00000000FFE1D6B0, state:B, prio=5
+3XMJAVALTHREAD            (java/lang/Thread getId:0x22, isDaemon:true)
+3XMTHREADINFO1            (native thread ID:0x2B32, native priority:0x5, native policy:UNKNOWN, vmstate:B, vm thread flags:0x00000081)
+3XMCPUTIME               CPU usage total: 19.028134700 secs, current category="Application"
+3XMTHREADBLOCK     Blocked on: com/acme/ledger/LedgerBook@0x00000000E00A2D58 Owned by: "pgto-worker-1" (J9VMThread:0x0000000000ABC100, java/lang/Thread:0x00000000FFE1D5A0)
+3XMTHREADINFO3           Java.lang.Thread.State: BLOCKED
+4XESTACKTRACE                at com/acme/ledger/LedgerBook.append(LedgerBook.java:57(Compiled Code))
+4XESTACKTRACE                at com/acme/payment/WalletService.settle(WalletService.java:131)
+4XESTACKTRACE                at com/acme/payment/PaymentWorker.process(PaymentWorker.java:141)
+4XESTACKTRACE                at com/acme/payment/PaymentWorker.run(PaymentWorker.java:63)
+4XESTACKTRACE                at java/lang/Thread.run(Thread.java:857)
+NULL
+3XMTHREADINFO      "pgto-worker-3" J9VMThread:0x0000000000ABE300, omrthread_t:0x00007F30C410AB28, java/lang/Thread:0x00000000FFE1D7C0, state:CW, prio=5
+3XMJAVALTHREAD            (java/lang/Thread getId:0x23, isDaemon:true)
+3XMTHREADINFO1            (native thread ID:0x2B33, native priority:0x5, native policy:UNKNOWN, vmstate:CW, vm thread flags:0x00000041)
+3XMCPUTIME               CPU usage total: 6.001923800 secs, current category="Application"
+3XMTHREADINFO3           Java.lang.Thread.State: WAITING
+4XESTACKTRACE                at jdk/internal/misc/Unsafe.park(Native Method)
+4XESTACKTRACE                at java/util/concurrent/locks/LockSupport.park(LockSupport.java:211)
+4XESTACKTRACE                at java/util/concurrent/LinkedBlockingQueue.take(LinkedBlockingQueue.java:435)
+4XESTACKTRACE                at com/acme/payment/PaymentQueue.next(PaymentQueue.java:52)
+4XESTACKTRACE                at com/acme/payment/PaymentWorker.run(PaymentWorker.java:58)
+4XESTACKTRACE                at java/lang/Thread.run(Thread.java:857)
+NULL
+3XMTHREADINFO      "Signal Dispatcher" J9VMThread:0x0000000000052300, omrthread_t:0x00007F30C4009BB8, java/lang/Thread:0x00000000FFE1C100, state:R, prio=5
+3XMJAVALTHREAD            (java/lang/Thread getId:0x4, isDaemon:true)
+3XMTHREADINFO1            (native thread ID:0x2B14, native priority:0x5, native policy:UNKNOWN, vmstate:R, vm thread flags:0x00000001)
+3XMCPUTIME               CPU usage total: 0.000981200 secs, current category="System-JVM"
+NULL
+3XMTHREADINFO      "Finalizer thread" J9VMThread:0x000000000005CD00, omrthread_t:0x00007F30C400F108, java/lang/Thread:0x00000000FFE1C650, state:CW, prio=8
+3XMJAVALTHREAD            (java/lang/Thread getId:0x9, isDaemon:true)
+3XMTHREADINFO1            (native thread ID:0x2B19, native priority:0x8, native policy:UNKNOWN, vmstate:CW, vm thread flags:0x00000081)
+3XMCPUTIME               CPU usage total: 0.031204800 secs, current category="System-JVM"
+3XMTHREADINFO3           Java.lang.Thread.State: WAITING
+4XESTACKTRACE                at java/lang/Object.waitImpl(Native Method)
+4XESTACKTRACE                at java/lang/Object.wait(Object.java:342)
+4XESTACKTRACE                at java/lang/ref/ReferenceQueue.remove(ReferenceQueue.java:174)
+4XESTACKTRACE                at java/lang/ref/Finalizer$FinalizerThread.run(Finalizer.java:184)
+NULL           ------------------------------------------------------------------------
+0SECTION       Javadump End section
+NULL           ---------------------- END OF DUMP -------------------------------------

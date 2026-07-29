@@ -1,0 +1,270 @@
+NULL           ------------------------------------------------------------------------
+0SECTION       TITLE subcomponent dump routine
+NULL           ===============================
+1TICHARSET     UTF-8
+1TISIGINFO     Dump Event "user" (00004000) received
+1TIDATETIME    Date: 2026/02/10 at 09:30:11:224 (UTC)
+1TITIMEZONE    Timezone: UTC
+1TINANOTIME    System nanotime: 8123456789012345
+1TIFILENAME    Javacore filename:    /opt/acme/payments/javacore.20260210.093011.1.0001.txt
+1TIREQFLAGS    Request Flags: 0x81 (exclusive+preempt)
+1TIPREPSTATE   Prep State: 0x104 (exclusive_vm_access+trace_disabled)
+NULL           ------------------------------------------------------------------------
+0SECTION       GPINFO subcomponent dump routine
+NULL           ================================
+NULL
+2XHOSLEVEL     OS Level         : Linux 5.15.0-91-generic
+2XHCPUS        Processors -
+3XHCPUARCH       Architecture   : amd64
+3XHNUMCPUS       How Many       : 8
+3XHNUMASUP       NUMA is either not supported or has been disabled by user
+NULL
+1XHERROR2      GPINFO dump section only produced for SIGSEGV, SIGILL or SIGFPE.
+NULL           ------------------------------------------------------------------------
+0SECTION       ENVINFO subcomponent dump routine
+NULL           =================================
+1CIJAVAVERSION JRE 17 Linux amd64-64 (build 17.0.9+9)
+1CIVMVERSION   openj9-0.41.0
+1CIJITVERSION  0e9d70e2a
+1CIOMRVERSION  b433da9ac
+1CIJITMODES    JIT enabled, AOT enabled, FSD disabled, HCR enabled
+1CIRUNNINGAS   Running as a standalone JVM
+1CIVMIDLESTATE VM Idle State: Active
+1CICONTINFO    Running in container : TRUE
+1CICGRPINFO    JVM support for cgroups enabled : TRUE
+1CIPROCESSID   Process ID: 1 (0x1)
+1CICMDLINE     /opt/java/openjdk/bin/java -Xmx2g -Dspring.profiles.active=prod -Dacme.tenant=acme-payments -Dacme.db.url=jdbc:postgresql://db01.pay.acme.example:5432/payments -Dacme.db.password=Hunter2! -jar /opt/acme/payments/acme-payments-svc-4.12.0.jar
+1CIJAVAHOMEDIR Java Home Dir:   /opt/java/openjdk
+1CIJAVADLLDIR  Java DLL Dir:    /opt/java/openjdk/lib
+1CISYSCP       Sys Classpath:   /opt/java/openjdk/lib/jrt-fs.jar
+1CIUSERARGS    UserArgs:
+2CIUSERARG               -Xoptionsfile=/opt/java/openjdk/lib/options.default
+2CIUSERARG               -Xlockword:mode=default
+2CIUSERARG               -Xjcl:jclse29
+2CIUSERARG               -Dcom.ibm.oti.vm.bootstrap.library.path=/opt/java/openjdk/lib/default:/opt/java/openjdk/lib
+2CIUSERARG               -Xmx2g
+2CIUSERARG               -Dspring.profiles.active=prod
+2CIUSERARG               -Dacme.tenant=acme-payments
+2CIUSERARG               -Dacme.db.url=jdbc:postgresql://db01.pay.acme.example:5432/payments
+2CIUSERARG               -Dacme.db.password=Hunter2!
+NULL
+1CIENVVARS     Environment Variables
+2CIENVVAR      HOSTNAME=acme-payments-7d9f4c-x2lqz
+2CIENVVAR      ACME_DB_PASSWORD=Hunter2!
+2CIENVVAR      KUBERNETES_SERVICE_HOST=10.96.0.1
+2CIENVVAR      PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
+2CIENVVAR      JAVA_HOME=/opt/java/openjdk
+NULL           ------------------------------------------------------------------------
+0SECTION       NATIVEMEMINFO subcomponent dump routine
+NULL           =======================================
+0MEMUSER
+1MEMUSER       JRE: 1,432,595,272 bytes / 4321 allocations
+1MEMUSER       |
+2MEMUSER       +--VM: 1,384,921,048 bytes / 3210 allocations
+2MEMUSER       |
+3MEMUSER       |  +--Classes: 18,325,144 bytes / 812 allocations
+3MEMUSER       |  +--Threads: 22,481,920 bytes / 96 allocations
+NULL           ------------------------------------------------------------------------
+0SECTION       MEMINFO subcomponent dump routine
+NULL           =================================
+1STHEAPTYPE    Object Memory
+NULL           id                 start              end                size               space/region
+1STHEAPSPACE   0x00007F30C40D5DA0         --                 --                 --         Generational
+1STHEAPREGION  0x00007F30C40D6440 0x00000000E0000000 0x00000000E2000000 0x0000000002000000 Generational/Tenured Region
+NULL
+1STHEAPTOTAL   Total memory:                 2147483648 (0x0000000080000000)
+1STHEAPINUSE   Total memory in use:           734003200 (0x000000002BC00000)
+1STHEAPFREE    Total memory free:            1413480448 (0x0000000054400000)
+NULL
+1STGCHTYPE     GC History
+3STHSTTYPE       09:29:58:101234567 GMT j9mm.134 -   Allocation failure end: newspace=52428800/268435456 oldspace=681574400/1879048192 loa=18874368/18874368
+NULL           ------------------------------------------------------------------------
+0SECTION       LOCKS subcomponent dump routine
+NULL           ===============================
+NULL
+1LKPOOLINFO    Monitor pool info:
+2LKPOOLTOTAL     Current total number of monitors: 5
+NULL
+1LKMONPOOLDUMP Monitor Pool Dump (flat & inflated object-monitors):
+2LKMONINUSE      sys_mon_t:0x00007F30C4041D08 infl_mon_t: 0x00007F30C4041D88:
+3LKMONOBJECT       com/acme/payment/WalletService@0x00000000E00A2C48/0x00000000E00A2C50: Flat locked by "pgto-worker-2" (J9VMThread:0x0000000000ABD200), entry count 1
+3LKWAITERQ            Waiting to enter:
+3LKWAITER                "pgto-worker-1" (J9VMThread:0x0000000000ABC100)
+NULL
+2LKMONINUSE      sys_mon_t:0x00007F30C4042B18 infl_mon_t: 0x00007F30C4042B98:
+3LKMONOBJECT       java/util/concurrent/locks/AbstractQueuedSynchronizer$ConditionObject@0x00000000E0031F70/0x00000000E0031F78: <unowned>
+3LKNOTIFYQ            Waiting to be notified:
+3LKWAITNOTIFY            "pgto-worker-3" (J9VMThread:0x0000000000ABE300)
+3LKWAITNOTIFY            "pgto-worker-4" (J9VMThread:0x0000000000ABF400)
+NULL
+1LKREGMONDUMP  JVM System Monitor Dump (registered monitors):
+2LKREGMON          Thread global lock (0x00007F30C4004F58): <unowned>
+2LKREGMON          NLS hash table lock (0x00007F30C4005058): <unowned>
+2LKREGMON          portLibrary_omrsig_masterHandler_monitor lock (0x00007F30C4005158): <unowned>
+NULL           ------------------------------------------------------------------------
+0SECTION       THREADS subcomponent dump routine
+NULL           =================================
+NULL
+1XMJAVAVERSION JRE 17 Linux amd64-64 build 17.0.9+9 (openj9-0.41.0)
+NULL
+1XMPOOLINFO    JVM Thread pool info:
+2XMPOOLTOTAL             Current total number of pooled threads: 13
+2XMPOOLLIVE              Current total number of live threads: 13
+2XMPOOLDAEMON            Current total number of live daemon threads: 11
+NULL
+1XMCURTHDINFO  Current thread
+3XMTHREADINFO      "main" J9VMThread:0x000000000004E100, omrthread_t:0x00007F30C40089A8, java/lang/Thread:0x00000000FFE1D3F8, state:R, prio=5
+3XMJAVALTHREAD            (java/lang/Thread getId:0x1, isDaemon:false)
+3XMTHREADINFO1            (native thread ID:0x2B10, native priority:0x5, native policy:UNKNOWN, vmstate:R, vm thread flags:0x00000020)
+3XMTHREADINFO2            (native stack address range from:0x00007F30C8A00000, to:0x00007F30C8A40000, size:0x40000)
+3XMCPUTIME               CPU usage total: 2.365419500 secs, current category="Application"
+3XMTHREADINFO3           Java.lang.Thread.State: RUNNABLE
+4XESTACKTRACE                at com/acme/boot/Application.awaitShutdown(Application.java:112)
+4XESTACKTRACE                at com/acme/boot/Application.main(Application.java:41)
+NULL
+1XMTHDINFO     All Thread Details
+NULL           ------------------
+NULL
+3XMTHREADINFO      "pgto-worker-1" J9VMThread:0x0000000000ABC100, omrthread_t:0x00007F30C4108908, java/lang/Thread:0x00000000FFE1D5A0, state:B, prio=5
+3XMJAVALTHREAD            (java/lang/Thread getId:0x21, isDaemon:true)
+3XMTHREADINFO1            (native thread ID:0x2B31, native priority:0x5, native policy:UNKNOWN, vmstate:B, vm thread flags:0x00000081)
+3XMCPUTIME               CPU usage total: 12.470131900 secs, current category="Application"
+3XMTHREADBLOCK     Blocked on: com/acme/payment/WalletService@0x00000000E00A2C48 Owned by: "pgto-worker-2" (J9VMThread:0x0000000000ABD200, java/lang/Thread:0x00000000FFE1D6B0)
+3XMTHREADINFO3           Java.lang.Thread.State: BLOCKED
+4XESTACKTRACE                at com/acme/payment/WalletService.debit(WalletService.java:88(Compiled Code))
+4XESTACKTRACE                at com/acme/payment/PaymentWorker.process(PaymentWorker.java:141)
+4XESTACKTRACE                at com/acme/payment/PaymentWorker.run(PaymentWorker.java:63)
+4XESTACKTRACE                at java/lang/Thread.run(Thread.java:857)
+NULL
+3XMTHREADINFO      "pgto-worker-2" J9VMThread:0x0000000000ABD200, omrthread_t:0x00007F30C4109A18, java/lang/Thread:0x00000000FFE1D6B0, state:R, prio=5
+3XMJAVALTHREAD            (java/lang/Thread getId:0x22, isDaemon:true)
+3XMTHREADINFO1            (native thread ID:0x2B32, native priority:0x5, native policy:UNKNOWN, vmstate:R, vm thread flags:0x00000001)
+3XMCPUTIME               CPU usage total: 44.918273600 secs, current category="Application"
+3XMTHREADINFO3           Java.lang.Thread.State: RUNNABLE
+4XESTACKTRACE                at java/net/SocketInputStream.socketRead0(Native Method)
+4XESTACKTRACE                at java/net/SocketInputStream.read(SocketInputStream.java:168)
+4XESTACKTRACE                at com/acme/gateway/CardSwitchClient.readResponse(CardSwitchClient.java:210(Compiled Code))
+4XESTACKTRACE                at com/acme/payment/WalletService.settle(WalletService.java:131)
+4XESTACKTRACE                at com/acme/payment/PaymentWorker.process(PaymentWorker.java:141)
+4XESTACKTRACE                at com/acme/payment/PaymentWorker.run(PaymentWorker.java:63)
+4XESTACKTRACE                at java/lang/Thread.run(Thread.java:857)
+NULL
+3XMTHREADINFO      "pgto-worker-3" J9VMThread:0x0000000000ABE300, omrthread_t:0x00007F30C410AB28, java/lang/Thread:0x00000000FFE1D7C0, state:CW, prio=5
+3XMJAVALTHREAD            (java/lang/Thread getId:0x23, isDaemon:true)
+3XMTHREADINFO1            (native thread ID:0x2B33, native priority:0x5, native policy:UNKNOWN, vmstate:CW, vm thread flags:0x00000041)
+3XMCPUTIME               CPU usage total: 8.102938400 secs, current category="Application"
+3XMTHREADINFO3           Java.lang.Thread.State: WAITING
+4XESTACKTRACE                at jdk/internal/misc/Unsafe.park(Native Method)
+4XESTACKTRACE                at java/util/concurrent/locks/LockSupport.park(LockSupport.java:211)
+4XESTACKTRACE                at java/util/concurrent/locks/AbstractQueuedSynchronizer$ConditionObject.await(AbstractQueuedSynchronizer.java:1625)
+4XESTACKTRACE                at java/util/concurrent/LinkedBlockingQueue.take(LinkedBlockingQueue.java:435)
+4XESTACKTRACE                at com/acme/payment/PaymentQueue.next(PaymentQueue.java:52)
+4XESTACKTRACE                at com/acme/payment/PaymentWorker.run(PaymentWorker.java:58)
+4XESTACKTRACE                at java/lang/Thread.run(Thread.java:857)
+NULL
+3XMTHREADINFO      "pgto-worker-4" J9VMThread:0x0000000000ABF400, omrthread_t:0x00007F30C410BC38, java/lang/Thread:0x00000000FFE1D8D0, state:CW, prio=5
+3XMJAVALTHREAD            (java/lang/Thread getId:0x24, isDaemon:true)
+3XMTHREADINFO1            (native thread ID:0x2B34, native priority:0x5, native policy:UNKNOWN, vmstate:CW, vm thread flags:0x00000041)
+3XMCPUTIME               CPU usage total: 7.885101200 secs, current category="Application"
+3XMTHREADINFO3           Java.lang.Thread.State: WAITING
+4XESTACKTRACE                at jdk/internal/misc/Unsafe.park(Native Method)
+4XESTACKTRACE                at java/util/concurrent/locks/LockSupport.park(LockSupport.java:211)
+4XESTACKTRACE                at java/util/concurrent/locks/AbstractQueuedSynchronizer$ConditionObject.await(AbstractQueuedSynchronizer.java:1625)
+4XESTACKTRACE                at java/util/concurrent/LinkedBlockingQueue.take(LinkedBlockingQueue.java:435)
+4XESTACKTRACE                at com/acme/payment/PaymentQueue.next(PaymentQueue.java:52)
+4XESTACKTRACE                at com/acme/payment/PaymentWorker.run(PaymentWorker.java:58)
+4XESTACKTRACE                at java/lang/Thread.run(Thread.java:857)
+NULL
+3XMTHREADINFO      "http-sync tenant-acme /api/payments?invoice=99887766" J9VMThread:0x0000000000AC0500, omrthread_t:0x00007F30C410CD48, java/lang/Thread:0x00000000FFE1D9E0, state:R, prio=5
+3XMJAVALTHREAD            (java/lang/Thread getId:0x25, isDaemon:true)
+3XMTHREADINFO1            (native thread ID:0x2B35, native priority:0x5, native policy:UNKNOWN, vmstate:R, vm thread flags:0x00000001)
+3XMCPUTIME               CPU usage total: 1.204981700 secs, current category="Application"
+3XMTHREADINFO3           Java.lang.Thread.State: RUNNABLE
+4XESTACKTRACE                at com/acme/api/PaymentSyncHandler.fetchInvoice(PaymentSyncHandler.java:77)
+4XESTACKTRACE                at com/acme/api/PaymentSyncHandler.handle(PaymentSyncHandler.java:41)
+4XESTACKTRACE                at java/lang/Thread.run(Thread.java:857)
+NULL
+3XMTHREADINFO      "Signal Dispatcher" J9VMThread:0x0000000000052300, omrthread_t:0x00007F30C4009BB8, java/lang/Thread:0x00000000FFE1C100, state:R, prio=5
+3XMJAVALTHREAD            (java/lang/Thread getId:0x4, isDaemon:true)
+3XMTHREADINFO1            (native thread ID:0x2B14, native priority:0x5, native policy:UNKNOWN, vmstate:R, vm thread flags:0x00000001)
+3XMCPUTIME               CPU usage total: 0.001204300 secs, current category="System-JVM"
+3XMTHREADINFO3           Native callstack:
+4XENATIVESTACK               (0x00007F30C89123AB [libj9prt29.so+0x123ab])
+4XENATIVESTACK               (0x00007F30C8F04A20 [libpthread.so.0+0xa420])
+NULL
+3XMTHREADINFO      "JIT Compilation Thread-000 Suspended" J9VMThread:0x0000000000054500, omrthread_t:0x00007F30C400ACC8, java/lang/Thread:0x00000000FFE1C210, state:R, prio=10
+3XMJAVALTHREAD            (java/lang/Thread getId:0x5, isDaemon:true)
+3XMTHREADINFO1            (native thread ID:0x2B15, native priority:0xB, native policy:UNKNOWN, vmstate:CW, vm thread flags:0x00000081)
+3XMCPUTIME               CPU usage total: 18.377291000 secs, current category="JIT"
+NULL
+3XMTHREADINFO      "JIT Compilation Thread-001 Suspended" J9VMThread:0x0000000000056700, omrthread_t:0x00007F30C400BDD8, java/lang/Thread:0x00000000FFE1C320, state:R, prio=10
+3XMJAVALTHREAD            (java/lang/Thread getId:0x6, isDaemon:true)
+3XMTHREADINFO1            (native thread ID:0x2B16, native priority:0xB, native policy:UNKNOWN, vmstate:CW, vm thread flags:0x00000081)
+3XMCPUTIME               CPU usage total: 4.008112500 secs, current category="JIT"
+NULL
+3XMTHREADINFO      "IProfiler" J9VMThread:0x0000000000058900, omrthread_t:0x00007F30C400CEE8, java/lang/Thread:0x00000000FFE1C430, state:CW, prio=5
+3XMJAVALTHREAD            (java/lang/Thread getId:0x7, isDaemon:true)
+3XMTHREADINFO1            (native thread ID:0x2B17, native priority:0x5, native policy:UNKNOWN, vmstate:CW, vm thread flags:0x00000081)
+3XMCPUTIME               CPU usage total: 0.912834100 secs, current category="JIT"
+NULL
+3XMTHREADINFO      "Concurrent Mark Helper" J9VMThread:0x000000000005AB00, omrthread_t:0x00007F30C400DFF8, java/lang/Thread:0x00000000FFE1C540, state:CW, prio=5
+3XMJAVALTHREAD            (java/lang/Thread getId:0x8, isDaemon:true)
+3XMTHREADINFO1            (native thread ID:0x2B18, native priority:0x5, native policy:UNKNOWN, vmstate:CW, vm thread flags:0x00000081)
+3XMCPUTIME               CPU usage total: 3.281910800 secs, current category="GC"
+NULL
+3XMTHREADINFO      "Finalizer thread" J9VMThread:0x000000000005CD00, omrthread_t:0x00007F30C400F108, java/lang/Thread:0x00000000FFE1C650, state:CW, prio=8
+3XMJAVALTHREAD            (java/lang/Thread getId:0x9, isDaemon:true)
+3XMTHREADINFO1            (native thread ID:0x2B19, native priority:0x8, native policy:UNKNOWN, vmstate:CW, vm thread flags:0x00000081)
+3XMCPUTIME               CPU usage total: 0.048120900 secs, current category="System-JVM"
+3XMTHREADINFO3           Java.lang.Thread.State: WAITING
+4XESTACKTRACE                at java/lang/Object.waitImpl(Native Method)
+4XESTACKTRACE                at java/lang/Object.wait(Object.java:342)
+4XESTACKTRACE                at java/lang/ref/ReferenceQueue.remove(ReferenceQueue.java:174)
+4XESTACKTRACE                at java/lang/ref/Finalizer$FinalizerThread.run(Finalizer.java:184)
+NULL
+3XMTHREADINFO      "Common-Cleaner" J9VMThread:0x000000000005EF00, omrthread_t:0x00007F30C4010218, java/lang/Thread:0x00000000FFE1C760, state:CW, prio=8
+3XMJAVALTHREAD            (java/lang/Thread getId:0xA, isDaemon:true)
+3XMTHREADINFO1            (native thread ID:0x2B1A, native priority:0x8, native policy:UNKNOWN, vmstate:CW, vm thread flags:0x00000041)
+3XMCPUTIME               CPU usage total: 0.021084300 secs, current category="System-JVM"
+3XMTHREADINFO3           Java.lang.Thread.State: TIMED_WAITING
+4XESTACKTRACE                at java/lang/Object.waitImpl(Native Method)
+4XESTACKTRACE                at java/lang/Object.wait(Object.java:342)
+4XESTACKTRACE                at java/lang/ref/ReferenceQueue.remove(ReferenceQueue.java:174)
+4XESTACKTRACE                at jdk/internal/ref/CleanerImpl.run(CleanerImpl.java:140)
+4XESTACKTRACE                at java/lang/Thread.run(Thread.java:857)
+NULL
+3XMTHREADINFO      Anonymous native thread
+3XMTHREADINFO1            (native thread ID:0x2B44, native priority:0x0, native policy:UNKNOWN)
+4XENATIVESTACK               (0x00007F30C89201B4 [libj9prt29.so+0x201b4])
+NULL           ------------------------------------------------------------------------
+0SECTION       HOOKS subcomponent dump routine
+NULL           ===============================
+1HKINTERFACE   MM_OmrHookInterface
+2HKEVENTID     1
+3HKCALLCOUNT     8749
+3HKTOTALTIME     1.234 ms
+NULL           ------------------------------------------------------------------------
+0SECTION       CLASSES subcomponent dump routine
+NULL           =================================
+1CLTEXTCLLOD   Classloader summaries
+1CLTEXTCLLSS   	12345678: 1=primordial,2=extension,3=shareable,4=middleware,5=system,6=trusted,7=application,8=delegating
+2CLTEXTCLLOADER	p---st-- Loader *System*(0x00000000FFE1C4C8)
+3CLNMBRLOADEDLIB		Number of loaded libraries 6
+3CLNMBRLOADEDCL		Number of loaded classes 748
+2CLTEXTCLLOADER	-x--st-- Loader jdk/internal/loader/ClassLoaders$AppClassLoader(0x00000000FFE20D80), Parent jdk/internal/loader/ClassLoaders$PlatformClassLoader(0x00000000FFE20DD0)
+3CLNMBRLOADEDLIB		Number of loaded libraries 0
+3CLNMBRLOADEDCL		Number of loaded classes 213
+1CLTEXTCLLIB   	ClassLoader loaded libraries
+2CLTEXTCLLIB   	Loader *System*(0x00000000FFE1C4C8)
+3CLTEXTLIB     		/opt/java/openjdk/lib/default/libjclse29.so
+1CLTEXTCLLOD   	ClassLoader loaded classes
+2CLTEXTCLLOD   	Loader jdk/internal/loader/ClassLoaders$AppClassLoader(0x00000000FFE20D80)
+3CLTEXTCLASS   		com/acme/payment/WalletService(0x00000000012A5100)
+3CLTEXTCLASS   		com/acme/payment/PaymentWorker(0x00000000012A5300)
+3CLTEXTCLASS   		com/acme/payment/PaymentQueue(0x00000000012A5500)
+3CLTEXTCLASS   		com/acme/gateway/CardSwitchClient(0x00000000012A5700)
+3CLTEXTCLASS   		com/acme/api/PaymentSyncHandler(0x00000000012A5900)
+3CLTEXTCLASS   		com/acme/boot/Application(0x00000000012A0100)
+NULL           ------------------------------------------------------------------------
+0SECTION       Javadump End section
+NULL           ---------------------- END OF DUMP -------------------------------------

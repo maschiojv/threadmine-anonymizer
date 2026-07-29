@@ -17,12 +17,22 @@ import java.util.Set;
 final class ExpectationYaml {
 
     String formato = "";
+    boolean idsNativosVerbatim = false;
     final List<String> ancorasPreservadas = new ArrayList<>();
     final List<String> threadsAllowlistVerbatim = new ArrayList<>();
     final Map<String, Tokenized> threadsTokenizadas = new LinkedHashMap<>();
     final List<String> classesTokenizadas = new ArrayList<>();
     final List<String> linhasStripadas = new ArrayList<>();
     final Set<String> invariantes = new LinkedHashSet<>();
+    // javacore extensions (SPEC §5-B / §6)
+    final List<String> ancorasDeteccao4kb = new ArrayList<>();
+    final List<String> secoesPreservadas = new ArrayList<>();
+    final List<String> secoesStripadas = new ArrayList<>();
+    final List<String> linhasRedigidas = new ArrayList<>();
+
+    boolean isJavacore() {
+        return formato.startsWith("openj9");
+    }
 
     record Tokenized(String preservaSufixo, boolean marcadorRota) {
     }
@@ -44,6 +54,9 @@ final class ExpectationYaml {
                 String rest = line.substring(colon + 1).trim();
                 if (key.equals("formato")) {
                     result.formato = rest;
+                    section = null;
+                } else if (key.equals("ids_nativos_verbatim")) {
+                    result.idsNativosVerbatim = Boolean.parseBoolean(rest);
                     section = null;
                 } else {
                     section = key;
@@ -70,6 +83,10 @@ final class ExpectationYaml {
             case "classes_tokenizadas" -> classesTokenizadas.add(value);
             case "linhas_stripadas" -> linhasStripadas.add(value);
             case "invariantes" -> invariantes.add(value);
+            case "ancoras_deteccao_4kb" -> ancorasDeteccao4kb.add(value);
+            case "secoes_preservadas" -> secoesPreservadas.add(value);
+            case "secoes_stripadas" -> secoesStripadas.add(value);
+            case "linhas_redigidas" -> linhasRedigidas.add(value);
             default -> throw new IllegalArgumentException("list item outside a known section: " + section);
         }
     }

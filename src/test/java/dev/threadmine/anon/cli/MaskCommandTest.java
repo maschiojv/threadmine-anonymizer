@@ -162,6 +162,46 @@ class MaskCommandTest {
     }
 
     @Test
+    void javacoreIsRoutedToTheOpenJ9Rewriter() throws IOException {
+        Path javacore = tempDir.resolve("javacore.20260210.093011.1.0001.txt");
+        Files.writeString(javacore, """
+                0SECTION       TITLE subcomponent dump routine
+                1TISIGINFO     signal 3 received
+                1TIDATETIME    Date: 2026/02/10 at 09:30:11
+                1TIFILENAME    Javacore filename:    /opt/corp/javacore.txt
+                0SECTION       CI subcomponent dump routine
+                1CICMDLINE     /opt/java/bin/java -Dcorp.db.password=Hunter2! -jar corp.jar
+                0SECTION       XM subcomponent dump routine
+                3XMTHREADINFO      "corp-worker-1" (TID:0x2A29CF8, sys_thread_t:0x2412E78, state:R, native ID:0x107C) prio=5
+                4XESTACKTRACE          at com.corp.kernel.QueueWorker.run(QueueWorker.java:172)
+                """);
+        Path outFile = tempDir.resolve("javacore.anon.txt");
+
+        int exit = run("mask", javacore.toString(), "-o", outFile.toString(),
+                "--vault", vaultFile.toString());
+
+        assertEquals(0, exit, err());
+        String masked = Files.readString(outFile);
+        assertTrue(masked.startsWith("# tm-anon v1\n"));
+        assertTrue(masked.contains("# [tm-anon: stripped section CI]"),
+                "javacore must go through the section-strip rewriter: " + masked);
+        assertFalse(masked.contains("Hunter2"), "CI secrets must not survive");
+        assertFalse(masked.contains("corp-worker"), "thread names must be tokenized");
+        assertTrue(masked.contains("1TISIGINFO     signal 3 received"));
+    }
+
+    @Test
+    void refusalMessageNamesTheJavacoreDialect() throws IOException {
+        Path notADump = tempDir.resolve("notes2.txt");
+        Files.writeString(notADump, "just some meeting notes\nnothing thread-dump-like here\n");
+
+        run("mask", notADump.toString(), "--vault", vaultFile.toString());
+
+        assertTrue(err().contains("OpenJ9 javacore"),
+                "the refusal must list javacore among supported formats: " + err());
+    }
+
+    @Test
     void sameVaultProducesSameTokensAcrossRuns() throws IOException {
         Path out1 = tempDir.resolve("a.txt");
         Path out2 = tempDir.resolve("b.txt");

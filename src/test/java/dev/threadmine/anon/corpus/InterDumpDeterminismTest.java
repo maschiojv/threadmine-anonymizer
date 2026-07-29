@@ -76,6 +76,23 @@ class InterDumpDeterminismTest {
     }
 
     @Test
+    void javacoreAndHotspotDialectsShareTokensUnderTheSameVault() throws IOException {
+        // "pgto-worker-N" exists both in the HotSpot starvation fixture and in
+        // the OpenJ9 javacore fixture; the same vault must hand both dialects
+        // the same base token, or cross-dump comparison dies at the server.
+        String hotspot = Files.readString(FIXTURES.resolve("edge-pool-starvation.txt"), StandardCharsets.UTF_8);
+        String javacore = Files.readString(FIXTURES.resolve("openj9-javacore-moderno.txt"), StandardCharsets.UTF_8);
+        Vault vault = Vault.create(tempDir.resolve("vault-cross.json"));
+
+        String outHotspot = mask(hotspot, vault);
+        String outJavacore = new dev.threadmine.anon.format.openj9.JavacoreRewriter(
+                new HmacTokenEngine(vault), AllowlistMatcher.fromClasspath()).mask(javacore).output();
+
+        assertEquals(firstWorkerToken(outHotspot), firstWorkerToken(outJavacore),
+                "the same pool prefix must map to the same token across dialects");
+    }
+
+    @Test
     void differentVaultsProduceDifferentTokens() throws IOException {
         String multiDump = Files.readString(FIXTURES.resolve("multi-dump-3x.txt"), StandardCharsets.UTF_8);
 

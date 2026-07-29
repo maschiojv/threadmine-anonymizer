@@ -4,7 +4,9 @@ import dev.threadmine.anon.allowlist.AllowlistMatcher;
 import dev.threadmine.anon.core.HmacTokenEngine;
 import dev.threadmine.anon.core.TokenEngine;
 import dev.threadmine.anon.core.Vault;
+import dev.threadmine.anon.format.hotspot.FormatDetector;
 import dev.threadmine.anon.format.hotspot.HotspotRewriter;
+import dev.threadmine.anon.format.openj9.JavacoreRewriter;
 import dev.threadmine.anon.verify.AllowlistLookup;
 import dev.threadmine.anon.verify.ComplianceVerifier;
 import dev.threadmine.anon.verify.VerifyReport;
@@ -60,7 +62,10 @@ class CorpusMaskVerifyTest {
                 Vault vault = Vault.create(tempDir.resolve(name + "-vault.json"));
                 TokenEngine engine = new HmacTokenEngine(vault);
 
-                String masked = new HotspotRewriter(engine, matcher).mask(original).output();
+                boolean javacore = FormatDetector.isJavacore(original);
+                String masked = javacore
+                        ? new JavacoreRewriter(engine, matcher).mask(original).output()
+                        : new HotspotRewriter(engine, matcher).mask(original).output();
                 VerifyReport report = verifier.verify(original, masked, engine);
 
                 assertEquals(List.of(), report.residualIdentifiers(),
@@ -69,8 +74,13 @@ class CorpusMaskVerifyTest {
                         "masking must not destroy a structural marker");
                 assertTrue(report.counts().allMatch(),
                         "threads/frames/blank lines must survive: " + report.counts());
-                assertEquals(0, report.redactedLines(),
-                        "no corpus line may fall through to fail-closed redaction");
+                if (!javacore) {
+                    // Javacore fixtures deliberately contain lines the SPEC has
+                    // no rule for (quoteless native headers, 4XENATIVESTACK);
+                    // their exact redaction set is pinned by CorpusGoldenTest.
+                    assertEquals(0, report.redactedLines(),
+                            "no corpus line may fall through to fail-closed redaction");
+                }
                 assertEquals(List.of(), report.unknownTokens(),
                         "the vault used to mask must reverse every token it produced");
                 assertTrue(report.passed());

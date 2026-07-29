@@ -1,0 +1,76 @@
+# Javacore IBM JDK classico (estilo J2RE 1.4.2, como o real-openj9.txt do ThreadMine):
+# SEM 1XMJAVAVERSION (a versao vive so em 1CIJAVAVERSION, que morre junto com a secao CI),
+# threads com state:R/CW/B e TID/sys_thread_t/native ID na propria linha 3XMTHREADINFO,
+# secao XM delimitada por tokens (nao ha linha em branco entre threads — SPEC 5-B.7).
+# Schema §6 estendido p/ javacore: + ancoras_deteccao_4kb, secoes_preservadas,
+# secoes_stripadas, linhas_redigidas, ids_nativos_verbatim.
+formato: openj9-javacore
+ancoras_deteccao_4kb:
+  # SPEC 5-B.1: pelo menos UM dos tokens de deteccao (1TISIGINFO | 3XMTHREADINFO | 1XMJAVAVERSION)
+  # deve sobreviver DENTRO dos primeiros 4KB do arquivo mascarado. Neste fixture a unica ancora
+  # garantida nos 4KB e 1TISIGINFO (linha 4): 3XMTHREADINFO so aparece depois de CI/DC/DG/ST/XE/LK,
+  # e 1XMJAVAVERSION nao existe no dialeto classico.
+  - "1TISIGINFO"
+secoes_preservadas:
+  - "TITLE"            # minima: 1TISIGINFO + 1TIDATETIME preservadas; 1TIFILENAME redigida (5-B.3)
+  - "XM"
+secoes_stripadas:      # cada uma vira UMA linha "# [tm-anon: stripped section <NOME>]" (5-B.2)
+  - "XHPI"             # nao esta na lista fixa da 5-B.2 -> strip por fail-closed de secao desconhecida (5-B.6)
+  - "CI"               # 1CICMDLINE com -Dacme.db.password/host, 1CISYSCP, -Djava.class.path com jars do produto
+  - "DC"
+  - "DG"
+  - "ST"
+  - "XE"
+  - "LK"               # monitores classe@endereco com.acme.* + nomes de thread em 3LKWAITNOTIFY/3LKWAITER
+  - "CL"               # classloader com/acme/kernel/AcmeModuleClassLoader + 3CLTEXTCLASS com classes do app
+  - "Javadump End section"   # 0SECTION final desconhecido -> mesmo fail-closed da 5-B.6
+linhas_redigidas:
+  - "1TIFILENAME"      # path local D:\acme\payserver\... (hostname/usuario/estrutura de dir) — SEMPRE redigido
+ancoras_preservadas:
+  - "1TISIGINFO     signal 3 received"
+  - "1TIDATETIME    Date:                 2007/03/14 at 09:30:11"
+  - "1XMCURTHDINFO"
+  - "2XMFULLTHDDUMP"   # "Full thread dump Classic VM (...)": estrutural do XM; contem a frase
+                       # "Full thread dump" MUITO alem dos 4KB — nao pode reclassificar como HotSpot
+  - "3XMTHREADINFO"
+  - "4XESTACKTRACE"
+threads_allowlist_verbatim:
+  - "Signal dispatcher"    # regex (?i)^(VM |Signal |Finalizer|Reference Handler|Attach Listener) da allowlist-v1
+  - "Finalizer"
+  - "Reference Handler"
+  - "Thread-1"             # ^Thread-\d+$
+threads_tokenizadas:
+  # Nomes de pool classicos "X: 'N' for queue: 'Q'" NAO casam a heuristica de sufixo [-#]N da
+  # SPEC 5.3c (o numero fica no meio, entre aspas simples) -> regra 5.3d: token do nome inteiro,
+  # um token DIFERENTE por thread. Perde o agrupamento de pool — limitacao registrada no INDICE.
+  "QueueWorker: '0' for queue: 'acme.kernel.Default'": {}
+  "QueueWorker: '1' for queue: 'acme.kernel.Default'": {}
+  "QueueWorker: '2' for queue: 'acme.kernel.Default'": {}
+  "QueueWorker: '3' for queue: 'acme.kernel.Default'": {}
+  "QueueWorker: '4' for queue: 'acme.kernel.Default'": {}
+  "QueueWorker: '0' for queue: 'acme.kernel.System'": {}
+  "ListenThread.Default": {}
+  "com.acme.health.CoreHealthMonitor": {}   # nome de thread que E um FQCN -> token de thread (t...), nao de classe
+  "main": {}                                # allowlist-v1 nao tem regra p/ "main" (mesma decisao das fixtures HotSpot)
+classes_tokenizadas:
+  # No XM os frames sao FQCN com PONTO (dialeto classico) — mesmas regras da SPEC 5.1.
+  - "com.acme.kernel.QueueWorker"
+  - "com.acme.ledger.LedgerCache"
+  - "com.acme.gateway.CardSwitchClient"
+  - "com.acme.pay.PaymentRouter"
+  - "com.acme.server.AcmeServerSocket"
+  - "com.acme.server.ListenThread"
+  - "com.acme.server.PayServer"
+  - "com.acme.health.CoreHealthMonitorThread"
+ids_nativos_verbatim: true   # TID:0x... / sys_thread_t:0x... / native ID:0x... na 3XMTHREADINFO (5-B.4)
+invariantes:
+  - determinismo_intra_dump
+  - ids_nativos_verbatim
+  - ordem_threadinfo_stacktrace_preservada    # 5-B.7: ordem relativa 3XMTHREADINFO/4XESTACKTRACE intacta
+  - verify_exit4_se_secao_proibida_sobrevive  # 5-B.9: CI/LK/CL/DC/DG/ST/XE vivas no mascarado = exit 4
+  - verify_exit4_se_1tifilename_com_conteudo  # 5-B.9
+# Armadilhas cobertas: (1) 1TISIGINFO e a UNICA ancora de deteccao nos 4KB — o strip do TITLE nao
+# pode toca-la; (2) thread sem stack ("Signal dispatcher": 3XMTHREADINFO seguida de outra
+# 3XMTHREADINFO, sem 4XESTACKTRACE) nao pode quebrar o lexer; (3) 2XMFULLTHDDUMP repete a versao
+# da JVM (nao-sensivel, preservar); (4) o mesmo nome de thread aparece em XM (preservado/tokenizado)
+# e em LK (stripado) — o token so precisa existir no XM.

@@ -61,6 +61,23 @@ public final class ComplianceVerifier {
     private static final Set<String> NON_LOCATIONS =
             Set.of("Native Method", "Unknown Source", "<generated>", "");
 
+    /**
+     * Column-0 token of a forbidden javacore section (SPEC §5-B.9): any depth
+     * of the CI/LK/CL/DC/DG/ST families, plus depth-1 XE — the XE section body
+     * is all {@code 1XE*} lines, while the XE-family tokens that legitimately
+     * live inside the THREADS section ({@code 4XESTACKTRACE},
+     * {@code 4XENATIVESTACK}) are depth 4 and must not be flagged.
+     */
+    private static final Pattern FORBIDDEN_SECTION_TOKEN =
+            Pattern.compile("^(?:\\d+(?:CI|LK|CL|DC|DG|ST)[A-Z]|1XE[A-Z])[A-Z0-9]*");
+
+    private static final String FILENAME_TOKEN = "1TIFILENAME";
+    private static final String FILENAME_REDACTION = "[tm-anon: redacted]";
+
+    /** The fixed {@code 3XMCPUTIME} category vocabulary — the only quoted strings allowed there. */
+    private static final Set<String> CPU_CATEGORIES =
+            Set.of("Application", "Resource-Monitor", "System-JVM", "GC", "JIT");
+
     private final AllowlistLookup allowlist;
 
     public ComplianceVerifier(AllowlistLookup allowlist) {
@@ -117,6 +134,7 @@ public final class ComplianceVerifier {
                 continue;
             }
             int lineNumber = i + 1;
+            checkJavacoreContract(line, lineNumber, findings);
             if (DumpScan.isFrame(line)) {
                 checkFrame(DumpScan.frameBody(line), lineNumber, line, findings);
             }
@@ -126,11 +144,30 @@ public final class ComplianceVerifier {
         return findings;
     }
 
+    /** SPEC §5-B.9: forbidden sections and {@code 1TIFILENAME} content are leaks by definition. */
+    private static void checkJavacoreContract(String line, int lineNumber, List<Finding> findings) {
+        Matcher forbidden = FORBIDDEN_SECTION_TOKEN.matcher(line);
+        if (forbidden.find()) {
+            findings.add(new Finding(lineNumber, Finding.Kind.FORBIDDEN_SECTION,
+                    forbidden.group(), line));
+            return;
+        }
+        if (line.startsWith(FILENAME_TOKEN)) {
+            String rest = line.substring(FILENAME_TOKEN.length()).strip();
+            if (!rest.isEmpty() && !rest.equals(FILENAME_REDACTION)) {
+                findings.add(new Finding(lineNumber, Finding.Kind.FILENAME_CONTENT, rest, line));
+            }
+        }
+    }
+
     private void checkFrame(String frame, int lineNumber, String line, List<Finding> findings) {
         String body = stripModulePrefix(frame);
         int parenthesis = body.indexOf('(');
         String qualified = (parenthesis < 0 ? body : body.substring(0, parenthesis)).strip();
-        if (allowlist.allowsFqcn(qualified)) {
+        // OpenJ9 modern frames spell the FQCN with slashes; the allowlist speaks
+        // dotted form only, so the lookup normalizes. The leak check below still
+        // sees the original spelling — a name is a leak in either notation.
+        if (allowlist.allowsFqcn(qualified.replace('/', '.'))) {
             // Public infrastructure: the rewriter leaves the whole frame,
             // source file included, exactly as it was.
             return;
@@ -158,6 +195,21 @@ public final class ComplianceVerifier {
 
     private void checkThreadNames(String line, int lineNumber, List<Finding> findings) {
         if (line.contains("java version") || line.startsWith("Full thread dump")) {
+            return;
+        }
+        if (line.startsWith("1TISIGINFO")) {
+            // JVM-generated dump-event vocabulary: 'Dump Event "user" (...)'.
+            return;
+        }
+        if (line.startsWith("3XMCPUTIME")) {
+            // The only quoted strings allowed here are the JVM's fixed CPU
+            // categories; anything else could carry an application name.
+            Matcher quoted = QUOTED.matcher(line);
+            while (quoted.find()) {
+                if (!CPU_CATEGORIES.contains(quoted.group(1))) {
+                    findings.add(new Finding(lineNumber, Finding.Kind.THREAD_NAME, quoted.group(1), line));
+                }
+            }
             return;
         }
         Matcher quoted = QUOTED.matcher(line);

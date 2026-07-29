@@ -29,10 +29,28 @@ public final class FormatDetector {
     }
 
     public static boolean isHotspot(String text) {
-        String probe = text.length() > PROBE_LIMIT ? text.substring(0, PROBE_LIMIT) : text;
+        String probe = probe(text);
         return probe.contains("Full thread dump")
                 || probe.contains("java.lang.Thread.State:")
                 || JSTACK_HEADER.matcher(probe).find()
                 || JCMD_TEXT_HEADER.matcher(probe).find();
+    }
+
+    /**
+     * OpenJ9 javacore, recognized by the same tokens the ThreadMine
+     * {@code DetectorFormatoServiceImpl} probes for (SPEC §5-B.1). Checked
+     * BEFORE {@link #isHotspot}: a classic javacore repeats the literal
+     * {@code Full thread dump} on its {@code 2XMFULLTHDDUMP} line, and the
+     * dialect must never be reclassified because of it.
+     */
+    public static boolean isJavacore(String text) {
+        String probe = probe(text);
+        return probe.contains("1TISIGINFO")
+                || probe.contains("3XMTHREADINFO")
+                || probe.contains("1XMJAVAVERSION");
+    }
+
+    private static String probe(String text) {
+        return text.length() > PROBE_LIMIT ? text.substring(0, PROBE_LIMIT) : text;
     }
 }

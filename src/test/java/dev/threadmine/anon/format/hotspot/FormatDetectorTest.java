@@ -52,4 +52,31 @@ class FormatDetectorTest {
         assertFalse(FormatDetector.isHotspot("#1 \"not a dump\" but a list\nhello world\n"));
         assertFalse(FormatDetector.isHotspot("{\"threads\": [{\"name\": \"main\"}]}\n"));
     }
+
+    // --- OpenJ9 javacore (SPEC §5-B.1) -----------------------------------
+
+    @Test
+    void javacoreIsDetectedByAnyOfItsThreeTokens() {
+        assertTrue(FormatDetector.isJavacore("0SECTION       TITLE subcomponent dump routine\n"
+                + "1TISIGINFO     signal 3 received\n"));
+        assertTrue(FormatDetector.isJavacore(
+                "3XMTHREADINFO      \"main\" J9VMThread:0x0000000000ABC100, state:R, prio=5\n"));
+        assertTrue(FormatDetector.isJavacore(
+                "1XMJAVAVERSION JRE 17 Linux amd64-64 build 17.0.9+9 (openj9-0.41.0)\n"));
+    }
+
+    @Test
+    void javacoreTokensBeyondFourKbDoNotCount() {
+        assertFalse(FormatDetector.isJavacore(" ".repeat(4096) + "\n1TISIGINFO signal 3 received\n"));
+    }
+
+    @Test
+    void javacoreIsNotMistakenForHotspotAndViceVersa() {
+        String javacore = "0SECTION       TITLE subcomponent dump routine\n"
+                + "1TISIGINFO     signal 3 received\n";
+        assertFalse(FormatDetector.isHotspot(javacore));
+        String jstack = "Full thread dump OpenJDK 64-Bit Server VM (21.0.3+9-LTS mixed mode, sharing):\n";
+        assertFalse(FormatDetector.isJavacore(jstack));
+        assertFalse(FormatDetector.isJavacore("hello world\n"));
+    }
 }

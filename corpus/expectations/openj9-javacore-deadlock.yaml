@@ -1,0 +1,65 @@
+# Deadlock em javacore OpenJ9 moderno: bloco 1LKDEADLOCK/2LKDEADLOCKTHR/3LKDEADLOCKWTR/
+# 4LKDEADLOCKMON/4LKDEADLOCKOBJ/3LKDEADLOCKOWN DENTRO da secao LOCKS + monitores envolvidos
+# (3LKMONOBJECT/3LKWAITERQ/3LKWAITER) + as duas threads em state:B com 3XMTHREADBLOCK cruzadas.
+# PONTO CENTRAL DO FIXTURE: pela SPEC 5-B.2 a secao LOCKS (familia LK) e stripada POR INTEIRO —
+# o anuncio "Deadlock detected !!!" morre junto. A unica evidencia de deadlock que sobrevive ao
+# mask sao as duas 3XMTHREADBLOCK em ciclo ("pgto-worker-1" blocked on X owned by "pgto-worker-2"
+# e vice-versa) — e sobre ELAS que a paridade de deteccao do servidor precisa se sustentar.
+formato: openj9-javacore
+ancoras_deteccao_4kb:
+  - "1TISIGINFO"
+secoes_preservadas:
+  - "TITLE"
+  - "THREADS"
+secoes_stripadas:
+  - "GPINFO"
+  - "ENVINFO"
+  - "MEMINFO"
+  - "LOCKS"              # inclui 1LKDEADLOCK e TODO o bloco 2LKDEADLOCKTHR/4LKDEADLOCKOBJ — strip
+                         # integral (5-B.2); nenhum token de deadlock pode aparecer no mascarado
+  - "Javadump End section"
+linhas_redigidas:
+  - "1TIFILENAME"
+ancoras_preservadas:
+  - "1TISIGINFO     Dump Event \"user\" (00004000) received"
+  - "1TIDATETIME    Date: 2026/02/11 at 14:02:47:918 (UTC)"
+  - "1XMJAVAVERSION JRE 17 Linux amd64-64 build 17.0.9+9 (openj9-0.41.0)"
+  - "3XMTHREADINFO"
+  - "3XMTHREADBLOCK     Blocked on:"
+  - "3XMTHREADINFO3           Java.lang.Thread.State: BLOCKED"
+  - "4XESTACKTRACE"
+threads_allowlist_verbatim:
+  - "Signal Dispatcher"
+  - "Finalizer thread"
+threads_tokenizadas:
+  "main": {}
+  "pgto-worker-1": { preserva_sufixo: "-1" }
+  "pgto-worker-2": { preserva_sufixo: "-2" }
+  "pgto-worker-3": { preserva_sufixo: "-3" }
+classes_tokenizadas:
+  - "com.acme.boot.Application"
+  - "com.acme.payment.WalletService"   # alvo do Blocked on da worker-1 (5-B.5: classe tokenizada, @endereco verbatim)
+  - "com.acme.ledger.LedgerBook"       # alvo do Blocked on da worker-2
+  - "com.acme.payment.PaymentWorker"
+  - "com.acme.payment.PaymentQueue"
+ids_nativos_verbatim: true
+invariantes:
+  - determinismo_intra_dump
+  - ids_nativos_verbatim
+  - sufixo_numerico_preservado
+  - ordem_threadinfo_stacktrace_preservada
+  - frames_com_barra_tokenizados
+  - blocked_on_consistente             # o ciclo tem que continuar FECHADO depois do mask:
+                                       # token("pgto-worker-1") no Owned by da worker-2 == token do
+                                       # cabecalho da worker-1 (e vice-versa); classes dos dois alvos
+                                       # com os MESMOS tokens em frame e em Blocked on
+  - deadlock_nomes_consistentes        # mesma semantica da fixture HotSpot, aplicada as 3XMTHREADBLOCK
+  - verify_exit4_se_secao_proibida_sobrevive   # em particular: NENHUMA linha *LKDEADLOCK* no mascarado
+  - verify_exit4_se_1tifilename_com_conteudo
+# Armadilhas cobertas: (1) o par WalletService/LedgerBook aparece em TRES contextos (frame com
+# barra, 3XMTHREADBLOCK, e LOCKS stripado) — as duas primeiras precisam do MESMO token, a terceira
+# nao pode existir no output; (2) endereco do Blocked on (0x00000000E00A2C48) difere do par
+# @addr1/addr2 do LOCKS — enderecos sao verbatim onde preservados, nunca "corrigidos"; (3) strip
+# do LOCKS remove a UNICA declaracao explicita de deadlock: registrado como custo aceito da 5-B
+# (o parser OpenJ9 do ThreadMine ignora LK; deteccao vem dos estados B cruzados) — se a onda 4
+# quiser paridade com o detector de deadlock textual, e a SPEC que precisa mudar, nao o corpus.

@@ -7,6 +7,7 @@ import dev.threadmine.anon.core.VaultException;
 import dev.threadmine.anon.format.hotspot.FormatDetector;
 import dev.threadmine.anon.format.hotspot.HotspotRewriter;
 import dev.threadmine.anon.format.hotspot.MaskResult;
+import dev.threadmine.anon.format.openj9.JavacoreRewriter;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -82,10 +83,13 @@ final class MaskCommand {
             return usage(err, "cannot read dump file: " + input);
         }
 
-        if (!FormatDetector.isHotspot(text)) {
+        // javacore first: a classic javacore repeats "Full thread dump" on its
+        // 2XMFULLTHDDUMP line and must never be reclassified as HotSpot.
+        boolean javacore = FormatDetector.isJavacore(text);
+        if (!javacore && !FormatDetector.isHotspot(text)) {
             err.println("tm-anon: unrecognized dump format (fail-closed refusal, SPEC exit 2).");
-            err.println("Only HotSpot-family thread dumps are supported: jstack, jcmd Thread.print,");
-            err.println("jcmd Thread.dump_to_file -format=text, ThreadMXBean/VisualVM.");
+            err.println("Supported formats: HotSpot-family thread dumps (jstack, jcmd Thread.print,");
+            err.println("jcmd Thread.dump_to_file -format=text, ThreadMXBean/VisualVM) and OpenJ9 javacore.");
             return EXIT_UNSUPPORTED_FORMAT;
         }
 
@@ -94,9 +98,11 @@ final class MaskCommand {
         // explicit and happens only after the output file was written.
         try {
             Vault vault = Vault.load(vaultPath);
-            HotspotRewriter rewriter = new HotspotRewriter(new HmacTokenEngine(vault),
-                    AllowlistMatcher.fromClasspath().withStrict(strict));
-            MaskResult result = rewriter.mask(text);
+            HmacTokenEngine engine = new HmacTokenEngine(vault);
+            AllowlistMatcher allowlist = AllowlistMatcher.fromClasspath().withStrict(strict);
+            MaskResult result = javacore
+                    ? new JavacoreRewriter(engine, allowlist).mask(text)
+                    : new HotspotRewriter(engine, allowlist).mask(text);
             if (dryRun) {
                 return finish(result, null, input, reportPath, out, true);
             }
