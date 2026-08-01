@@ -87,7 +87,11 @@ Vocabulário de `invariantes`: `determinismo_intra_dump`, `determinismo_inter_du
   3. **Frames modernos usam barra** (`com/acme/...`) e admitem `(Compiled Code)` dentro do
      parêntese `(Arquivo.java:NN(Compiled Code))` — a §5.1 (escrita para FQCN com ponto) precisa
      de normalização barra→ponto antes de allowlist/canônico, inclusive para RECONHECER
-     `java/util/...` como allowlist.
+     `java/util/...` como allowlist. No dialeto **clássico** a mesma moldura vem SEM número de
+     linha (`(Arquivo.java(Compiled Code))`): o `mask` tokeniza o arquivo e preserva a moldura,
+     e o `verify` precisa recortá-la antes de exigir token do nome do arquivo — sem isso, um
+     javacore real bem mascarado sai com exit 4 (falso positivo, mesma família do `(<generated>)`
+     do CGLIB). Pinado pelo invariante `moldura_compiled_code_preservada` do fixture clássico.
   4. **Strip do LOCKS apaga a declaração explícita de deadlock** (`1LKDEADLOCK`). Custo aceito
      pela §5-B (o `ParserOpenJ9Impl` ignora LK); a detecção sobrevive pelas `3XMTHREADBLOCK`
      cruzadas — pinado pela fixture de deadlock.

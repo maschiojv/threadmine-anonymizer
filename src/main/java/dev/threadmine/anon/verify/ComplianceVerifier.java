@@ -45,6 +45,16 @@ public final class ComplianceVerifier {
             Pattern.compile("([A-Za-z_$][\\w.$]*)@([0-9a-fA-F]{4,})(?![\\w.$/@])");
     /** Module or classloader prefix on a frame: {@code java.base@21.0.3/} or {@code app//}. */
     private static final Pattern MODULE_PREFIX = Pattern.compile("^(?:[\\w.$]+//|[\\w.$]+@[\\w.+-]+/)");
+    /**
+     * The JIT moulding an OpenJ9/IBM javacore glues to the source file inside
+     * the frame parenthesis: {@code (WalletService.java:88(Compiled Code))} in
+     * modern dumps, {@code (WalletService.java(Compiled Code))} in the JDK
+     * 1.4-era ones, which omit the line number. The rewriter tokenizes the file
+     * and keeps the moulding verbatim (SPEC §5.1) because it tells the
+     * ThreadMine parsers the frame was JIT-compiled; here it is cut off so what
+     * is left is the file name alone, which still has to be a token.
+     */
+    private static final Pattern COMPILED_CODE_MOULDING = Pattern.compile("\\s*\\(Compiled Code\\)$");
 
     private static final Pattern SEGMENT_SEPARATOR = Pattern.compile("\\.");
     private static final Pattern ATOM_SEPARATOR = Pattern.compile("\\$");
@@ -59,7 +69,7 @@ public final class ComplianceVerifier {
             "lambda", "Lambda", "<init>", "<clinit>", "init", "clinit", "java", "class");
 
     private static final Set<String> NON_LOCATIONS =
-            Set.of("Native Method", "Unknown Source", "<generated>", "");
+            Set.of("Native Method", "Unknown Source", "<generated>", "Compiled Code", "");
 
     /**
      * Column-0 token of a forbidden javacore section (SPEC §5-B.9): any depth
@@ -213,7 +223,8 @@ public final class ComplianceVerifier {
         }
         int close = body.lastIndexOf(')');
         String inside = close > parenthesis ? body.substring(parenthesis + 1, close) : body.substring(parenthesis + 1);
-        return stripModulePrefix(inside.strip());
+        String location = stripModulePrefix(inside.strip());
+        return COMPILED_CODE_MOULDING.matcher(location).replaceFirst("").strip();
     }
 
     private void checkThreadNames(String line, int lineNumber, List<Finding> findings) {

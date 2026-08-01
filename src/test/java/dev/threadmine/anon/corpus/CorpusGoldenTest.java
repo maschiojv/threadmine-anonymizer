@@ -282,6 +282,16 @@ class CorpusGoldenTest {
                     });
         }
 
+        if (exp.invariantes.contains("moldura_compiled_code_preservada")) {
+            // SPEC §5.1: the JIT moulding is structure the ThreadMine parsers
+            // read, so it survives verbatim — on the allowlisted frame and on
+            // the tokenized one alike. Only the file name in front of it moves.
+            assertEquals(count(text, "(Compiled Code)"), count(out, "(Compiled Code)"),
+                    "the (Compiled Code) moulding must survive on every frame that had it");
+            assertTrue(out.lines().anyMatch(l -> l.contains(".java(Compiled Code))")),
+                    "the no-line-number moulding form must survive glued to the source file");
+        }
+
         if (exp.invariantes.contains("ordem_threadinfo_stacktrace_preservada")) {
             assertEquals(threadStackKinds(text), threadStackKinds(out),
                     "relative 3XMTHREADINFO/4XESTACKTRACE order must be preserved (SPEC 5-B.7)");
