@@ -36,6 +36,7 @@ class JavacoreRewriterTest {
             "NULL           ------------------------------------------------------------------------",
             "0SECTION       CI subcomponent dump routine",
             "NULL           ============================",
+            "1CIJAVAVERSION J2RE 1.4.2 IBM Windows 32 build cn142sr1w-20041028",
             "1CICMDLINE     D:\\corp\\java\\bin\\java -Dcorp.db.password=Sw0rdf1sh! com.corp.PayServer",
             "1CISYSCP       Sys Classpath:   D:\\corp\\lib\\corp-pay-core-2.4.1.jar");
 
@@ -148,6 +149,94 @@ class JavacoreRewriterTest {
         // THREADS carries XM-family tokens: preserved even though it is not named "XM"
         assertTrue(out.contains("0SECTION       THREADS subcomponent dump routine"));
         assertTrue(out.contains("1XMJAVAVERSION JRE 17 Linux amd64-64 build 17.0.9+9 (openj9-0.41.0)"));
+    }
+
+    // --- §5-B.2 amendment: the JVM version survives the CI strip ----------
+    // A real javacore has NO 1XMJAVAVERSION — the only version line is
+    // 1CIJAVAVERSION, inside the stripped CI/ENVINFO section. Stripping it
+    // whole would make ThreadMine parse the masked dump with versaoJava=null,
+    // losing information that is not sensitive. The rewriter re-emits the
+    // payload right after the strip marker, under the one token
+    // ParserOpenJ9Impl actually reads: ^1XMJAVAVERSION\s+(.+).
+
+    @Test
+    void strippedCiVersionIsReemittedUnderTheTokenTheThreadMineParserReads() {
+        String out = rewriter.mask(CLASSIC).output();
+        List<String> lines = out.lines().toList();
+        int marker = lines.indexOf("# [tm-anon: stripped section CI]");
+        assertTrue(marker >= 0, out);
+        assertEquals("1XMJAVAVERSION J2RE 1.4.2 IBM Windows 32 build cn142sr1w-20041028",
+                lines.get(marker + 1),
+                "the version payload must survive verbatim right after the strip marker");
+        assertFalse(out.contains("1CIJAVAVERSION"),
+                "the CI-family token must not survive (verify flags any CI line as a leak)");
+    }
+
+    @Test
+    void reemittedVersionLineYieldsANonNullVersionInThreadMine() {
+        String out = rewriter.mask(CLASSIC).output();
+        // Exactly what ParserOpenJ9Impl does: TOKEN_JAVA_VERSION then VERSION_NUMBER.
+        // Note the parser's own quirk on classic payloads: the first [\d._]+ run
+        // in "J2RE 1.4.2 ..." is the "2" inside "J2RE". That is what ThreadMine
+        // would extract from an unmasked line too — the contract here is only
+        // that versaoJava stops being null, with the payload untouched.
+        String extracted = threadMineVersionOf(out);
+        assertFalse(extracted.isEmpty(), "versaoJava must not be null on the masked dump");
+    }
+
+    @Test
+    void reemittedModernPayloadYieldsTheExactVersionInThreadMine() {
+        String modernCi = CLASSIC.replace(
+                "1CIJAVAVERSION J2RE 1.4.2 IBM Windows 32 build cn142sr1w-20041028",
+                "1CIJAVAVERSION JRE 1.8.0 Windows 10 amd64-64 (build 8.0.6.36)");
+        String out = rewriter.mask(modernCi).output();
+        assertEquals("1.8.0", threadMineVersionOf(out), "ThreadMine must extract versaoJava=1.8.0");
+    }
+
+    /** Mirrors ParserOpenJ9Impl: first ^1XMJAVAVERSION line, first ([\d._]+) run of its payload. */
+    private static String threadMineVersionOf(String out) {
+        java.util.regex.Pattern parserToken = java.util.regex.Pattern.compile("^1XMJAVAVERSION\\s+(.+)");
+        String payload = out.lines()
+                .map(parserToken::matcher)
+                .filter(java.util.regex.Matcher::find)
+                .map(m -> m.group(1))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("no line the parser recognizes as version: " + out));
+        java.util.regex.Matcher number = java.util.regex.Pattern.compile("([\\d._]+)").matcher(payload);
+        return number.find() ? number.group(1) : "";
+    }
+
+    @Test
+    void versionIsNotReemittedWhenTheDumpAlreadyCarriesTheParserVersionLine() {
+        String out = rewriter.mask(MODERN).output();
+        assertEquals(1, out.lines().filter(l -> l.startsWith("1XMJAVAVERSION")).count(),
+                "a dump that already carries 1XMJAVAVERSION must not gain a duplicate: " + out);
+        assertTrue(out.contains("1XMJAVAVERSION JRE 17 Linux amd64-64 build 17.0.9+9 (openj9-0.41.0)"));
+    }
+
+    @Test
+    void unsafeVersionFragmentsAreRedactedNotLeaked() {
+        String tainted = CLASSIC.replace(
+                "1CIJAVAVERSION J2RE 1.4.2 IBM Windows 32 build cn142sr1w-20041028",
+                "1CIJAVAVERSION J2RE 1.4.2 IBM Windows 32 build D:\\corp\\builds\\custom nightly.corp.example");
+        MaskResult result = rewriter.mask(tainted);
+        String out = result.output();
+        assertTrue(out.contains(
+                        "1XMJAVAVERSION J2RE 1.4.2 IBM Windows 32 build [tm-anon:redacted] [tm-anon:redacted]"),
+                out);
+        assertFalse(out.contains("D:\\corp\\builds"), "a path in the version line must not survive");
+        assertFalse(out.contains("corp.example"), "a hostname-shaped fragment must not survive");
+        assertTrue(result.warnings().stream().anyMatch(w -> w.contains("1CIJAVAVERSION")),
+                "partial redaction of the version line must leave a warning: " + result.warnings());
+    }
+
+    @Test
+    void versionIsReemittedAtMostOnce() {
+        // A second CI-family section (another 1CIJAVAVERSION) must not produce
+        // a second synthetic version line.
+        String doubled = String.join("\n", TITLE, CI, CI, XM_CLASSIC, END);
+        String out = rewriter.mask(doubled).output();
+        assertEquals(1, out.lines().filter(l -> l.startsWith("1XMJAVAVERSION")).count(), out);
     }
 
     // --- §5-B.3: TITLE minimal, 1TIFILENAME always redacted ---------------
