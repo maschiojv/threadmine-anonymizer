@@ -33,8 +33,17 @@ class JavacoreNoLeakTest {
 
     private static final Path FIXTURES = Path.of("corpus", "fixtures");
 
+    // The 1CIJAVAVERSION TOKEN itself must die everywhere: its payload is
+    // re-emitted under 1XMJAVAVERSION (SPEC 5-B.2 amendment), but a surviving
+    // CI-family token is a verify finding. The payloads in these fixtures were
+    // audited word by word — version/vendor/public GA build only, nothing
+    // client-identifying — so no payload fragment belongs in the planted
+    // lists; the sensitive-fragment path (path/hostname inside the version
+    // line) is pinned by JavacoreRewriterTest.unsafeVersionFragmentsAreRedactedNotLeaked.
     private static final Map<String, List<String>> PLANTED = Map.of(
             "openj9-javacore-classic.txt", List.of(
+                    // CI-family version token (payload survives, token must not)
+                    "1CIJAVAVERSION",
                     // 1TIFILENAME local path
                     "D:\\acme", "javacore.20070314",
                     // 1CICMDLINE / 2CIUSERARG secrets and hosts
@@ -50,6 +59,8 @@ class JavacoreNoLeakTest {
                     "HealthBoard", "ScoreMatrix", "AcmeModuleClassLoader",
                     "com.acme", "com/acme"),
             "openj9-javacore-moderno.txt", List.of(
+                    // CI-family version token (dump already has 1XMJAVAVERSION: no re-emission)
+                    "1CIJAVAVERSION",
                     // 1TIFILENAME and deploy paths
                     "/opt/acme", "javacore.20260210",
                     // 1CICMDLINE / 2CIENVVAR secrets
@@ -62,6 +73,7 @@ class JavacoreNoLeakTest {
                     "CardSwitchClient", "PaymentSyncHandler", "Application.java",
                     "com/acme"),
             "openj9-javacore-deadlock.txt", List.of(
+                    "1CIJAVAVERSION",
                     "/opt/acme", "javacore.20260211", "Hunter2!", "-Dacme.tenant",
                     "acme-payments-svc-4.12.0.jar",
                     "pgto-worker", "WalletService", "LedgerBook", "PaymentWorker",

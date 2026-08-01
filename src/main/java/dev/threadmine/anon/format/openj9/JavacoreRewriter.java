@@ -99,6 +99,27 @@ public final class JavacoreRewriter {
     private static final Set<String> VERBATIM_SOURCES =
             Set.of("Native Method", "Unknown Source", "<generated>", "");
 
+    // --- §5-B.2 amendment: JVM version re-emitted from the stripped section --
+    // A real javacore has no 1XMJAVAVERSION: its only version line is
+    // 1CIJAVAVERSION, inside the CI/ENVINFO section that §5-B.2 strips whole.
+    // Losing it makes ThreadMine parse the masked dump with versaoJava=null —
+    // information that is not sensitive (the payload is the JVM's own
+    // java.fullversion: version, vendor, OS/arch, public GA/SR build id).
+    // The payload is re-emitted right after the strip marker under
+    // 1XMJAVAVERSION, the one token ParserOpenJ9Impl reads — re-emitting the
+    // original 1CI token would itself be flagged by verify as a surviving
+    // forbidden-section line (§5-B.9). Fail-closed guard: each
+    // whitespace-separated word must look like version vocabulary; anything
+    // path-, env- or hostname-shaped is replaced by a redaction placeholder.
+    private static final Pattern CI_JAVA_VERSION = Pattern.compile("^1CIJAVAVERSION\\s+(.*\\S)\\s*$");
+    private static final Pattern SAFE_VERSION_WORD =
+            Pattern.compile("^[-()A-Za-z0-9][-()A-Za-z0-9._+,]*$");
+    /** Two alphabetic runs joined by a dot read as a hostname/domain, never as a version. */
+    private static final Pattern DOMAIN_LIKE_WORD = Pattern.compile("[A-Za-z]{2,}\\.[A-Za-z]{2,}");
+    /** In-line placeholder; deliberately digit-free so it can never read as a version number. */
+    static final String REDACTED_FRAGMENT = "[tm-anon:redacted]";
+    private static final String REEMITTED_VERSION_TOKEN = "1XMJAVAVERSION ";
+
     private enum SectionKind { PREAMBLE, TITLE, THREADS, STRIP }
 
     private final TokenEngine engine;
@@ -125,6 +146,8 @@ public final class JavacoreRewriter {
         SectionKind kind = SectionKind.PREAMBLE;
         boolean stripMarkerEmitted = false;
         String sectionName = null;
+        boolean hasParserVersionLine = hasParserVersionLine(lines);
+        boolean versionReemitted = false;
 
         for (int i = 0; i < lines.length; i++) {
             String raw = lines[i];
@@ -156,6 +179,20 @@ public final class JavacoreRewriter {
                     out.add("# [tm-anon: stripped section " + sectionName + "]" + eol);
                     stripMarkerEmitted = true;
                 }
+                Matcher version = CI_JAVA_VERSION.matcher(line);
+                if (!hasParserVersionLine && !versionReemitted && version.matches()) {
+                    String payload = sanitizeVersionPayload(version.group(1));
+                    out.add(REEMITTED_VERSION_TOKEN + payload + eol);
+                    versionReemitted = true;
+                    if (payload.contains(REDACTED_FRAGMENT)) {
+                        redacted++;
+                        warnings.add("line " + (i + 1) + ": 1CIJAVAVERSION re-emitted as "
+                                + "1XMJAVAVERSION with non-version fragment(s) redacted (fail-closed)");
+                    } else {
+                        preserved++;
+                    }
+                    continue;
+                }
                 stripped++;
                 continue;
             }
@@ -185,6 +222,40 @@ public final class JavacoreRewriter {
 
         return new MaskResult(String.join("\n", out), preserved, tokenized, stripped, redacted,
                 List.copyOf(warnings));
+    }
+
+    // --- §5-B.2 amendment helpers -------------------------------------------
+
+    /** Whether the dump already carries the line the ThreadMine parser reads. */
+    private static boolean hasParserVersionLine(String[] lines) {
+        for (String raw : lines) {
+            String line = raw.endsWith("\r") ? raw.substring(0, raw.length() - 1) : raw;
+            if (line.startsWith("1XMJAVAVERSION")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Word-by-word fail-closed filter for the {@code 1CIJAVAVERSION} payload.
+     * Version vocabulary ({@code J2RE 1.4.2}, {@code amd64-64},
+     * {@code (build 17.0.9+9)}, IBM SR ids like {@code cn142sr1w-20041028})
+     * passes verbatim; anything carrying path separators, {@code =}/{@code @},
+     * quotes, or a hostname-shaped {@code word.word} run is replaced by a
+     * digit-free placeholder so ThreadMine can never read it as a version.
+     */
+    private static String sanitizeVersionPayload(String payload) {
+        StringBuilder sanitized = new StringBuilder(payload.length());
+        for (String word : payload.split("\\s+")) {
+            if (sanitized.length() > 0) {
+                sanitized.append(' ');
+            }
+            boolean safe = SAFE_VERSION_WORD.matcher(word).matches()
+                    && !DOMAIN_LIKE_WORD.matcher(word).find();
+            sanitized.append(safe ? word : REDACTED_FRAGMENT);
+        }
+        return sanitized.toString();
     }
 
     // --- section machinery ---------------------------------------------------

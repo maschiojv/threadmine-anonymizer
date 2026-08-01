@@ -1,5 +1,7 @@
 # Javacore IBM JDK classico (estilo J2RE 1.4.2, como o real-openj9.txt do ThreadMine):
-# SEM 1XMJAVAVERSION (a versao vive so em 1CIJAVAVERSION, que morre junto com a secao CI),
+# SEM 1XMJAVAVERSION (a versao vive so em 1CIJAVAVERSION; a emenda da 5-B.2 re-emite o
+# payload logo apos o marcador de strip da CI, sob o token 1XMJAVAVERSION — o unico que o
+# ParserOpenJ9Impl le — para o ThreadMine nao parsear o mascarado com versaoJava=null),
 # threads com state:R/CW/B e TID/sys_thread_t/native ID na propria linha 3XMTHREADINFO,
 # secao XM delimitada por tokens (nao ha linha em branco entre threads — SPEC 5-B.7).
 # Schema §6 estendido p/ javacore: + ancoras_deteccao_4kb, secoes_preservadas,
@@ -7,10 +9,11 @@
 formato: openj9-javacore
 ancoras_deteccao_4kb:
   # SPEC 5-B.1: pelo menos UM dos tokens de deteccao (1TISIGINFO | 3XMTHREADINFO | 1XMJAVAVERSION)
-  # deve sobreviver DENTRO dos primeiros 4KB do arquivo mascarado. Neste fixture a unica ancora
-  # garantida nos 4KB e 1TISIGINFO (linha 4): 3XMTHREADINFO so aparece depois de CI/DC/DG/ST/XE/LK,
-  # e 1XMJAVAVERSION nao existe no dialeto classico.
+  # deve sobreviver DENTRO dos primeiros 4KB do arquivo mascarado. Neste fixture 1TISIGINFO
+  # (linha 4) sobrevive, e a emenda da 5-B.2 poe um 1XMJAVAVERSION sintetico logo apos o strip
+  # da CI — bem dentro dos 4KB, ja que o strip colapsa tudo que vinha antes.
   - "1TISIGINFO"
+  - "1XMJAVAVERSION"
 secoes_preservadas:
   - "TITLE"            # minima: 1TISIGINFO + 1TIDATETIME preservadas; 1TIFILENAME redigida (5-B.3)
   - "XM"
@@ -29,6 +32,9 @@ linhas_redigidas:
 ancoras_preservadas:
   - "1TISIGINFO     signal 3 received"
   - "1TIDATETIME    Date:                 2007/03/14 at 09:30:11"
+  - "J2RE 1.4.2 IBM Windows 32 build cn142sr2w-20050810"   # payload da 1CIJAVAVERSION: re-emitido
+                       # verbatim sob 1XMJAVAVERSION (emenda 5-B.2) — versao/vendor/build GA publico
+                       # da IBM, nada identificavel do cliente (auditado); tambem repete no 2XMFULLTHDDUMP
   - "1XMCURTHDINFO"
   - "2XMFULLTHDDUMP"   # "Full thread dump Classic VM (...)": estrutural do XM; contem a frase
                        # "Full thread dump" MUITO alem dos 4KB — nao pode reclassificar como HotSpot

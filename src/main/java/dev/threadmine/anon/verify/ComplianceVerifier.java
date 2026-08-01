@@ -74,6 +74,10 @@ public final class ComplianceVerifier {
     private static final String FILENAME_TOKEN = "1TIFILENAME";
     private static final String FILENAME_REDACTION = "[tm-anon: redacted]";
 
+    /** The version token the ThreadMine parser reads, and its CI-section source in real javacores. */
+    private static final String VERSION_ANCHOR = "1XMJAVAVERSION";
+    private static final String CI_VERSION_TOKEN = "1CIJAVAVERSION";
+
     /** The fixed {@code 3XMCPUTIME} category vocabulary — the only quoted strings allowed there. */
     private static final Set<String> CPU_CATEGORIES =
             Set.of("Application", "Resource-Monitor", "System-JVM", "GC", "JIT");
@@ -105,8 +109,8 @@ public final class ComplianceVerifier {
         List<Finding> findings = residualIdentifiers(after);
         List<AnchorCheck> anchors = new ArrayList<>();
         for (String marker : DumpScan.ANCHOR_MARKERS) {
-            int inOriginal = before.anchorCount(marker);
-            int inMasked = after.anchorCount(marker);
+            int inOriginal = versionAwareAnchorCount(marker, before);
+            int inMasked = versionAwareAnchorCount(marker, after);
             if (inOriginal > 0 || inMasked > 0) {
                 anchors.add(new AnchorCheck(marker, inOriginal, inMasked));
             }
@@ -120,6 +124,25 @@ public final class ComplianceVerifier {
 
         return new VerifyReport(findings, anchors, counts, unknownTokens(tokens, engine),
                 after.strippedLines(), after.redactedLines());
+    }
+
+    /**
+     * §5-B.2 amendment: a real javacore carries its version only in
+     * {@code 1CIJAVAVERSION}, which mask strips with the CI/ENVINFO section and
+     * re-emits exactly once as {@code 1XMJAVAVERSION} — the token the
+     * ThreadMine parser reads. For the version anchor, a side with no
+     * {@code 1XMJAVAVERSION} but at least one {@code 1CIJAVAVERSION} counts as
+     * one expected line, so an original/masked pair stays intact while a
+     * masked file that DROPPED the version breaks the anchor. Symmetric on
+     * purpose: verify(x, x) must never flag anything.
+     */
+    private static int versionAwareAnchorCount(String marker, DumpScan scan) {
+        int count = scan.anchorCount(marker);
+        if (marker.equals(VERSION_ANCHOR) && count == 0
+                && scan.anchorCount(CI_VERSION_TOKEN) > 0) {
+            return 1;
+        }
+        return count;
     }
 
     // --- (a) identifiers that survived masking -----------------------------

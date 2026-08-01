@@ -127,6 +127,45 @@ class ComplianceVerifierJavacoreTest {
                 report.residualIdentifiers().toString());
     }
 
+    // --- §5-B.2 amendment: version re-emitted from the stripped CI section --
+    // On a real javacore the only version line is 1CIJAVAVERSION; mask strips
+    // the CI/ENVINFO section and re-emits the payload as 1XMJAVAVERSION (the
+    // token the ThreadMine parser reads). The anchor bookkeeping must treat
+    // that re-emission as intact — and its absence as broken.
+
+    @Test
+    void reemittedVersionAnchorIsIntactWhenOriginalOnlyHadTheCiForm() {
+        String original = ORIGINAL
+                .replace("1XMJAVAVERSION JRE 17 Linux amd64-64 build 17.0.9+9 (openj9-0.41.0)\n", "")
+                .replace("0SECTION       ENVINFO subcomponent dump routine",
+                        "0SECTION       ENVINFO subcomponent dump routine\n"
+                                + "1CIJAVAVERSION JRE 17 Linux amd64-64 (build 17.0.9+9)");
+        String masked = MASKED
+                .replace("1XMJAVAVERSION JRE 17 Linux amd64-64 build 17.0.9+9 (openj9-0.41.0)\n", "")
+                .replace("# [tm-anon: stripped section ENVINFO]",
+                        "# [tm-anon: stripped section ENVINFO]\n"
+                                + "1XMJAVAVERSION JRE 17 Linux amd64-64 (build 17.0.9+9)");
+        VerifyReport report = verifier.verify(original, masked);
+        assertEquals(java.util.List.of(), report.residualIdentifiers());
+        assertTrue(report.brokenAnchors().isEmpty(), report.brokenAnchors().toString());
+        assertTrue(report.passed());
+    }
+
+    @Test
+    void missingReemittedVersionBreaksTheAnchorWhenOriginalHadTheCiForm() {
+        String original = ORIGINAL
+                .replace("1XMJAVAVERSION JRE 17 Linux amd64-64 build 17.0.9+9 (openj9-0.41.0)\n", "")
+                .replace("0SECTION       ENVINFO subcomponent dump routine",
+                        "0SECTION       ENVINFO subcomponent dump routine\n"
+                                + "1CIJAVAVERSION JRE 17 Linux amd64-64 (build 17.0.9+9)");
+        String masked = MASKED
+                .replace("1XMJAVAVERSION JRE 17 Linux amd64-64 build 17.0.9+9 (openj9-0.41.0)\n", "");
+        VerifyReport report = verifier.verify(original, masked);
+        assertFalse(report.passed(), "a dropped version line must break the 1XMJAVAVERSION anchor");
+        assertTrue(report.brokenAnchors().stream().anyMatch(a -> a.marker().equals("1XMJAVAVERSION")),
+                report.brokenAnchors().toString());
+    }
+
     @Test
     void rawJavacoreFailsWithFrameAndThreadFindings() {
         VerifyReport report = verifier.verify(ORIGINAL, ORIGINAL);
