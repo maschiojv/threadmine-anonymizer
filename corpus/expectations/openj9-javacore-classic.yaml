@@ -73,10 +73,17 @@ invariantes:
   - determinismo_intra_dump
   - ids_nativos_verbatim
   - ordem_threadinfo_stacktrace_preservada    # 5-B.7: ordem relativa 3XMTHREADINFO/4XESTACKTRACE intacta
+  - moldura_compiled_code_preservada          # 5.1: "(Compiled Code)" colado ao arquivo-fonte, SEM numero
+                       # de linha (dialeto 1.4.2) — a moldura sobrevive verbatim (o parser do ThreadMine
+                       # le "frame JIT-compilado") e so o nome do arquivo vira token
   - verify_exit4_se_secao_proibida_sobrevive  # 5-B.9: CI/LK/CL/DC/DG/ST/XE vivas no mascarado = exit 4
   - verify_exit4_se_1tifilename_com_conteudo  # 5-B.9
 # Armadilhas cobertas: (1) 1TISIGINFO e a UNICA ancora de deteccao nos 4KB — o strip do TITLE nao
 # pode toca-la; (2) thread sem stack ("Signal dispatcher": 3XMTHREADINFO seguida de outra
 # 3XMTHREADINFO, sem 4XESTACKTRACE) nao pode quebrar o lexer; (3) 2XMFULLTHDDUMP repete a versao
 # da JVM (nao-sensivel, preservar); (4) o mesmo nome de thread aparece em XM (preservado/tokenizado)
-# e em LK (stripado) — o token so precisa existir no XM.
+# e em LK (stripado) — o token so precisa existir no XM; (5) frames JIT no dialeto 1.4.2 trazem
+# "(Compiled Code)" colado ao arquivo-fonte SEM numero de linha — "(Object.java(Compiled Code))"
+# numa classe de allowlist e "(LedgerCache.java(Compiled Code))" numa classe do app. Essa forma
+# (diferente do "(Arquivo.java:NN(Compiled Code))" do fixture moderno) e a que o verify tratava
+# como identificador residual: falso positivo em javacore real, exit 4 num arquivo bem mascarado.

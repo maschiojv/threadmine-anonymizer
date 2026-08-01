@@ -188,6 +188,59 @@ class ComplianceVerifierJavacoreTest {
         assertEquals(java.util.List.of(), report.residualIdentifiers());
     }
 
+    // --- JIT moulding inside the source parenthesis (old javacores) ---------
+
+    /** Same masked shape as MASKED, with the frames the JIT moulding rides on. */
+    private static String maskedWithCompiledCode(String applicationSource) {
+        return String.join("\n",
+                "# tm-anon v1",
+                "1TISIGINFO     signal 3 received",
+                "2XMFULLTHDDUMP Full thread dump Classic VM (J2RE 1.4.2 IBM Windows 32, native threads):",
+                "3XMTHREADINFO      \"t11111x22222\" (TID:0x2A29CF8, sys_thread_t:0x2412E78, state:R) prio=5",
+                "4XESTACKTRACE          at java.lang.Object.wait(Object.java(Compiled Code))",
+                "4XESTACKTRACE          at paaaaaxbbbbb.pcccccxddddd.C11111x22222.m33333x44444("
+                        + applicationSource + ")",
+                "");
+    }
+
+    /**
+     * Old IBM javacores glue the JIT moulding to the source file inside the
+     * frame parenthesis and omit the line number:
+     * {@code (WalletService.java(Compiled Code))}. The rewriter tokenizes the
+     * file name and keeps the moulding verbatim (SPEC §5.1) — the verifier has
+     * to read it back the same way, or a correctly masked JDK 1.4-era javacore
+     * is condemned on a frame that has nothing left to leak.
+     */
+    @Test
+    void acceptsMaskedSourceFileWearingTheCompiledCodeMoulding() {
+        String masked = maskedWithCompiledCode("C11111x22222.java(Compiled Code)");
+        VerifyReport report = verifier.verify(masked, masked);
+        assertEquals(java.util.List.of(), report.residualIdentifiers(),
+                report.residualIdentifiers().toString());
+        assertTrue(report.passed());
+    }
+
+    /** Some javacores drop the file name entirely and leave only the moulding. */
+    @Test
+    void acceptsTheBareCompiledCodeLocation() {
+        String masked = maskedWithCompiledCode("Compiled Code");
+        VerifyReport report = verifier.verify(masked, masked);
+        assertEquals(java.util.List.of(), report.residualIdentifiers(),
+                report.residualIdentifiers().toString());
+    }
+
+    /** Cutting the moulding must not blind the check to the file name under it. */
+    @Test
+    void stillReportsAnUnmaskedSourceFileWearingTheCompiledCodeMoulding() {
+        String dump = maskedWithCompiledCode("LedgerService.java(Compiled Code)");
+        VerifyReport report = verifier.verify(dump, dump);
+        assertFalse(report.passed(), "an unmasked source file is a leak, moulding or not");
+        assertTrue(report.residualIdentifiers().stream()
+                        .anyMatch(f -> f.kind() == Finding.Kind.SOURCE_FILE
+                                && f.value().contains("LedgerService")),
+                report.residualIdentifiers().toString());
+    }
+
     @Test
     void unknownCpuCategoryIsAFinding() {
         String leaked = MASKED.replace("current category=\"Application\"",

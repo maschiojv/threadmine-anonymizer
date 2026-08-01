@@ -167,14 +167,14 @@ NULL
 2XMFULLTHDDUMP Full thread dump Classic VM (J2RE 1.4.2 IBM Windows 32 build cn142sr2w-20050810, native threads):
 3XMTHREADINFO      "QueueWorker: '0' for queue: 'acme.kernel.Default'" (TID:0x2A29CF8, sys_thread_t:0x2412E78, state:CW, native ID:0x107C) prio=5
 4XESTACKTRACE          at java.lang.Object.wait(Native Method)
-4XESTACKTRACE          at java.lang.Object.wait(Object.java:443)
+4XESTACKTRACE          at java.lang.Object.wait(Object.java(Compiled Code))
 4XESTACKTRACE          at com.acme.kernel.QueueWorker.waitForRequest(QueueWorker.java:153)
 4XESTACKTRACE          at com.acme.kernel.QueueWorker.run(QueueWorker.java:172)
 3XMTHREADINFO      "QueueWorker: '1' for queue: 'acme.kernel.Default'" (TID:0x2A29B18, sys_thread_t:0x2413388, state:R, native ID:0xB2C) prio=5
 4XESTACKTRACE          at java.net.SocketInputStream.socketRead(Native Method)
 4XESTACKTRACE          at java.net.SocketInputStream.read(SocketInputStream.java:129)
 4XESTACKTRACE          at com.acme.gateway.CardSwitchClient.readResponse(CardSwitchClient.java:210)
-4XESTACKTRACE          at com.acme.ledger.LedgerCache.refresh(LedgerCache.java:88)
+4XESTACKTRACE          at com.acme.ledger.LedgerCache.refresh(LedgerCache.java(Compiled Code))
 4XESTACKTRACE          at com.acme.kernel.QueueWorker.execute(QueueWorker.java:219)
 4XESTACKTRACE          at com.acme.kernel.QueueWorker.run(QueueWorker.java:178)
 3XMTHREADINFO      "QueueWorker: '2' for queue: 'acme.kernel.Default'" (TID:0x2A29BB8, sys_thread_t:0x2413808, state:B, native ID:0x1294) prio=5
