@@ -232,8 +232,8 @@ map. Refuses to overwrite an existing vault (exit `3`). Adds the file to
 
 ### `mask`
 
-Reads a HotSpot-family thread dump and writes the masked copy. Without `-o` the
-output is `<name>.anon.<ext>`.
+Reads a HotSpot-family thread dump or an OpenJ9 javacore and writes the masked
+copy. Without `-o` the output is `<name>.anon.<ext>`.
 
 | Option | Effect |
 |---|---|
@@ -271,8 +271,8 @@ recognizable HotSpot dump is refused outright:
 ```
 $ tm-anon mask notadump.txt
 tm-anon: unrecognized dump format (fail-closed refusal, SPEC exit 2).
-Only HotSpot-family thread dumps are supported: jstack, jcmd Thread.print,
-jcmd Thread.dump_to_file -format=text, ThreadMXBean/VisualVM.
+Supported formats: HotSpot-family thread dumps (jstack, jcmd Thread.print,
+jcmd Thread.dump_to_file -format=text, ThreadMXBean/VisualVM) and OpenJ9 javacore.
 ```
 
 ### `unmask`
@@ -302,9 +302,21 @@ Temurin, Corretto, Zulu, Liberica, Zing, GraalVM in JVM mode):
 - virtual threads: pinned, mounted on a carrier, unmounted
 - deadlock blocks, multi-dump files, header-less and reverse-ordered dumps
 
-Not supported yet: **OpenJ9 javacore** and GraalVM native-image dumps. Both are
-refused with exit `2` rather than half-masked. See [`corpus/`](corpus/) for the
-17 fixtures every release is tested against.
+**OpenJ9 javacore** is supported in *strip mode*, because a javacore leaks far
+more than a HotSpot dump: command lines with `-D` properties, full classpaths,
+local file paths, monitor tables carrying your class names, loaded-class
+listings. Only the title (with the local file path redacted) and the thread
+section survive; every other section is removed wholesale and replaced by a
+single `# [tm-anon: stripped section <NAME>]` marker, and a section the tool
+does not recognize is stripped rather than kept. Sections are classified by the
+column-0 token family, so both the classic IBM layout (`CI/LK/XM/CL`) and the
+modern one (`ENVINFO/LOCKS/THREADS/CLASSES`) are handled. Trade-off worth
+knowing: the JVM version line sits in a stripped section, so the analyzer may
+report an unknown Java version.
+
+Not supported: GraalVM native-image dumps, refused with exit `2` rather than
+half-masked. See [`corpus/`](corpus/) for the 23 fixtures every release is
+tested against.
 
 ## Why you can trust this
 
@@ -336,9 +348,11 @@ them yourself:
 4. **The vault never leaves your filesystem**, because nothing in this jar can
    send it anywhere. Reversal requires the vault. Not the code — the vault.
 
-5. **Everything is tested against a corpus of 17 dumps** with golden
-   expectations, plus property tests on the token grammar. `./mvnw test` runs
-   the lot; CI runs it on Linux and Windows.
+5. **Everything is tested against a corpus of 23 dumps** with golden
+   expectations, plus property tests on the token grammar, an end-to-end parity
+   run against a real analyzer, and a hard non-leak assertion that plants
+   secrets in the javacore fixtures and fails if any of them survives masking.
+   `./mvnw test` runs the lot; CI runs it on Linux and Windows.
 
 The security argument in full, including what a masked dump still reveals, is in
 [THREAT_MODEL.md](THREAT_MODEL.md). It is deliberately written as "here is what

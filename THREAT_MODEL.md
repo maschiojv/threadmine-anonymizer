@@ -158,10 +158,20 @@ Explicit non-goals:
 - **No confidentiality of the vault at rest** (yet). No passphrase encryption in
   this version.
 - **No protection against structural inference** (sections 3 and 4).
-- **No masking of dialects it does not support.** OpenJ9 javacore and GraalVM
-  native-image dumps are refused, not partially masked. A javacore in particular
-  carries command lines, `-D` properties, full classpaths and local file paths;
-  do not upload one thinking `tm-anon` cleaned it, because `tm-anon` refused it.
+- **No masking of dialects it does not support.** GraalVM native-image dumps are
+  refused, not partially masked. Anything the format detector does not recognize
+  is refused with exit `2` rather than half-masked.
+- **OpenJ9 javacore is supported in strip mode, and the trade is worth stating.**
+  A javacore carries command lines, `-D` properties, full classpaths, monitor
+  tables with your class names, and loaded-class listings — far more than a
+  HotSpot dump. `tm-anon` keeps only the title (minus the local file path, which
+  is redacted) and the thread section; every other section is removed wholesale
+  and replaced by a single `# [tm-anon: stripped section <NAME>]` marker, and an
+  unrecognized section is stripped rather than kept. Two consequences to know
+  about: the JVM version line lives in a stripped section, so an analyzer may
+  report an unknown Java version; and the explicit `1LKDEADLOCK` block is
+  removed with the lock section — the deadlock cycle survives in the crossed
+  `3XMTHREADBLOCK` lines, which is what the analyzer reads anyway.
 - **No PDF or rendered-report unmasking.** `unmask` operates on text.
 
 ## 7. How to audit this in an afternoon
