@@ -109,16 +109,8 @@ public final class ComplianceVerifier {
         List<Finding> findings = residualIdentifiers(after);
         List<AnchorCheck> anchors = new ArrayList<>();
         for (String marker : DumpScan.ANCHOR_MARKERS) {
-            int inOriginal = before.anchorCount(marker);
-            int inMasked = after.anchorCount(marker);
-            if (marker.equals(VERSION_ANCHOR) && inOriginal == 0
-                    && before.anchorCount(CI_VERSION_TOKEN) > 0) {
-                // §5-B.2 amendment: a real javacore carries its version only in
-                // 1CIJAVAVERSION, which mask strips with the CI/ENVINFO section
-                // and re-emits exactly once as 1XMJAVAVERSION — the token the
-                // ThreadMine parser reads. Expect that one re-emitted line.
-                inOriginal = 1;
-            }
+            int inOriginal = versionAwareAnchorCount(marker, before);
+            int inMasked = versionAwareAnchorCount(marker, after);
             if (inOriginal > 0 || inMasked > 0) {
                 anchors.add(new AnchorCheck(marker, inOriginal, inMasked));
             }
@@ -132,6 +124,25 @@ public final class ComplianceVerifier {
 
         return new VerifyReport(findings, anchors, counts, unknownTokens(tokens, engine),
                 after.strippedLines(), after.redactedLines());
+    }
+
+    /**
+     * §5-B.2 amendment: a real javacore carries its version only in
+     * {@code 1CIJAVAVERSION}, which mask strips with the CI/ENVINFO section and
+     * re-emits exactly once as {@code 1XMJAVAVERSION} — the token the
+     * ThreadMine parser reads. For the version anchor, a side with no
+     * {@code 1XMJAVAVERSION} but at least one {@code 1CIJAVAVERSION} counts as
+     * one expected line, so an original/masked pair stays intact while a
+     * masked file that DROPPED the version breaks the anchor. Symmetric on
+     * purpose: verify(x, x) must never flag anything.
+     */
+    private static int versionAwareAnchorCount(String marker, DumpScan scan) {
+        int count = scan.anchorCount(marker);
+        if (marker.equals(VERSION_ANCHOR) && count == 0
+                && scan.anchorCount(CI_VERSION_TOKEN) > 0) {
+            return 1;
+        }
+        return count;
     }
 
     // --- (a) identifiers that survived masking -----------------------------

@@ -72,8 +72,13 @@ Vocabulário de `invariantes`: `determinismo_intra_dump`, `determinismo_inter_du
      (seção ENVINFO/CI — que a §5-B manda stripar) e usa `3XMTHREADINFO3` como cabeçalho
      `Java callstack:`; o estado real vive no `state:X` da própria `3XMTHREADINFO`. As fixtures
      modernas incluem os dois tokens do parser (o golden set serve à paridade com o ThreadMine),
-     mas o mask precisa aceitar javacores SEM eles — e stripar a CI mata a única fonte de versão
-     de um javacore real. Candidato a emenda da §5-B: preservar (ou reemitir) `1CIJAVAVERSION`.
+     mas o mask precisa aceitar javacores SEM eles. **Emenda IMPLEMENTADA (fix-javacore-version):**
+     ao stripar a CI/ENVINFO, o payload da `1CIJAVAVERSION` é re-emitido uma única vez logo após
+     o marcador de strip, sob o token `1XMJAVAVERSION` (o único que o `ParserOpenJ9Impl` lê;
+     re-emitir o token `1CI` seria flagado pelo `verify` como seção proibida sobrevivente).
+     Payload verbatim atrás de filtro fail-closed por palavra: vocabulário de versão passa;
+     fragmento com cara de path/env/hostname vira `[tm-anon:redacted]` (sem dígitos, para nunca
+     ser lido como versão) com warning. Sem re-emissão quando o dump já tem `1XMJAVAVERSION`.
   2. **Nomes de `0SECTION` mudam entre gerações** (clássico: `CI/LK/XM/CL`; moderno:
      `ENVINFO/LOCKS/THREADS/CLASSES`). A §5-B nomeia seções pela família de token — a
      identificação DEVE ser pela família (prefixo alfabético do token de coluna 0), nunca pelo
