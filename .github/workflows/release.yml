@@ -95,13 +95,18 @@ jobs:
       # native build needs is the allowlist resource, declared in
       # src/main/resources/META-INF/native-image/. --no-fallback makes a missing
       # piece of metadata a build failure instead of a jar-in-disguise binary.
+      # Called through GRAALVM_HOME rather than the bare command: on the Windows
+      # runner the launcher is native-image.cmd, which bash does not resolve
+      # from PATH (exit 127).
       - name: Build the native binary
         shell: bash
         run: |
           set -euo pipefail
           jar=$(ls target/tm-anon-*.jar | head -n 1)
           mkdir -p dist
-          native-image \
+          native_image="$GRAALVM_HOME/bin/native-image"
+          [ -x "$native_image" ] || native_image="$GRAALVM_HOME/bin/native-image.cmd"
+          "$native_image" \
             --no-fallback \
             -H:+ReportExceptionStackTraces \
             -jar "$jar" \
@@ -125,7 +130,10 @@ jobs:
     name: publish release
     needs: [ jar, native ]
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/v')
+    # The jar is the artifact that must exist; a native build failing on one OS
+    # cannot hold back the release (the matrix is fail-fast: false for the same
+    # reason). Whatever binaries did build get attached.
+    if: always() && needs.jar.result == 'success' && startsWith(github.ref, 'refs/tags/v')
     permissions:
       contents: write
     steps:
