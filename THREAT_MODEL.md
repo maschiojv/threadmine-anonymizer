@@ -61,7 +61,7 @@ Masking hides names. It does not hide structure, and structure is information:
   disclose your library stack; the *required* tier can never be tokenized without
   breaking analysis.
 - **Shape of the application.** Thread counts and states, pool names and sizes
-  (`t426f3xd05a4-1..N` is obviously a pool of N), depth of your package tree
+  (`t426f3xd05a4-1..N` reads as a pool of N), depth of your package tree
   (each segment is a separate token), how many distinct classes appear in a
   stack, presence of a deadlock.
 - **Environment metadata.** JVM version and vendor from the dump banner,

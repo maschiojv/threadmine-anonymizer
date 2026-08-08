@@ -10,9 +10,9 @@ dump to an analysis service such as [ThreadMine](https://threadmine.dev), and
 run the analysis output back through `tm-anon unmask` to read it with your real
 names again.
 
-The jar contains **zero network code**. Not "we promise we don't upload
-anything" — there is no HTTP client and no `java.net` usage in it at all, and a
-test in this repo proves it. See [Why you can trust this](#why-you-can-trust-this).
+The jar contains **zero network code**: no HTTP client, no `java.net` usage, and
+a test in this repo that fails the build if anyone adds either. See
+[Why you can trust this](#why-you-can-trust-this).
 
 - License: [MIT](LICENSE) · Requires: **Java 21+** · Runtime dependencies: **none**
 - Threat model and honest limits: [THREAT_MODEL.md](THREAT_MODEL.md)
@@ -24,8 +24,7 @@ test in this repo proves it. See [Why you can trust this](#why-you-can-trust-thi
 Thread dumps are the fastest way to find out why a JVM is stuck. They are also
 full of your internal names: `com.acme.payment.LedgerService`, thread names that
 carry tenant ids, routes, or customer identifiers. In a lot of companies that is
-exactly why nobody is allowed to paste a dump into a third-party analyzer.
-Security says no, and security is right.
+exactly why pasting a dump into a third-party analyzer is against policy.
 
 `tm-anon` makes the dump boring before it leaves the machine:
 
