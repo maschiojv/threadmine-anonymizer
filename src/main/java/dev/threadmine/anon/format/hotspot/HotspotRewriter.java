@@ -110,8 +110,29 @@ public final class HotspotRewriter {
 
     // --- strip (SPEC §5.7) ----------------------------------------------------
     private static final Pattern JNI_REFS = Pattern.compile("^JNI global ref.*$");
+    /**
+     * A section SPEC §5.7 strips, written in the brace style GraalVM uses:
+     * {@code Heap: {} … {@code }}. HotSpot writes the same sections as a bare
+     * header plus an indented body, which {@link StripBlock#INDENTED_BODY}
+     * covers. Isolates matters most here — its image-heap listing names
+     * application classes outright.
+     */
+    private static final Pattern BRACED_SECTION_START =
+            Pattern.compile("^(?:Heap|Isolates)\\b.*\\{\\s*$");
+    private static final Pattern BARE_SECTION_START =
+            Pattern.compile("^(?:Heap|Isolates):?\\s*$");
+    /** Azul Zing prefixes its dump with a metadata block no ThreadMine parser reads. */
+    private static final String ZING_HEADER = "Zing thread dump header:";
 
-    private enum StripBlock { NONE, SMR, SYNCHRONIZERS, HEAP }
+    private enum StripBlock {
+        NONE,
+        SMR,
+        SYNCHRONIZERS,
+        /** Header line plus its indented body, ended by the first unindented line. */
+        INDENTED_BODY,
+        /** Brace-delimited section, ended when the brace depth returns to zero. */
+        BRACE
+    }
 
     private final TokenEngine engine;
     private final AllowlistMatcher allowlist;
@@ -134,6 +155,7 @@ public final class HotspotRewriter {
         int stripped = 0;
         int redacted = 0;
         StripBlock stripBlock = StripBlock.NONE;
+        int braceDepth = 0;
         boolean lastEmittedWasStripMarker = false;
 
         for (int i = 0; i < lines.length; i++) {
@@ -146,6 +168,16 @@ public final class HotspotRewriter {
                 out.add(raw);
                 lastEmittedWasStripMarker = false;
                 preserved++;
+                continue;
+            }
+
+            if (stripBlock == StripBlock.BRACE) {
+                braceDepth += braceDepthDelta(line);
+                if (braceDepth <= 0) {
+                    stripBlock = StripBlock.NONE;
+                }
+                stripped++;
+                lastEmittedWasStripMarker = emitStripMarker(out, lastEmittedWasStripMarker, eol);
                 continue;
             }
 
@@ -162,6 +194,7 @@ public final class HotspotRewriter {
             StripBlock started = stripBlockStart(line);
             if (started != null) {
                 stripBlock = started;
+                braceDepth = started == StripBlock.BRACE ? braceDepthDelta(line) : 0;
                 stripped++;
                 lastEmittedWasStripMarker = emitStripMarker(out, lastEmittedWasStripMarker, eol);
                 continue;
@@ -210,8 +243,11 @@ public final class HotspotRewriter {
         if (trimmed.equals("Locked ownable synchronizers:")) {
             return StripBlock.SYNCHRONIZERS;
         }
-        if (trimmed.equals("Heap")) {
-            return StripBlock.HEAP;
+        if (BRACED_SECTION_START.matcher(trimmed).matches()) {
+            return StripBlock.BRACE;
+        }
+        if (BARE_SECTION_START.matcher(trimmed).matches() || trimmed.equals(ZING_HEADER)) {
+            return StripBlock.INDENTED_BODY;
         }
         return null;
     }
@@ -222,9 +258,23 @@ public final class HotspotRewriter {
             case SMR -> trimmed.startsWith("_java_thread_list=") || trimmed.startsWith("0x")
                     || trimmed.equals("}");
             case SYNCHRONIZERS -> trimmed.startsWith("-");
-            case HEAP -> line.startsWith(" ");
-            case NONE -> false;
+            case INDENTED_BODY -> line.startsWith(" ");
+            case BRACE, NONE -> false;
         };
+    }
+
+    /** Net brace balance of one line, used to find where a braced section ends. */
+    private static int braceDepthDelta(String line) {
+        int delta = 0;
+        for (int i = 0; i < line.length(); i++) {
+            char c = line.charAt(i);
+            if (c == '{') {
+                delta++;
+            } else if (c == '}') {
+                delta--;
+            }
+        }
+        return delta;
     }
 
     private static boolean isStandaloneStrip(String line) {

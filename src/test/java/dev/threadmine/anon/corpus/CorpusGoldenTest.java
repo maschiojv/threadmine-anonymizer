@@ -51,7 +51,7 @@ class CorpusGoldenTest {
                     .map(n -> n.substring(0, n.length() - 4))
                     .sorted()
                     .toList();
-            assertEquals(23, names.size(), "the corpus must have its 23 fixtures (20 HotSpot + 3 javacore)");
+            assertEquals(25, names.size(), "the corpus must have its 25 fixtures (22 HotSpot + 3 javacore)");
             return names.stream();
         }
     }

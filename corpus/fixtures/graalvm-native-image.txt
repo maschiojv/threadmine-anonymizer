@@ -1,0 +1,38 @@
+Full thread dump GraalVM Native Image 24.1.1 (Java Version 21.0.5+9-LTS):
+
+Heap: {
+  Young generation: 32768K used, 65536K committed
+  Old generation: 131072K used, 262144K committed
+  Runtime page size: 4096
+}
+
+Isolates: {
+  Isolate 0x00007f3a4c000000: heap 262144K, threads 5
+    Image heap: 0x00007f3a4c001000 - 0x00007f3a4c8f2000
+    Object at 0x00007f3a4c123456: com.acme.boot.ServiceRegistry
+  Isolate 0x00007f3a5c000000: heap 65536K, threads 1
+}
+
+"main" #1 prio=5 tid=1 nid=0x1c33 runnable
+	at com.acme.gateway.Bootstrap.awaitShutdown(Bootstrap.java:77)
+	at com.acme.gateway.Bootstrap.main(Bootstrap.java:41)
+
+"pgto-worker-1" #24 prio=5 tid=24 nid=0x1c28 blocked
+	at com.acme.payment.LedgerService.applyEntry(LedgerService.java:88)
+	at com.acme.payment.PaymentFacade.settle(PaymentFacade.java:41)
+	at java.lang.Thread.run(Thread.java:829)
+
+"pgto-worker-2" #25 prio=5 tid=25 nid=0x1c29 runnable
+	at com.acme.payment.gateway.AcquirerClient.capture(AcquirerClient.java:133)
+	at com.acme.payment.LedgerService.applyEntry(LedgerService.java:95)
+	at java.lang.Thread.run(Thread.java:829)
+
+"http-nio-8080-exec-1" #27 daemon prio=5 tid=27 nid=0x1c2f waiting
+	at jdk.internal.misc.Unsafe.park(Native Method)
+	at org.apache.tomcat.util.threads.TaskQueue.poll(TaskQueue.java:99)
+	at java.lang.Thread.run(Thread.java:829)
+
+"Reference Handler" #2 daemon prio=10 tid=2 nid=0x1bf2 runnable
+	at java.lang.ref.Reference.waitForReferencePendingList(Native Method)
+
+"VM Thread" #3 prio=5 tid=3 nid=0x1bf1 runnable
