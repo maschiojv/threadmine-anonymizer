@@ -125,7 +125,12 @@ final class MaskCommand {
             return finish(result, target, input, reportPath, out, false);
         } catch (VaultException e) {
             err.println("tm-anon: vault error: " + e.getMessage());
-            err.println("hint: run `tm-anon init --vault " + vaultPath + "` to create a vault first.");
+            if (!Files.exists(vaultPath)) {
+                // Only advise creating one when there is none: telling someone
+                // who mistyped a passphrase to run `init` sends them chasing
+                // the wrong problem.
+                err.println("hint: run `tm-anon init --vault " + vaultPath + "` to create a vault first.");
+            }
             return EXIT_VAULT_ERROR;
         } catch (IOException e) {
             err.println("tm-anon: cannot write report: " + e.getMessage());

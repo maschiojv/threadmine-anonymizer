@@ -45,6 +45,14 @@ final class InitCommand {
 
         Path vaultFile = Commands.vaultPath(args, workingDir);
         boolean encrypt = args.flag(Commands.ENCRYPT_FLAG);
+        if (!encrypt && passphrases.presetAvailable()) {
+            err.println("init: " + PassphraseSource.ENV_VAR + " is set but --encrypt was not passed.");
+            err.println("Refusing to create a PLAINTEXT vault while a passphrase is waiting - that");
+            err.println("combination almost always means you expected an encrypted one.");
+            err.println("Pass --encrypt to seal the vault, or unset " + PassphraseSource.ENV_VAR
+                    + " to create a plaintext vault on purpose.");
+            return ExitCodes.VAULT_ERROR;
+        }
         char[] passphrase = null;
         if (encrypt) {
             passphrase = passphrases.fresh();

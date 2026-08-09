@@ -19,6 +19,18 @@ interface PassphraseSource {
     char[] existing();
 
     /**
+     * Whether a passphrase is waiting in the environment, answerable without
+     * prompting anyone. {@code init} uses it to refuse creating a PLAINTEXT
+     * vault while {@code TM_ANON_PASSPHRASE} is set: that combination is
+     * almost always someone who believes they are getting an encrypted vault,
+     * and silently handing them an unprotected one is the same failure the
+     * loader already refuses in the other direction.
+     */
+    default boolean presetAvailable() {
+        return false;
+    }
+
+    /**
      * Passphrase for a vault being created, confirmed by a second entry;
      * {@code null} when none is available or the two entries differ.
      */
@@ -26,6 +38,12 @@ interface PassphraseSource {
 
     static PassphraseSource standard() {
         return new PassphraseSource() {
+            @Override
+            public boolean presetAvailable() {
+                String value = System.getenv(ENV_VAR);
+                return value != null && !value.isEmpty();
+            }
+
             @Override
             public char[] existing() {
                 char[] fromEnvironment = fromEnvironment();

@@ -39,7 +39,7 @@ class EncryptedVaultCliTest {
         return errBytes.toString(StandardCharsets.UTF_8);
     }
 
-    /** Stands in for the environment variable / terminal prompt. */
+    /** Stands in for the terminal prompt: available, but not preset in the environment. */
     private static PassphraseSource supplying(String value) {
         return new PassphraseSource() {
             @Override
@@ -52,6 +52,51 @@ class EncryptedVaultCliTest {
                 return value == null ? null : value.toCharArray();
             }
         };
+    }
+
+    /** Stands in for TM_ANON_PASSPHRASE being set in the environment. */
+    private static PassphraseSource preset(String value) {
+        return new PassphraseSource() {
+            @Override
+            public boolean presetAvailable() {
+                return true;
+            }
+
+            @Override
+            public char[] existing() {
+                return value.toCharArray();
+            }
+
+            @Override
+            public char[] fresh() {
+                return value.toCharArray();
+            }
+        };
+    }
+
+    @Test
+    void initRefusesAPlaintextVaultWhileAPassphraseIsWaitingInTheEnvironment() {
+        // Found by smoke-testing the real jar: exporting TM_ANON_PASSPHRASE and
+        // forgetting --encrypt silently produced a plaintext vault, which is
+        // the same "believing you are protected" failure load() already
+        // refuses in the other direction.
+        Path vault = tempDir.resolve("v.json");
+        int code = InitCommand.execute(new String[]{"--vault", vault.toString()},
+                tempDir, out, err, preset("a passphrase"));
+
+        assertEquals(ExitCodes.VAULT_ERROR, code);
+        assertTrue(err().contains("--encrypt"), err());
+        assertFalse(Files.exists(vault), "no vault at all beats an unexpectedly plaintext one");
+    }
+
+    @Test
+    void initWithEncryptUsesThePresetPassphraseWithoutPrompting() {
+        Path vault = tempDir.resolve("v.json");
+        int code = InitCommand.execute(new String[]{"--vault", vault.toString(), "--encrypt"},
+                tempDir, out, err, preset("a passphrase"));
+
+        assertEquals(ExitCodes.OK, code, err());
+        assertTrue(Vault.isEncrypted(vault));
     }
 
     @Test
