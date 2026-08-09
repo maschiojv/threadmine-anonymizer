@@ -47,7 +47,8 @@ Vocabulário de `invariantes`: `determinismo_intra_dump`, `determinismo_inter_du
 | `openj9-javacore-moderno.txt` | OpenJ9 0.41 em container: seções `ENVINFO/LOCKS/THREADS/CLASSES` (mesmas famílias CI/LK/XM/CL), `1XMJAVAVERSION`, `3XMTHREADINFO3 Java.lang.Thread.State:`, `3XMTHREADBLOCK Blocked on: … Owned by: "…"`, frames com **barra** + `(Compiled Code)`, pool `pgto-worker-N`, thread de rota com `?` e espaços, `2CIENVVAR` com `HOSTNAME`/senha, `Anonymous native thread`, `4XENATIVESTACK` | nomes de seção modernos ≠ clássicos (identificação por família de token, não pelo texto do `0SECTION`); `com/acme/...` deve normalizar p/ o MESMO token do canônico pontilhado (e `java/util/...` continua allowlist); nome citado em `Owned by:` = token do cabeçalho; linhas sem regra (nativas) caem no fail-closed sem derrubar o arquivo |
 | `openj9-javacore-deadlock.txt` | Deadlock OpenJ9: `1LKDEADLOCK`/`2LKDEADLOCKTHR`/`4LKDEADLOCKOBJ` + monitores com `3LKWAITERQ/3LKWAITER` dentro de LOCKS, e as duas threads `state:B` com `3XMTHREADBLOCK` cruzadas no THREADS | o strip integral do LOCKS (§5-B.2) apaga o anúncio "Deadlock detected !!!" — a evidência sobrevivente é o ciclo fechado das `3XMTHREADBLOCK`, que TEM que continuar fechado após o mask (mesmos tokens de thread/classe nos dois lados); `verify` exit 4 se qualquer linha `*LKDEADLOCK*` sobreviver |
 | `zing-c4-jstack.txt` | Azul Zing (Prime): banner `Full thread dump Zing (…)`, bloco `Zing thread dump header:` com metadados, threads do coletor C4 | o banner é a âncora que roteia ao `ParserZingImpl` no servidor (reescrevê-lo quebra a detecção de formato); o bloco de metadados não é lido por parser nenhum e caía inteiro no fail-closed — vira strip §5.7; threads `C4 …` já eram allowlist (regex de GC) |
-| `graalvm-native-image.txt` | GraalVM Native Image: estado **inline** no cabeçalho, `tid=` decimal, sem linha `java.lang.Thread.State:`, blocos `Heap: { … }` e `Isolates: { … }` delimitados por chave | `Isolates` é o ÚNICO lugar do corpus onde uma classe da aplicação aparece fora de um frame (`Object at 0x…: com.acme.boot.ServiceRegistry`) — a §5.7 manda stripar a seção, e a delimitação por chave (não por indentação) exige contar profundidade, senão o `}` final vaza como linha não classificada |
+| `graalvm-native-image.txt` | GraalVM Native Image: estado **inline** no cabeçalho, `tid=` decimal, sem linha `java.lang.Thread.State:`, blocos `Heap: { … }` e `Isolates: { … }` delimitados por chave | `Isolates` é o ÚNICO lugar do corpus **texto** onde uma classe da aplicação aparece fora de um frame (`Object at 0x…: com.acme.boot.ServiceRegistry`) — a §5.7 manda stripar a seção, e a delimitação por chave (não por indentação) exige contar profundidade, senão o `}` final vaza como linha não classificada |
+| `jcmd-dump-json-jdk25.txt` | `jcmd Thread.dump_to_file -format=json` (JDK 21+), **derivada de captura real** de um processo JDK 25 (pool de plataforma, virtual threads, lock contendido, thread de rota): `threadContainers` com `parent`/`owner`, `parkBlocker` como OBJETO, `monitorsOwned[].locks[]`, `depth` numérico, `virtual` booleano | `container` carrega `toString()` do executor/StructuredTaskScope — a classe da aplicação se nomeando fora de qualquer frame; `parent` referencia outro container pela string exata (link pendura se as duas não forem reescritas igual); o marcador da §5.9 **não pode** ser 1ª linha `#` sem invalidar o JSON (vai como 1ª chave); chave desconhecida de um JDK futuro → redigida, não repassada |
 
 ## Lacunas — status
 
@@ -119,9 +120,16 @@ Vocabulário de `invariantes`: `determinismo_intra_dump`, `determinismo_inter_du
   6. **Allowlist v2 (candidatos OpenJ9):** `JIT Compilation Thread-`, `IProfiler`,
      `Attach API wait loop`, marcador estrutural p/ `Anonymous native thread`. Hoje as
      expectations declaram esses nomes como tokenizados (allowlist-v1 não os cobre).
-- **JSON format** do `Thread.dump_to_file -format=json` não coberto (formato de saída ≠ text, fora
-  da SPEC) — é o único formato onde vivem os containers, e onde o `toString()` de um
-  `StructuredTaskScope` da aplicação vazaria FQCN. Candidato natural a uma onda futura.
+- ~~**JSON format** do `Thread.dump_to_file -format=json`~~ **FECHADA (onda 5).** A previsão da 3I
+  estava certa: o `threadContainers[].container` imprime o `toString()` do executor ou
+  `StructuredTaskScope` dono do grupo (`com.acme.batch.LedgerScope@4f2b1a`) — a classe da
+  aplicação se nomeando fora de qualquer frame — e `blockedOn`/`waitingOn`/`parkBlocker.object`/
+  `monitorsOwned[].locks[]` repetem a forma. Antes disso o `mask` **recusava** o arquivo (exit 2:
+  fail-closed correto, mas quem tinha o dump ficava sem saída). Agora: fixture
+  `jcmd-dump-json-jdk25.txt` (captura real de JDK 25), `format.json.JsonThreadDumpRewriter`
+  (documento parseado e percorrido, chave desconhecida → redigida) e caminho JSON no `verify`.
+  Desvio de spec registrado: o marcador da §5.9 vai como 1ª **chave** (`"tmAnon"`), não como 1ª
+  linha `#`, que invalidaria o JSON.
 - **`jcmd-dump-text.txt` (a fixture original) usa uma forma sintética**: `#N "nome" VIRTUAL ESTADO`,
   com `VIRTUAL` maiúsculo e antes do estado. O JDK real nunca imprimiu assim (21-23: sem estado,
   sufixo ` virtual`; 24+: `virtual ` minúsculo + estado + `Instant`). Mantida como está — o mask

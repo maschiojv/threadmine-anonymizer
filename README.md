@@ -229,6 +229,20 @@ Creates a vault: a fresh 256-bit key from `SecureRandom` plus an empty token
 map. Refuses to overwrite an existing vault (exit `3`). Adds the file to
 `.gitignore` when it sits inside a git repository.
 
+`--encrypt` seals the vault with a passphrase — PBKDF2-HMAC-SHA256 (600,000
+iterations) to derive the key, AES-256-GCM to encrypt, both from the JDK, so
+the zero-dependency guarantee is unaffected. Worth doing: the tool tells you to
+back the vault up, and a backup is exactly how a plaintext copy of your whole
+token dictionary ends up on a second disk or in a sync folder.
+
+Encrypted vaults take the passphrase from `TM_ANON_PASSPHRASE` or, failing
+that, an interactive prompt. There is deliberately no `--passphrase <value>`
+flag: it would land in your shell history and be visible in the process list to
+every other user on the machine. Lose the passphrase and the vault is gone with
+it — there is no recovery path, by construction.
+
+Existing plaintext vaults keep working untouched; nothing needs migrating.
+
 ### `mask`
 
 Reads a HotSpot-family thread dump or an OpenJ9 javacore and writes the masked
@@ -297,9 +311,23 @@ Temurin, Corretto, Zulu, Liberica, Zing, GraalVM in JVM mode):
 - `jstack` — JDK 8, 11, 17, 21, 25
 - `jcmd Thread.print`
 - `jcmd Thread.dump_to_file -format=text` (`#N "name" STATE`)
+- `jcmd Thread.dump_to_file -format=json` (JDK 21+)
 - `ThreadMXBean` / VisualVM (`"name" Id=N STATE on Class@hash`)
 - virtual threads: pinned, mounted on a carrier, unmounted
 - deadlock blocks, multi-dump files, header-less and reverse-ordered dumps
+- Azul Zing (`Zing thread dump header:` block, C4 collector threads)
+- GraalVM native-image (inline state, `Heap: { }` / `Isolates: { }` sections)
+
+**The JSON dialect** is worth a note, because it leaks in a way the text one
+does not: its `threadContainers[].container` field carries `toString()` of the
+executor or `StructuredTaskScope` that owns each group of threads — for example
+`com.acme.batch.LedgerScope@4f2b1a` — which is the only place in any format
+where one of your classes names itself outside a stack frame. The same shape
+recurs in `blockedOn`, `waitingOn`, `parkBlocker` and `monitorsOwned`. All of it
+is masked. The output stays valid JSON, so the marker cannot be a leading
+`# tm-anon v1` line; it is the first key of the root object instead
+(`"tmAnon": "# tm-anon v1"`). Keys are matched exhaustively: a field a future
+JDK adds is redacted rather than passed through.
 
 **OpenJ9 javacore** is supported in *strip mode*, because a javacore leaks far
 more than a HotSpot dump: command lines with `-D` properties, full classpaths,
@@ -313,8 +341,8 @@ modern one (`ENVINFO/LOCKS/THREADS/CLASSES`) are handled. Trade-off worth
 knowing: the JVM version line sits in a stripped section, so the analyzer may
 report an unknown Java version.
 
-Not supported: GraalVM native-image dumps, refused with exit `2` rather than
-half-masked. See [`corpus/`](corpus/) for the 23 fixtures every release is
+Anything the tool cannot classify is refused with exit `2` rather than
+half-masked. See [`corpus/`](corpus/) for the 26 fixtures every release is
 tested against.
 
 ## Why you can trust this

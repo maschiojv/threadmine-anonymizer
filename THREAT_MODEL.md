@@ -42,9 +42,31 @@ Sharing the vault with your team (a supported and recommended workflow) is a
 deliberate decision to share reversal capability. A leaked vault means total
 reversal of every dump ever masked with it. **Treat the vault as a private key:
 back it up, keep it out of repositories and tickets, put it in the same place you
-keep other secrets.** Passphrase encryption of the vault at rest is planned, not
-implemented — until it lands, the file's confidentiality is entirely up to your
-filesystem and your secret store.
+keep other secrets.**
+
+*Encryption at rest is available*: `tm-anon init --encrypt` seals the vault with
+a passphrase (PBKDF2-HMAC-SHA256, 600,000 iterations → AES-256-GCM). What this
+changes and what it does not:
+
+- **Changes:** a copy of the vault file on a backup disk, in a sync folder, or
+  in a stolen laptop image is useless without the passphrase. That is the most
+  likely way a vault escapes, precisely because backing it up is advice this
+  tool gives you.
+- **Does not change:** while `mask` or `unmask` is running, the key is in
+  process memory in the clear; anyone who can read that process, or who has
+  your passphrase, still has everything. Encryption protects the file at rest,
+  not a compromised machine.
+- **KDF honesty:** PBKDF2 is not memory-hard. Argon2id or scrypt would resist
+  GPU cracking better, but neither ships in the JDK and this tool takes no
+  dependencies — that trade-off is deliberate and stated rather than papered
+  over. Choose a passphrase with real entropy; the iteration count buys time,
+  not immunity to a weak one.
+- The KDF parameters are authenticated as GCM associated data, so an attacker
+  who can edit the file cannot weaken the stored iteration count and hand it
+  back to you: authentication fails before decryption is attempted.
+- Plaintext vaults (format v1) remain supported and are still the default;
+  passing a passphrase to one is refused rather than ignored, so nobody ends up
+  believing an unprotected file is protected.
 
 **3. The analysis service itself: cannot**, even if fully compromised. It only
 ever receives tokens, and no amount of server-side access produces a key that
