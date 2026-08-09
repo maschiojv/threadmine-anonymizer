@@ -468,8 +468,36 @@ public final class HotspotRewriter {
     private String rewriteFrame(Matcher frame) {
         String indent = frame.group(1);
         String at = frame.group(2) == null ? "" : frame.group(2);
-        String qualified = frame.group(3);
-        String source = frame.group(4);
+        String body = rewriteFrameBody(frame.group(3), frame.group(4));
+        return body == null ? null : indent + at + body;
+    }
+
+    /**
+     * Rewrites a frame with no surrounding decoration, e.g.
+     * {@code java.base/java.lang.Thread.sleep(Thread.java:540)}.
+     *
+     * <p>Public because a frame is a frame in every dialect: the JSON dumper
+     * puts this exact string in its {@code stack} array with no {@code at}
+     * prefix, and reusing this method is what makes the token for
+     * {@code com.acme.Foo} identical across the text, javacore and JSON
+     * dialects of the same vault (SPEC §1 determinism).</p>
+     *
+     * @return the rewritten frame, or {@code null} when it does not parse as
+     *         one, so the caller can fail closed (SPEC §5.8)
+     */
+    public String rewriteFrameBody(String frame) {
+        Matcher parts = BARE_FRAME.matcher(frame);
+        return parts.matches() ? rewriteFrameBody(parts.group(1), parts.group(2)) : null;
+    }
+
+    private static final Pattern BARE_FRAME = Pattern.compile("^([^\\s()]+)\\((.*)\\)$");
+
+    private String rewriteFrameBody(String qualifiedInput, String sourceInput) {
+        String qualified = qualifiedInput;
+        String source = sourceInput;
+        if (qualified.indexOf('.') < 0) {
+            return null; // not a plausible frame; fail closed
+        }
 
         String qualifierPrefix = "";
         Matcher prefix = QUALIFIER_PREFIX.matcher(qualified);
@@ -487,10 +515,7 @@ public final class HotspotRewriter {
         String method = qualified.substring(methodDot + 1);
 
         if (allowlist.allowsFqcn(fqcn)) {
-            if (safeQualifierPrefix.equals(qualifierPrefix)) {
-                return frame.group(0);
-            }
-            return indent + at + safeQualifierPrefix + qualified + "(" + source + ")";
+            return safeQualifierPrefix + qualified + "(" + source + ")";
         }
 
         int classStart = fqcn.lastIndexOf('.');
@@ -501,7 +526,7 @@ public final class HotspotRewriter {
                 : classSegment.substring(0, mouldingStart(classSegment));
         String canonicalClass = packagePath.isEmpty() ? classBase : packagePath + "." + classBase;
 
-        StringBuilder sb = new StringBuilder(indent).append(at).append(safeQualifierPrefix);
+        StringBuilder sb = new StringBuilder(safeQualifierPrefix);
         appendTokenizedPackage(sb, packagePath);
         appendTokenizedClass(sb, packagePath, classSegment);
         sb.append('.').append(rewriteMethod(canonicalClass, method));

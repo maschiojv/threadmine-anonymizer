@@ -6,6 +6,7 @@ import dev.threadmine.anon.core.TokenEngine;
 import dev.threadmine.anon.core.Vault;
 import dev.threadmine.anon.format.hotspot.FormatDetector;
 import dev.threadmine.anon.format.hotspot.HotspotRewriter;
+import dev.threadmine.anon.format.json.JsonThreadDumpRewriter;
 import dev.threadmine.anon.format.openj9.JavacoreRewriter;
 import dev.threadmine.anon.verify.AllowlistLookup;
 import dev.threadmine.anon.verify.ComplianceVerifier;
@@ -63,9 +64,15 @@ class CorpusMaskVerifyTest {
                 TokenEngine engine = new HmacTokenEngine(vault);
 
                 boolean javacore = FormatDetector.isJavacore(original);
-                String masked = javacore
-                        ? new JavacoreRewriter(engine, matcher).mask(original).output()
-                        : new HotspotRewriter(engine, matcher).mask(original).output();
+                boolean json = !javacore && FormatDetector.isJsonThreadDump(original);
+                String masked;
+                if (javacore) {
+                    masked = new JavacoreRewriter(engine, matcher).mask(original).output();
+                } else if (json) {
+                    masked = new JsonThreadDumpRewriter(engine, matcher).mask(original).output();
+                } else {
+                    masked = new HotspotRewriter(engine, matcher).mask(original).output();
+                }
                 VerifyReport report = verifier.verify(original, masked, engine);
 
                 assertEquals(List.of(), report.residualIdentifiers(),

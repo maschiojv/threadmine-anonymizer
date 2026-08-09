@@ -7,6 +7,7 @@ import dev.threadmine.anon.core.VaultException;
 import dev.threadmine.anon.format.hotspot.FormatDetector;
 import dev.threadmine.anon.format.hotspot.HotspotRewriter;
 import dev.threadmine.anon.format.hotspot.MaskResult;
+import dev.threadmine.anon.format.json.JsonThreadDumpRewriter;
 import dev.threadmine.anon.format.openj9.JavacoreRewriter;
 
 import java.io.IOException;
@@ -86,10 +87,12 @@ final class MaskCommand {
         // javacore first: a classic javacore repeats "Full thread dump" on its
         // 2XMFULLTHDDUMP line and must never be reclassified as HotSpot.
         boolean javacore = FormatDetector.isJavacore(text);
-        if (!javacore && !FormatDetector.isHotspot(text)) {
+        boolean json = !javacore && FormatDetector.isJsonThreadDump(text);
+        if (!javacore && !json && !FormatDetector.isHotspot(text)) {
             err.println("tm-anon: unrecognized dump format (fail-closed refusal, SPEC exit 2).");
             err.println("Supported formats: HotSpot-family thread dumps (jstack, jcmd Thread.print,");
-            err.println("jcmd Thread.dump_to_file -format=text, ThreadMXBean/VisualVM) and OpenJ9 javacore.");
+            err.println("jcmd Thread.dump_to_file -format=text/-format=json, ThreadMXBean/VisualVM)");
+            err.println("and OpenJ9 javacore.");
             return EXIT_UNSUPPORTED_FORMAT;
         }
 
@@ -100,9 +103,14 @@ final class MaskCommand {
             Vault vault = Commands.openVault(vaultPath);
             HmacTokenEngine engine = new HmacTokenEngine(vault);
             AllowlistMatcher allowlist = AllowlistMatcher.fromClasspath().withStrict(strict);
-            MaskResult result = javacore
-                    ? new JavacoreRewriter(engine, allowlist).mask(text)
-                    : new HotspotRewriter(engine, allowlist).mask(text);
+            MaskResult result;
+            if (javacore) {
+                result = new JavacoreRewriter(engine, allowlist).mask(text);
+            } else if (json) {
+                result = new JsonThreadDumpRewriter(engine, allowlist).mask(text);
+            } else {
+                result = new HotspotRewriter(engine, allowlist).mask(text);
+            }
             if (dryRun) {
                 return finish(result, null, input, reportPath, out, true);
             }
