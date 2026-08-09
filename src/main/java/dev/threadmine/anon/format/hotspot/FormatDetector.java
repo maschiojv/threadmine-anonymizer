@@ -28,8 +28,25 @@ public final class FormatDetector {
     private FormatDetector() {
     }
 
+    /**
+     * {@code jcmd Thread.dump_to_file -format=json}, recognized by its two
+     * mandatory root keys. Checked BEFORE {@link #isHotspot}: the JSON body
+     * embeds frames and thread names that would otherwise satisfy the
+     * text-dialect probes.
+     */
+    private static final Pattern JSON_HEADER = Pattern.compile(
+            "\\{\\s*\"threadDump\"\\s*:\\s*\\{", Pattern.DOTALL);
+
+    public static boolean isJsonThreadDump(String text) {
+        String probe = probe(text);
+        return JSON_HEADER.matcher(probe).find() && probe.contains("\"threadContainers\"");
+    }
+
     public static boolean isHotspot(String text) {
         String probe = probe(text);
+        if (isJsonThreadDump(text)) {
+            return false;
+        }
         return probe.contains("Full thread dump")
                 || probe.contains("java.lang.Thread.State:")
                 || JSTACK_HEADER.matcher(probe).find()

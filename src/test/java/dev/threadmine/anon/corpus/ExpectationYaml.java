@@ -34,6 +34,10 @@ final class ExpectationYaml {
         return formato.startsWith("openj9");
     }
 
+    boolean isJson() {
+        return formato.startsWith("hotspot-json");
+    }
+
     record Tokenized(String preservaSufixo, boolean marcadorRota) {
     }
 

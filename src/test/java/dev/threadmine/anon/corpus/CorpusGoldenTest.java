@@ -8,6 +8,8 @@ import dev.threadmine.anon.core.Vault;
 import dev.threadmine.anon.format.hotspot.FormatDetector;
 import dev.threadmine.anon.format.hotspot.HotspotRewriter;
 import dev.threadmine.anon.format.hotspot.MaskResult;
+import dev.threadmine.anon.format.json.Json;
+import dev.threadmine.anon.format.json.JsonThreadDumpRewriter;
 import dev.threadmine.anon.format.openj9.JavacoreRewriter;
 import dev.threadmine.anon.verify.AllowlistLookup;
 import dev.threadmine.anon.verify.ComplianceVerifier;
@@ -20,6 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -51,7 +54,7 @@ class CorpusGoldenTest {
                     .map(n -> n.substring(0, n.length() - 4))
                     .sorted()
                     .toList();
-            assertEquals(23, names.size(), "the corpus must have its 23 fixtures (20 HotSpot + 3 javacore)");
+            assertEquals(26, names.size(), "the corpus must have its 26 fixtures (22 HotSpot + 3 javacore + 1 JSON)");
             return names.stream();
         }
     }
@@ -71,6 +74,14 @@ class CorpusGoldenTest {
             assertFalse(FormatDetector.isHotspot(text),
                     "the HotSpot detector must not claim a javacore (SPEC 5-B.1)");
             javacoreGolden(text, exp, engine);
+            return;
+        }
+
+        if (exp.isJson()) {
+            assertTrue(FormatDetector.isJsonThreadDump(text), "JSON fixture must be detected as JSON");
+            assertFalse(FormatDetector.isHotspot(text),
+                    "the text detector must not claim a JSON dump - it would be rewritten line by line");
+            jsonGolden(text, exp, engine);
             return;
         }
 
@@ -158,6 +169,66 @@ class CorpusGoldenTest {
     }
 
     // --- OpenJ9 javacore golden path (SPEC §5-B) ---------------------------
+
+    /**
+     * Golden pass for the {@code -format=json} dialect. Assertions run against
+     * the parsed document where structure matters and against the serialized
+     * text where absence matters — a name must be gone from the bytes, not
+     * merely from the field it used to sit in. Names are checked in both their
+     * plain and JSON-escaped spellings because the JDK dumper writes
+     * {@code sync-\/api\/orders} for {@code sync-/api/orders}.
+     */
+    private void jsonGolden(String text, ExpectationYaml exp, TokenEngine engine) {
+        MaskResult result = new JsonThreadDumpRewriter(engine, AllowlistMatcher.fromClasspath()).mask(text);
+        String out = result.output();
+
+        Map<?, ?> root = (Map<?, ?>) Json.parse(out);
+        assertEquals(JsonThreadDumpRewriter.MARKER_KEY, root.keySet().iterator().next(),
+                "the marker must be the first key of the root object (SPEC 5.9, JSON form)");
+        assertEquals(JsonThreadDumpRewriter.MARKER_VALUE, root.get(JsonThreadDumpRewriter.MARKER_KEY));
+        assertEquals(0, result.redactedLines(),
+                "corpus values must all be classified; warnings: " + result.warnings());
+        assertFalse(out.contains("acme"), "the com.acme namespace must never survive masking");
+
+        for (String anchor : exp.ancorasPreservadas) {
+            assertTrue(count(text, anchor) > 0, "anchor missing from fixture itself: " + anchor);
+            assertEquals(count(text, anchor), count(out, anchor), "anchor must survive: " + anchor);
+        }
+
+        for (String thread : exp.threadsAllowlistVerbatim) {
+            String quoted = "\"" + thread + "\"";
+            assertTrue(count(text, quoted) > 0, "allowlist thread missing from fixture: " + thread);
+            assertEquals(count(text, quoted), count(out, quoted),
+                    "allowlist thread must stay verbatim: " + thread);
+        }
+
+        for (var entry : exp.threadsTokenizadas.entrySet()) {
+            String original = entry.getKey();
+            String escaped = original.replace("/", "\\/");
+            assertTrue(text.contains("\"" + original + "\"") || text.contains("\"" + escaped + "\""),
+                    "tokenized thread missing from fixture: " + original);
+            assertFalse(out.contains(original), "original thread name must not survive: " + original);
+            assertFalse(out.contains(escaped), "escaped thread name must not survive: " + escaped);
+
+            String suffix = entry.getValue().marcadorRota() ? "/q" : "";
+            String expected = engine.tokenize(TokenType.THREAD_NAME, original) + suffix;
+            assertTrue(out.contains(expected),
+                    "deterministic thread token must appear for " + original + ": " + expected);
+        }
+
+        for (String fqcn : exp.classesTokenizadas) {
+            assertTrue(text.contains(fqcn), "class missing from fixture: " + fqcn);
+            assertFalse(out.contains(fqcn), "FQCN must not survive: " + fqcn);
+            String simpleName = fqcn.substring(fqcn.lastIndexOf('.') + 1);
+            assertFalse(out.contains(simpleName), "simple class name must not survive: " + simpleName);
+            assertTrue(out.contains(engine.tokenize(TokenType.CLASS_NAME, fqcn)),
+                    "deterministic class token must appear for: " + fqcn);
+        }
+
+        if (exp.invariantes.contains("marcador_rota_q")) {
+            assertTrue(out.contains("/q"), "a route-shaped thread name must keep its /q marker");
+        }
+    }
 
     private void javacoreGolden(String text, ExpectationYaml exp, TokenEngine engine) {
         AllowlistMatcher matcher = AllowlistMatcher.fromClasspath();

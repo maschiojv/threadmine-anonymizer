@@ -26,9 +26,14 @@ final class InitCommand {
     }
 
     static int execute(String[] argv, Path workingDir, PrintStream out, PrintStream err) {
+        return execute(argv, workingDir, out, err, PassphraseSource.standard());
+    }
+
+    static int execute(String[] argv, Path workingDir, PrintStream out, PrintStream err,
+                       PassphraseSource passphrases) {
         Args args;
         try {
-            args = Args.parse(argv, Commands.VAULT_ONLY, Set.of());
+            args = Args.parse(argv, Commands.VAULT_ONLY, Set.of(Commands.ENCRYPT_FLAG));
         } catch (Args.UsageException e) {
             err.println("init: " + e.getMessage());
             return ExitCodes.USAGE;
@@ -39,12 +44,30 @@ final class InitCommand {
         }
 
         Path vaultFile = Commands.vaultPath(args, workingDir);
+        boolean encrypt = args.flag(Commands.ENCRYPT_FLAG);
+        if (!encrypt && passphrases.presetAvailable()) {
+            err.println("init: " + PassphraseSource.ENV_VAR + " is set but --encrypt was not passed.");
+            err.println("Refusing to create a PLAINTEXT vault while a passphrase is waiting - that");
+            err.println("combination almost always means you expected an encrypted one.");
+            err.println("Pass --encrypt to seal the vault, or unset " + PassphraseSource.ENV_VAR
+                    + " to create a plaintext vault on purpose.");
+            return ExitCodes.VAULT_ERROR;
+        }
+        char[] passphrase = null;
+        if (encrypt) {
+            passphrase = passphrases.fresh();
+            if (passphrase == null) {
+                err.println("init: --encrypt needs a passphrase - set " + PassphraseSource.ENV_VAR
+                        + " or run this from a terminal (the two entries must match)");
+                return ExitCodes.VAULT_ERROR;
+            }
+        }
         try {
             Path parent = vaultFile.toAbsolutePath().getParent();
             if (parent != null) {
                 Files.createDirectories(parent);
             }
-            try (Vault ignored = Vault.create(vaultFile)) {
+            try (Vault ignored = Vault.create(vaultFile, passphrase)) {
                 // create() already persisted the fresh key; close() is a no-op here.
             }
         } catch (VaultException e) {
@@ -55,13 +78,23 @@ final class InitCommand {
             return ExitCodes.VAULT_ERROR;
         }
 
-        out.println("Created vault: " + vaultFile.toAbsolutePath());
+        out.println("Created vault: " + vaultFile.toAbsolutePath()
+                + (encrypt ? " (encrypted)" : ""));
         gitignore(vaultFile, workingDir, out, err);
         out.println();
         out.println("Back this file up. It holds the HMAC key and the token dictionary:");
         out.println("  - lose it and you can never unmask an already masked dump;");
         out.println("  - share it and anyone can unmask those dumps.");
         out.println("Never commit it, never upload it, never attach it to a ticket.");
+        if (encrypt) {
+            out.println();
+            out.println("The vault is sealed with your passphrase (PBKDF2-HMAC-SHA256 + AES-256-GCM).");
+            out.println("Lose the passphrase and the vault is gone with it - there is no recovery.");
+        } else {
+            out.println();
+            out.println("Tip: `tm-anon init --encrypt` seals the vault with a passphrase, so a copy");
+            out.println("of this file on a backup disk or sync folder is useless without it.");
+        }
         return ExitCodes.OK;
     }
 

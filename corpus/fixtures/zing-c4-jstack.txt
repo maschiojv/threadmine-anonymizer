@@ -1,0 +1,52 @@
+2026-08-09 11:20:41
+Full thread dump Zing (21.09.0.0-8-ZVM mixed mode):
+
+Zing thread dump header:
+  Zing runtime version 21.09.0.0
+  System memory: 65536M
+  Java heap: 8192M
+  Pause detector: enabled
+
+"main" #1 prio=5 os_prio=0 cpu=612.44ms elapsed=8341.20s tid=0x00007fa894019000 nid=0x2b03 waiting on condition  [0x0000700004b3a000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(Native Method)
+	at com.acme.gateway.Bootstrap.awaitShutdown(Bootstrap.java:77)
+	at com.acme.gateway.Bootstrap.main(Bootstrap.java:41)
+
+"pgto-worker-1" #24 prio=5 os_prio=0 cpu=545.68ms elapsed=8339.70s tid=0x00007fa89421b000 nid=0x6203 waiting for monitor entry  [0x00007000077f9000]
+   java.lang.Thread.State: BLOCKED (on object monitor)
+	at com.acme.payment.LedgerService.applyEntry(LedgerService.java:88)
+	- waiting to lock <0x000000061fcc9b90> (a com.acme.payment.LedgerLock)
+	at com.acme.payment.PaymentFacade.settle(PaymentFacade.java:41)
+	at java.lang.Thread.run(Thread.java:829)
+
+"pgto-worker-2" #25 prio=5 os_prio=0 cpu=545.23ms elapsed=8339.70s tid=0x00007fa89427b800 nid=0x9e03 runnable  [0x00007000078fc000]
+   java.lang.Thread.State: RUNNABLE
+	at com.acme.payment.gateway.AcquirerClient.capture(AcquirerClient.java:133)
+	at com.acme.payment.LedgerService.applyEntry(LedgerService.java:95)
+	- locked <0x000000061fcc9b90> (a com.acme.payment.LedgerLock)
+	at com.acme.payment.PaymentFacade.settle(PaymentFacade.java:41)
+	at java.lang.Thread.run(Thread.java:829)
+
+"http-nio-8080-exec-1" #27 daemon prio=5 os_prio=0 cpu=45.00ms elapsed=8339.50s tid=0x00007fa89421c000 nid=0x5803 waiting on condition  [0x00007ffee9f20000]
+   java.lang.Thread.State: TIMED_WAITING (parking)
+	at jdk.internal.misc.Unsafe.park(Native Method)
+	- parking to wait for  <0x000000061f8b1170> (a java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject)
+	at org.apache.tomcat.util.threads.TaskQueue.poll(TaskQueue.java:99)
+	at java.lang.Thread.run(Thread.java:829)
+
+"Reference Handler" #2 daemon prio=10 os_prio=0 cpu=4.42ms elapsed=8341.19s tid=0x00007fa895008800 nid=0x3e03 waiting on condition  [0x0000700004c3d000]
+   java.lang.Thread.State: RUNNABLE
+	at java.lang.ref.Reference.waitForReferencePendingList(Native Method)
+
+"C4 Collector Thread" os_prio=0 cpu=1230.06ms elapsed=8341.21s tid=0x00007fa88200a800 nid=0x4903 runnable
+
+"C4 New Collector" os_prio=0 cpu=473.12ms elapsed=8341.22s tid=0x00007fa89400e800 nid=0x5103 runnable
+
+"C4 Old Collector" os_prio=0 cpu=331.44ms elapsed=8341.22s tid=0x00007fa89400f000 nid=0x5203 runnable
+
+"VM Thread" os_prio=0 cpu=120.06ms elapsed=8341.21s tid=0x00007fa88200b800 nid=0x4a03 runnable
+
+"VM Periodic Task Thread" os_prio=0 cpu=5821.45ms elapsed=8341.06s tid=0x00007fa894839800 nid=0x5e83 waiting on condition
+
+JNI global refs: 19, weak refs: 0

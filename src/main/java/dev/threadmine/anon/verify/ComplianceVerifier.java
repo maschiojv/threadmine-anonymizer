@@ -100,7 +100,7 @@ public final class ComplianceVerifier {
 
     /** True when the text is recognizable as a thread dump; false means refuse it (SPEC §4, exit 2). */
     public static boolean looksLikeThreadDump(String text) {
-        return DumpScan.of(text).looksLikeThreadDump();
+        return DumpScan.of(text).looksLikeThreadDump() || JsonDumpScan.of(text).valid();
     }
 
     public VerifyReport verify(String original, String masked) {
@@ -113,6 +113,11 @@ public final class ComplianceVerifier {
      *               a mismatch between the file and the vault kept for it
      */
     public VerifyReport verify(String original, String masked, TokenEngine engine) {
+        JsonDumpScan jsonAfter = JsonDumpScan.of(masked);
+        if (jsonAfter.valid()) {
+            return verifyJson(JsonDumpScan.of(original), jsonAfter, original, masked, engine);
+        }
+
         DumpScan before = DumpScan.of(original);
         DumpScan after = DumpScan.of(masked);
 
@@ -151,6 +156,72 @@ public final class ComplianceVerifier {
         if (marker.equals(VERSION_ANCHOR) && count == 0
                 && scan.anchorCount(CI_VERSION_TOKEN) > 0) {
             return 1;
+        }
+        return count;
+    }
+
+    // --- JSON dialect ------------------------------------------------------
+
+    /**
+     * Compliance for a {@code -format=json} dump. Same three questions as the
+     * text path — nothing identifiable left, structure intact, volumetrics
+     * unchanged — asked against the parsed document, because in JSON every
+     * value is a quoted string and a line scan cannot tell a key from a name.
+     */
+    private VerifyReport verifyJson(JsonDumpScan before, JsonDumpScan after,
+                                    String original, String masked, TokenEngine engine) {
+        List<Finding> findings = new ArrayList<>();
+        for (JsonDumpScan.Candidate candidate : after.candidates()) {
+            checkJsonCandidate(candidate, findings);
+        }
+
+        List<AnchorCheck> anchors = new ArrayList<>();
+        for (String key : JsonDumpScan.ANCHOR_KEYS) {
+            int inOriginal = occurrences(original, key);
+            int inMasked = occurrences(masked, key);
+            if (inOriginal > 0 || inMasked > 0) {
+                anchors.add(new AnchorCheck(key, inOriginal, inMasked));
+            }
+        }
+
+        List<String> tokens = tokensIn(masked);
+        // Blank lines carry no meaning in JSON, so they are reported as equal
+        // rather than pretending to measure something.
+        Counts counts = new Counts(before.threads(), after.threads(),
+                before.frames(), after.frames(), 0, 0, tokens.size());
+        return new VerifyReport(findings, anchors, counts, unknownTokens(tokens, engine),
+                0, after.redactedValues());
+    }
+
+    private void checkJsonCandidate(JsonDumpScan.Candidate candidate, List<Finding> findings) {
+        String value = candidate.value();
+        switch (candidate.kind()) {
+            case THREAD_NAME, CONTAINER_POOL -> {
+                if (!allowlist.allowsThreadName(value) && !THREAD_TOKEN.matcher(value).matches()) {
+                    findings.add(new Finding(0, Finding.Kind.THREAD_NAME, value, candidate.path()));
+                }
+            }
+            case FRAME -> checkFrame(value, 0, candidate.path(), findings);
+            case LOCK, CONTAINER_CLASS -> {
+                // Both are FQCN@identityHash; the hash is an address (SPEC §5.4).
+                String className = value;
+                int at = value.lastIndexOf('@');
+                if (at > 0) {
+                    className = value.substring(0, at);
+                }
+                if (!allowlist.allowsFqcn(className) && !isMaskedIdentifier(className)) {
+                    findings.add(new Finding(0, Finding.Kind.LOCK_CLASS, value, candidate.path()));
+                }
+            }
+        }
+    }
+
+    private static int occurrences(String haystack, String needle) {
+        int count = 0;
+        int from = 0;
+        while ((from = haystack.indexOf(needle, from)) >= 0) {
+            count++;
+            from += needle.length();
         }
         return count;
     }

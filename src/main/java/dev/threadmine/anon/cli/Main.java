@@ -21,10 +21,15 @@ public final class Main {
             tm-anon - local, offline anonymizer for JVM thread dumps
 
             Usage:
-              tm-anon init   [--vault <path>]
+              tm-anon init   [--vault <path>] [--encrypt]
               tm-anon mask   <dump> [-o <out>] [--vault <path>] [--strict] [--report <path>] [--dry-run]
               tm-anon unmask <file> [-o <out>] [--vault <path>]
               tm-anon verify <original> <masked> [--vault <path>]
+
+            --encrypt seals the vault with a passphrase (PBKDF2-HMAC-SHA256 + AES-256-GCM).
+            Encrypted vaults read the passphrase from TM_ANON_PASSPHRASE, or prompt on a
+            terminal. There is no --passphrase flag on purpose: it would land in your shell
+            history and in the process list.
 
             Exit codes: 0 ok - 1 usage - 2 unsupported input - 3 vault error - 4 verify failed
             """;

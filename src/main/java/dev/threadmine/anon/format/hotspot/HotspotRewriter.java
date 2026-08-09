@@ -110,8 +110,29 @@ public final class HotspotRewriter {
 
     // --- strip (SPEC §5.7) ----------------------------------------------------
     private static final Pattern JNI_REFS = Pattern.compile("^JNI global ref.*$");
+    /**
+     * A section SPEC §5.7 strips, written in the brace style GraalVM uses:
+     * {@code Heap: {} … {@code }}. HotSpot writes the same sections as a bare
+     * header plus an indented body, which {@link StripBlock#INDENTED_BODY}
+     * covers. Isolates matters most here — its image-heap listing names
+     * application classes outright.
+     */
+    private static final Pattern BRACED_SECTION_START =
+            Pattern.compile("^(?:Heap|Isolates)\\b.*\\{\\s*$");
+    private static final Pattern BARE_SECTION_START =
+            Pattern.compile("^(?:Heap|Isolates):?\\s*$");
+    /** Azul Zing prefixes its dump with a metadata block no ThreadMine parser reads. */
+    private static final String ZING_HEADER = "Zing thread dump header:";
 
-    private enum StripBlock { NONE, SMR, SYNCHRONIZERS, HEAP }
+    private enum StripBlock {
+        NONE,
+        SMR,
+        SYNCHRONIZERS,
+        /** Header line plus its indented body, ended by the first unindented line. */
+        INDENTED_BODY,
+        /** Brace-delimited section, ended when the brace depth returns to zero. */
+        BRACE
+    }
 
     private final TokenEngine engine;
     private final AllowlistMatcher allowlist;
@@ -134,6 +155,7 @@ public final class HotspotRewriter {
         int stripped = 0;
         int redacted = 0;
         StripBlock stripBlock = StripBlock.NONE;
+        int braceDepth = 0;
         boolean lastEmittedWasStripMarker = false;
 
         for (int i = 0; i < lines.length; i++) {
@@ -146,6 +168,16 @@ public final class HotspotRewriter {
                 out.add(raw);
                 lastEmittedWasStripMarker = false;
                 preserved++;
+                continue;
+            }
+
+            if (stripBlock == StripBlock.BRACE) {
+                braceDepth += braceDepthDelta(line);
+                if (braceDepth <= 0) {
+                    stripBlock = StripBlock.NONE;
+                }
+                stripped++;
+                lastEmittedWasStripMarker = emitStripMarker(out, lastEmittedWasStripMarker, eol);
                 continue;
             }
 
@@ -162,6 +194,7 @@ public final class HotspotRewriter {
             StripBlock started = stripBlockStart(line);
             if (started != null) {
                 stripBlock = started;
+                braceDepth = started == StripBlock.BRACE ? braceDepthDelta(line) : 0;
                 stripped++;
                 lastEmittedWasStripMarker = emitStripMarker(out, lastEmittedWasStripMarker, eol);
                 continue;
@@ -210,8 +243,11 @@ public final class HotspotRewriter {
         if (trimmed.equals("Locked ownable synchronizers:")) {
             return StripBlock.SYNCHRONIZERS;
         }
-        if (trimmed.equals("Heap")) {
-            return StripBlock.HEAP;
+        if (BRACED_SECTION_START.matcher(trimmed).matches()) {
+            return StripBlock.BRACE;
+        }
+        if (BARE_SECTION_START.matcher(trimmed).matches() || trimmed.equals(ZING_HEADER)) {
+            return StripBlock.INDENTED_BODY;
         }
         return null;
     }
@@ -222,9 +258,23 @@ public final class HotspotRewriter {
             case SMR -> trimmed.startsWith("_java_thread_list=") || trimmed.startsWith("0x")
                     || trimmed.equals("}");
             case SYNCHRONIZERS -> trimmed.startsWith("-");
-            case HEAP -> line.startsWith(" ");
-            case NONE -> false;
+            case INDENTED_BODY -> line.startsWith(" ");
+            case BRACE, NONE -> false;
         };
+    }
+
+    /** Net brace balance of one line, used to find where a braced section ends. */
+    private static int braceDepthDelta(String line) {
+        int delta = 0;
+        for (int i = 0; i < line.length(); i++) {
+            char c = line.charAt(i);
+            if (c == '{') {
+                delta++;
+            } else if (c == '}') {
+                delta--;
+            }
+        }
+        return delta;
     }
 
     private static boolean isStandaloneStrip(String line) {
@@ -418,8 +468,36 @@ public final class HotspotRewriter {
     private String rewriteFrame(Matcher frame) {
         String indent = frame.group(1);
         String at = frame.group(2) == null ? "" : frame.group(2);
-        String qualified = frame.group(3);
-        String source = frame.group(4);
+        String body = rewriteFrameBody(frame.group(3), frame.group(4));
+        return body == null ? null : indent + at + body;
+    }
+
+    /**
+     * Rewrites a frame with no surrounding decoration, e.g.
+     * {@code java.base/java.lang.Thread.sleep(Thread.java:540)}.
+     *
+     * <p>Public because a frame is a frame in every dialect: the JSON dumper
+     * puts this exact string in its {@code stack} array with no {@code at}
+     * prefix, and reusing this method is what makes the token for
+     * {@code com.acme.Foo} identical across the text, javacore and JSON
+     * dialects of the same vault (SPEC §1 determinism).</p>
+     *
+     * @return the rewritten frame, or {@code null} when it does not parse as
+     *         one, so the caller can fail closed (SPEC §5.8)
+     */
+    public String rewriteFrameBody(String frame) {
+        Matcher parts = BARE_FRAME.matcher(frame);
+        return parts.matches() ? rewriteFrameBody(parts.group(1), parts.group(2)) : null;
+    }
+
+    private static final Pattern BARE_FRAME = Pattern.compile("^([^\\s()]+)\\((.*)\\)$");
+
+    private String rewriteFrameBody(String qualifiedInput, String sourceInput) {
+        String qualified = qualifiedInput;
+        String source = sourceInput;
+        if (qualified.indexOf('.') < 0) {
+            return null; // not a plausible frame; fail closed
+        }
 
         String qualifierPrefix = "";
         Matcher prefix = QUALIFIER_PREFIX.matcher(qualified);
@@ -437,10 +515,7 @@ public final class HotspotRewriter {
         String method = qualified.substring(methodDot + 1);
 
         if (allowlist.allowsFqcn(fqcn)) {
-            if (safeQualifierPrefix.equals(qualifierPrefix)) {
-                return frame.group(0);
-            }
-            return indent + at + safeQualifierPrefix + qualified + "(" + source + ")";
+            return safeQualifierPrefix + qualified + "(" + source + ")";
         }
 
         int classStart = fqcn.lastIndexOf('.');
@@ -451,7 +526,7 @@ public final class HotspotRewriter {
                 : classSegment.substring(0, mouldingStart(classSegment));
         String canonicalClass = packagePath.isEmpty() ? classBase : packagePath + "." + classBase;
 
-        StringBuilder sb = new StringBuilder(indent).append(at).append(safeQualifierPrefix);
+        StringBuilder sb = new StringBuilder(safeQualifierPrefix);
         appendTokenizedPackage(sb, packagePath);
         appendTokenizedClass(sb, packagePath, classSegment);
         sb.append('.').append(rewriteMethod(canonicalClass, method));

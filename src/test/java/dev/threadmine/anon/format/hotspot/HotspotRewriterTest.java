@@ -590,6 +590,68 @@ class HotspotRewriterTest {
         assertFalse(out.contains("eden"));
     }
 
+    @Test
+    void braceDelimitedHeapSectionIsStripped() {
+        // GraalVM writes "Heap: {" ... "}" where HotSpot writes a bare "Heap"
+        // followed by indented lines. SPEC §5.7 strips the section either way.
+        MaskResult result = rewriter.mask("""
+                Heap: {
+                  Young generation: 32768K used, 65536K committed
+                  Old generation: 131072K used, 262144K committed
+                }
+                """);
+        assertFalse(result.output().contains("Young generation"));
+        assertFalse(result.output().contains("}"), "the closing brace belongs to the stripped block");
+        assertEquals(0, result.redactedLines(), "a section SPEC 5.7 names is stripped, never redacted");
+    }
+
+    @Test
+    void isolatesSectionIsStripped() {
+        // SPEC §5.7 names Isolates next to Heap. It carries image-heap object
+        // dumps, which is how an application class name ends up in there.
+        MaskResult result = rewriter.mask("""
+                Isolates: {
+                  Isolate 0x00007f3a4c000000: heap 262144K, threads 5
+                    Object at 0x00007f3a4c123456: com.acme.boot.ServiceRegistry
+                }
+                """);
+        assertFalse(result.output().contains("acme"), "the isolate body must not survive");
+        assertFalse(result.output().contains("ServiceRegistry"));
+        assertEquals(0, result.redactedLines());
+        assertTrue(result.strippedLines() >= 4);
+    }
+
+    @Test
+    void zingThreadDumpHeaderIsStripped() {
+        // Azul Zing prefixes the dump with a metadata block the ThreadMine
+        // parsers never read (ParserZingImpl delegates to ParserHotSpotCore).
+        MaskResult result = rewriter.mask("""
+                Zing thread dump header:
+                  Zing runtime version 21.09.0.0
+                  System memory: 65536M
+                  Java heap: 8192M
+                """);
+        assertFalse(result.output().contains("Zing runtime version"));
+        assertFalse(result.output().contains("65536M"));
+        assertEquals(0, result.redactedLines());
+    }
+
+    @Test
+    void strippedBlockStillEndsAtTheNextThreadHeader() {
+        // Guard against a greedy block: the thread after the section must be
+        // rewritten normally, not swallowed by the strip.
+        String out = mask("""
+                Isolates: {
+                  Isolate 0x00007f3a4c000000: heap 262144K, threads 5
+                }
+
+                "pgto-worker-1" #24 prio=5 tid=1 nid=0x1c28 runnable
+                \tat com.acme.payment.LedgerService.applyEntry(LedgerService.java:88)
+                """);
+        assertTrue(out.contains("\"t"), "the thread header must still be tokenized: " + out);
+        assertTrue(out.contains(".java:88)"), "the frame after the section must survive: " + out);
+    }
+
     // --- SPEC §5.8: fail-closed --------------------------------------------
 
     @Test
