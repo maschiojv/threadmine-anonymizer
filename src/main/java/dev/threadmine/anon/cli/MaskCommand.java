@@ -97,7 +97,7 @@ final class MaskCommand {
         // vault, and --dry-run must leave the vault file untouched. Saving is
         // explicit and happens only after the output file was written.
         try {
-            Vault vault = Vault.load(vaultPath);
+            Vault vault = Commands.openVault(vaultPath);
             HmacTokenEngine engine = new HmacTokenEngine(vault);
             AllowlistMatcher allowlist = AllowlistMatcher.fromClasspath().withStrict(strict);
             MaskResult result = javacore
