@@ -68,6 +68,26 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.5.2</version>
+                <configuration>
+                    <!--
+                      Windows loses a race deleting a @TempDir root: every child
+                      is removed, then RemoveDirectory fails because the OS still
+                      holds the directory handle for a moment. JUnit does not
+                      retry, so it reports "Failed to close extension context"
+                      and the build goes red with zero failed assertions. It hit
+                      3-4 random classes per full run here and would do the same
+                      on the windows-latest CI job.
+
+                      Cleanup is therefore off, and the test JVM's temp root is
+                      moved under target/ so `mvn clean` collects the leftovers
+                      instead of them piling up in the user's TEMP. The contents
+                      are throwaway fixtures and vaults with random test keys.
+                    -->
+                    <systemPropertyVariables>
+                        <java.io.tmpdir>${project.build.directory}</java.io.tmpdir>
+                        <junit.jupiter.tempdir.cleanup.mode.default>NEVER</junit.jupiter.tempdir.cleanup.mode.default>
+                    </systemPropertyVariables>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
