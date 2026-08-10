@@ -1,7 +1,7 @@
 # GraalVM Native Image: estado INLINE no cabecalho da thread, tid decimal, sem linha
 # "java.lang.Thread.State:" separada, e blocos "Heap: { ... }" / "Isolates: { ... }"
-# delimitados por chave (o ParserGraalVMImpl do ThreadMine ignora os dois).
-# Fixture da onda 5 (debito "dialetos nao-HotSpot" da SPEC 6).
+# delimitados por chave (o analisador ignora os dois).
+# Cobre o dialeto que antes era recusado por falta de suporte.
 formato: hotspot-jstack
 ancoras_preservadas:
   - "Full thread dump GraalVM Native Image 24.1.1 (Java Version 21.0.5+9-LTS):"
@@ -10,7 +10,7 @@ threads_allowlist_verbatim:
   - "Reference Handler"
   - "VM Thread"
 threads_tokenizadas:
-  "main": {}   # a allowlist-v1 real nao tem regra p/ "main" -> tokenizada (mesma decisao da onda 2E)
+  "main": {}   # a allowlist-v1 real nao tem regra p/ "main" -> tokenizada (mesma decisao das demais fixtures)
   "pgto-worker-1": { preserva_sufixo: "-1" }
   "pgto-worker-2": { preserva_sufixo: "-2" }
 classes_tokenizadas:

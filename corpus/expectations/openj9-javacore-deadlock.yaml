@@ -61,5 +61,5 @@ invariantes:
 # nao pode existir no output; (2) endereco do Blocked on (0x00000000E00A2C48) difere do par
 # @addr1/addr2 do LOCKS — enderecos sao verbatim onde preservados, nunca "corrigidos"; (3) strip
 # do LOCKS remove a UNICA declaracao explicita de deadlock: registrado como custo aceito da 5-B
-# (o parser OpenJ9 do ThreadMine ignora LK; deteccao vem dos estados B cruzados) — se a onda 4
+# (o parser OpenJ9 do ThreadMine ignora LK; deteccao vem dos estados B cruzados) — se a o suporte a javacore
 # quiser paridade com o detector de deadlock textual, e a SPEC que precisa mudar, nao o corpus.

@@ -23,9 +23,9 @@ threads_allowlist_verbatim:
   - "G1 Conc#0"
   - "G1 Main Marker"
 threads_tokenizadas:
-  "main": {}   # corrigido na onda 2E: a allowlist-v1 real nao tem regra p/ "main" -> tokenizada
-  "ForkJoinPool-1-delayScheduler": {}   # corrigido na onda 2E: regex da allowlist cobre so -worker-N
-  "process reaper (pid 4242)": {}   # corrigido na onda 2E: allowlist-v1 nao tem prefixo "process reaper"
+  "main": {}   # corrigido apos conferir contra a allowlist real: a allowlist-v1 real nao tem regra p/ "main" -> tokenizada
+  "ForkJoinPool-1-delayScheduler": {}   # corrigido apos conferir contra a allowlist real: regex da allowlist cobre so -worker-N
+  "process reaper (pid 4242)": {}   # corrigido apos conferir contra a allowlist real: allowlist-v1 nao tem prefixo "process reaper"
   "pgto-worker-4": { preserva_sufixo: "-4" }
 classes_tokenizadas:
   - "com.acme.gateway.Bootstrap"

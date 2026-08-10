@@ -10,7 +10,7 @@ threads_allowlist_verbatim:
   - "Finalizer"
   - "http-nio-8080-exec-1"
 threads_tokenizadas:
-  "main": {}   # corrigido na onda 2E: a allowlist-v1 real nao tem regra p/ "main" -> tokenizada
+  "main": {}   # corrigido apos conferir contra a allowlist real: a allowlist-v1 real nao tem regra p/ "main" -> tokenizada
   "pgto-worker-1": { preserva_sufixo: "-1" }
   "pgto-worker-2": { preserva_sufixo: "-2" }
   "order-dispatcher": {}

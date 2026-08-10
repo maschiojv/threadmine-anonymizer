@@ -465,7 +465,7 @@ class HotspotRewriterTest {
      * A mounted carrier prints {@code Carrying virtual thread #N} INSTEAD of
      * its {@code java.lang.Thread.State:} line. The number is a thread id, not
      * a name, and the ThreadMine parser reads the line
-     * ({@code ParserHotSpotCore.CARRYING_VIRTUAL}) — so it stays byte for byte.
+     * (the ThreadMine HotSpot parser reads it) — so it stays byte for byte.
      */
     @Test
     void carryingVirtualThreadLineIsVerbatim() {
@@ -624,7 +624,7 @@ class HotspotRewriterTest {
     @Test
     void zingThreadDumpHeaderIsStripped() {
         // Azul Zing prefixes the dump with a metadata block the ThreadMine
-        // parsers never read (ParserZingImpl delegates to ParserHotSpotCore).
+        // analyzer parsers never read (Zing reuses the HotSpot parser).
         MaskResult result = rewriter.mask("""
                 Zing thread dump header:
                   Zing runtime version 21.09.0.0

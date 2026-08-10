@@ -36,7 +36,7 @@ import java.util.regex.Pattern;
  * which is the entire point of this format. The literal marker string is
  * carried as the first key of the root object instead, so it is still found by
  * a substring search. ThreadMine's {@code DetectorDumpAnonimizado} reads the
- * first line only and its {@code DetectorFormatoServiceImpl} has no JSON
+ * first line only, and its format detector has no JSON
  * pattern at all, so no server behaviour depends on the line form here.</p>
  *
  * <p>The counters in the returned {@link MaskResult} refer to JSON string

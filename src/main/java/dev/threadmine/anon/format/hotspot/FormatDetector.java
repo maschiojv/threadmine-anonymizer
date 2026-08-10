@@ -55,7 +55,7 @@ public final class FormatDetector {
 
     /**
      * OpenJ9 javacore, recognized by the same tokens the ThreadMine
-     * {@code DetectorFormatoServiceImpl} probes for (SPEC §5-B.1). Checked
+     * the ThreadMine format detector probes for. Checked
      * BEFORE {@link #isHotspot}: a classic javacore repeats the literal
      * {@code Full thread dump} on its {@code 2XMFULLTHDDUMP} line, and the
      * dialect must never be reclassified because of it.

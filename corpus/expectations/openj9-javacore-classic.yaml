@@ -1,7 +1,7 @@
 # Javacore IBM JDK classico (estilo J2RE 1.4.2, como o real-openj9.txt do ThreadMine):
 # SEM 1XMJAVAVERSION (a versao vive so em 1CIJAVAVERSION; a emenda da 5-B.2 re-emite o
 # payload logo apos o marcador de strip da CI, sob o token 1XMJAVAVERSION — o unico que o
-# ParserOpenJ9Impl le — para o ThreadMine nao parsear o mascarado com versaoJava=null),
+# o parser OpenJ9 le — para o ThreadMine nao parsear o mascarado com versaoJava=null),
 # threads com state:R/CW/B e TID/sys_thread_t/native ID na propria linha 3XMTHREADINFO,
 # secao XM delimitada por tokens (nao ha linha em branco entre threads — SPEC 5-B.7).
 # Schema §6 estendido p/ javacore: + ancoras_deteccao_4kb, secoes_preservadas,
