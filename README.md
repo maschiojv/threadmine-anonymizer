@@ -323,8 +323,12 @@ verbatim would break the file it lands in. The output format decides how each
 restored value is escaped: it is inferred from the input file's extension
 (`.json` → JSON, `.html`/`.htm` → HTML, anything else → plain text) and
 `--format text|json|html` overrides that when the extension does not say what
-the file really is. An unrecognised value is a usage error, never a silent
-fallback to text.
+the file really is. `html` means the value is going into a JSON island embedded
+in HTML — a `<script type="application/json">` block, the way ThreadMine's
+offline report ships its data — not that the file is an HTML document, so Vein
+prose you happened to save as `.html` wants `--format text` unless you want JSON
+escapes showing up in the markup. An unrecognised value is a usage error, never
+a silent fallback to text.
 
 ### `verify`
 

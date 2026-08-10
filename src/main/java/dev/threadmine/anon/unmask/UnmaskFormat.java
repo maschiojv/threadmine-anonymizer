@@ -25,10 +25,16 @@ public enum UnmaskFormat {
 
     /** Never throws: an extension we do not know keeps the historical behaviour. */
     public static UnmaskFormat fromFileName(String fileName) {
-        if (fileName == null) return TEXT;
+        if (fileName == null) {
+            return TEXT;
+        }
         String lower = fileName.toLowerCase(Locale.ROOT);
-        if (lower.endsWith(".json")) return JSON;
-        if (lower.endsWith(".html") || lower.endsWith(".htm")) return HTML;
+        if (lower.endsWith(".json")) {
+            return JSON;
+        }
+        if (lower.endsWith(".html") || lower.endsWith(".htm")) {
+            return HTML;
+        }
         return TEXT;
     }
 

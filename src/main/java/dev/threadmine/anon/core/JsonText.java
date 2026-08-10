@@ -14,7 +14,7 @@ public final class JsonText {
     }
 
     /**
-     * @param escapeAngleBrackets when true, {@code <} becomes {@code \u003c}.
+     * @param escapeAngleBrackets when true, {@code <} becomes {@code \\u003c}.
      *        Required only when the JSON is embedded in HTML: the HTML parser
      *        ends a {@code <script>} element at {@code </script>} before any
      *        JSON is read. Off elsewhere so vault and rewriter bytes are stable.

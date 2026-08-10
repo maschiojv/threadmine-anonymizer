@@ -178,7 +178,7 @@ class UnmaskCommandTest {
         int exit = run(dir, "dump.txt", "--format", "yaml");
 
         assertEquals(1, exit, "an unknown format must not silently fall back");
-        assertTrue(stderr().contains("--format"), stderr());
+        assertTrue(stderr().contains("unknown --format 'yaml'"), stderr());
     }
 
     // --- exit codes --------------------------------------------------------
