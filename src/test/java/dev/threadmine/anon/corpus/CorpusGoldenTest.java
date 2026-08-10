@@ -97,19 +97,19 @@ class CorpusGoldenTest {
                 "corpus lines must all be classified; warnings: " + result.warnings());
         assertFalse(out.contains("acme"), "the com.acme namespace must never survive masking");
 
-        for (String anchor : exp.ancorasPreservadas) {
+        for (String anchor : exp.preservedAnchors) {
             assertTrue(count(text, anchor) > 0, "anchor missing from fixture itself: " + anchor);
             assertEquals(count(text, anchor), count(out, anchor), "anchor must survive: " + anchor);
         }
 
-        for (String thread : exp.threadsAllowlistVerbatim) {
+        for (String thread : exp.allowlistedThreadsVerbatim) {
             String quoted = "\"" + thread + "\"";
             assertTrue(count(text, quoted) > 0, "allowlist thread missing from fixture: " + thread);
             assertEquals(count(text, quoted), count(out, quoted),
                     "allowlist thread must stay verbatim: " + thread);
         }
 
-        for (var entry : exp.threadsTokenizadas.entrySet()) {
+        for (var entry : exp.tokenizedThreads.entrySet()) {
             String original = entry.getKey();
             ExpectationYaml.Tokenized spec = entry.getValue();
             String quotedOriginal = "\"" + original + "\"";
@@ -121,12 +121,12 @@ class CorpusGoldenTest {
 
             String canonical = original;
             String suffix = "";
-            if (spec.preservaSufixo() != null) {
-                assertTrue(original.endsWith(spec.preservaSufixo()),
+            if (spec.keepsSuffix() != null) {
+                assertTrue(original.endsWith(spec.keepsSuffix()),
                         "expectation suffix must terminate the name: " + original);
-                canonical = original.substring(0, original.length() - spec.preservaSufixo().length());
-                suffix = spec.preservaSufixo();
-            } else if (spec.marcadorRota()) {
+                canonical = original.substring(0, original.length() - spec.keepsSuffix().length());
+                suffix = spec.keepsSuffix();
+            } else if (spec.routeMarker()) {
                 suffix = "/q";
             }
             String expected = "\"" + engine.tokenize(TokenType.THREAD_NAME, canonical) + suffix + "\"";
@@ -134,7 +134,7 @@ class CorpusGoldenTest {
                     "every occurrence of " + original + " must become the same token " + expected);
         }
 
-        for (String fqcn : exp.classesTokenizadas) {
+        for (String fqcn : exp.tokenizedClasses) {
             assertTrue(text.contains(fqcn), "class missing from fixture: " + fqcn);
             assertFalse(out.contains(fqcn), "FQCN must not survive: " + fqcn);
             String simpleName = fqcn.substring(fqcn.lastIndexOf('.') + 1);
@@ -143,7 +143,7 @@ class CorpusGoldenTest {
                     "deterministic class token must appear for: " + fqcn);
         }
 
-        for (String stripped : exp.linhasStripadas) {
+        for (String stripped : exp.strippedLines) {
             assertTrue(text.contains(stripped), "strip target missing from fixture: " + stripped);
             assertFalse(out.contains(stripped), "stripped content must not survive: " + stripped);
         }
@@ -151,7 +151,7 @@ class CorpusGoldenTest {
         // blank lines delimit threads: never created nor removed (SPEC §5.6)
         assertEquals(blankLines(text), blankLines(out), "blank line count must be preserved");
 
-        if (exp.invariantes.contains("enderecos_lock_verbatim")) {
+        if (exp.invariants.contains("lock_addresses_verbatim")) {
             // Addresses inside the "Locked ownable synchronizers" block are
             // stripped WITH the block (SPEC §5.7); every other address must
             // survive verbatim with its exact count.
@@ -159,11 +159,11 @@ class CorpusGoldenTest {
             assertAddressesVerbatim(surviving, out, LOCK_ADDRESS);
             assertAddressesVerbatim(surviving, out, MONITOR_ADDRESS);
         }
-        if (exp.invariantes.contains("ordem_linhas_preservada")) {
+        if (exp.invariants.contains("line_order_preserved")) {
             assertEquals(stateLineSequence(text), stateLineSequence(out),
                     "thread state lines must keep their input order");
         }
-        if (exp.invariantes.contains("aceita_sem_header_full_thread_dump")) {
+        if (exp.invariants.contains("accepts_without_full_thread_dump_header")) {
             assertFalse(text.contains("Full thread dump"), "fixture must really lack the banner");
         }
     }
@@ -190,19 +190,19 @@ class CorpusGoldenTest {
                 "corpus values must all be classified; warnings: " + result.warnings());
         assertFalse(out.contains("acme"), "the com.acme namespace must never survive masking");
 
-        for (String anchor : exp.ancorasPreservadas) {
+        for (String anchor : exp.preservedAnchors) {
             assertTrue(count(text, anchor) > 0, "anchor missing from fixture itself: " + anchor);
             assertEquals(count(text, anchor), count(out, anchor), "anchor must survive: " + anchor);
         }
 
-        for (String thread : exp.threadsAllowlistVerbatim) {
+        for (String thread : exp.allowlistedThreadsVerbatim) {
             String quoted = "\"" + thread + "\"";
             assertTrue(count(text, quoted) > 0, "allowlist thread missing from fixture: " + thread);
             assertEquals(count(text, quoted), count(out, quoted),
                     "allowlist thread must stay verbatim: " + thread);
         }
 
-        for (var entry : exp.threadsTokenizadas.entrySet()) {
+        for (var entry : exp.tokenizedThreads.entrySet()) {
             String original = entry.getKey();
             String escaped = original.replace("/", "\\/");
             assertTrue(text.contains("\"" + original + "\"") || text.contains("\"" + escaped + "\""),
@@ -210,13 +210,13 @@ class CorpusGoldenTest {
             assertFalse(out.contains(original), "original thread name must not survive: " + original);
             assertFalse(out.contains(escaped), "escaped thread name must not survive: " + escaped);
 
-            String suffix = entry.getValue().marcadorRota() ? "/q" : "";
+            String suffix = entry.getValue().routeMarker() ? "/q" : "";
             String expected = engine.tokenize(TokenType.THREAD_NAME, original) + suffix;
             assertTrue(out.contains(expected),
                     "deterministic thread token must appear for " + original + ": " + expected);
         }
 
-        for (String fqcn : exp.classesTokenizadas) {
+        for (String fqcn : exp.tokenizedClasses) {
             assertTrue(text.contains(fqcn), "class missing from fixture: " + fqcn);
             assertFalse(out.contains(fqcn), "FQCN must not survive: " + fqcn);
             String simpleName = fqcn.substring(fqcn.lastIndexOf('.') + 1);
@@ -225,7 +225,7 @@ class CorpusGoldenTest {
                     "deterministic class token must appear for: " + fqcn);
         }
 
-        if (exp.invariantes.contains("marcador_rota_q")) {
+        if (exp.invariants.contains("route_marker_q")) {
             assertTrue(out.contains("/q"), "a route-shaped thread name must keep its /q marker");
         }
     }
@@ -242,11 +242,11 @@ class CorpusGoldenTest {
 
         // §5-B.1: at least one detection token survives inside the first 4KB
         String probe = out.length() > 4096 ? out.substring(0, 4096) : out;
-        assertTrue(exp.ancorasDeteccao4kb.stream().anyMatch(probe::contains),
-                "a detection anchor must survive inside the first 4KB: " + exp.ancorasDeteccao4kb);
+        assertTrue(exp.detectionAnchors4kb.stream().anyMatch(probe::contains),
+                "a detection anchor must survive inside the first 4KB: " + exp.detectionAnchors4kb);
 
         // §5-B.2/§5-B.6: forbidden and unknown sections collapse into one marker each
-        for (String section : exp.secoesStripadas) {
+        for (String section : exp.strippedSections) {
             String marker = "# [tm-anon: stripped section " + section + "]";
             assertEquals(1, out.lines().filter(l -> l.equals(marker)).count(),
                     "stripped section must collapse into exactly one marker: " + section);
@@ -254,7 +254,7 @@ class CorpusGoldenTest {
                             && sectionNameOf(l).equals(section)),
                     "stripped section header must not survive: " + section);
         }
-        for (String section : exp.secoesPreservadas) {
+        for (String section : exp.preservedSections) {
             assertTrue(out.lines().anyMatch(l -> l.startsWith("0SECTION")
                             && sectionNameOf(l).equals(section)),
                     "preserved section header must survive: " + section);
@@ -262,7 +262,7 @@ class CorpusGoldenTest {
 
         // §5-B.3/§5-B.6: redacted lines lose their content, and nothing else does
         int expectedRedactions = 0;
-        for (String prefix : exp.linhasRedigidas) {
+        for (String prefix : exp.redactedLines) {
             List<String> originals = text.lines().filter(l -> l.startsWith(prefix)).toList();
             assertFalse(originals.isEmpty(), "redaction target missing from fixture: " + prefix);
             expectedRedactions += originals.size();
@@ -276,19 +276,19 @@ class CorpusGoldenTest {
         // anchors: presence, not count equality — the same name may also appear
         // in a stripped LK section, and a redacted quoteless header may drop a
         // 3XMTHREADINFO occurrence
-        for (String anchor : exp.ancorasPreservadas) {
+        for (String anchor : exp.preservedAnchors) {
             assertTrue(count(text, anchor) > 0, "anchor missing from fixture itself: " + anchor);
             assertTrue(count(out, anchor) > 0, "anchor must survive: " + anchor);
         }
 
-        for (String threadName : exp.threadsAllowlistVerbatim) {
+        for (String threadName : exp.allowlistedThreadsVerbatim) {
             String quoted = "\"" + threadName + "\"";
             assertTrue(count(text, quoted) > 0, "allowlist thread missing from fixture: " + threadName);
             assertTrue(count(out, quoted) > 0,
                     "allowlist thread must stay verbatim in the threads section: " + threadName);
         }
 
-        for (var entry : exp.threadsTokenizadas.entrySet()) {
+        for (var entry : exp.tokenizedThreads.entrySet()) {
             String original = entry.getKey();
             ExpectationYaml.Tokenized spec = entry.getValue();
             String quotedOriginal = "\"" + original + "\"";
@@ -299,12 +299,12 @@ class CorpusGoldenTest {
             }
             String canonical = original;
             String suffix = "";
-            if (spec.preservaSufixo() != null) {
-                assertTrue(original.endsWith(spec.preservaSufixo()),
+            if (spec.keepsSuffix() != null) {
+                assertTrue(original.endsWith(spec.keepsSuffix()),
                         "expectation suffix must terminate the name: " + original);
-                canonical = original.substring(0, original.length() - spec.preservaSufixo().length());
-                suffix = spec.preservaSufixo();
-            } else if (spec.marcadorRota()) {
+                canonical = original.substring(0, original.length() - spec.keepsSuffix().length());
+                suffix = spec.keepsSuffix();
+            } else if (spec.routeMarker()) {
                 suffix = "/q";
             }
             String expected = "\"" + engine.tokenize(TokenType.THREAD_NAME, canonical) + suffix + "\"";
@@ -312,7 +312,7 @@ class CorpusGoldenTest {
                     original + " must appear as its deterministic token " + expected);
         }
 
-        for (String fqcn : exp.classesTokenizadas) {
+        for (String fqcn : exp.tokenizedClasses) {
             String slashed = fqcn.replace('.', '/');
             assertTrue(text.contains(fqcn) || text.contains(slashed),
                     "class missing from fixture: " + fqcn);
@@ -336,7 +336,7 @@ class CorpusGoldenTest {
 
     private void javacoreInvariants(String text, String out, ExpectationYaml exp,
                                     AllowlistMatcher matcher) {
-        if (exp.idsNativosVerbatim) {
+        if (exp.nativeIdsVerbatim) {
             // §5-B.4: TID/sys_thread_t/native ID/J9VMThread/omrthread_t on the
             // preserved thread lines are addresses, not names — byte-identical.
             Pattern nativeId = Pattern.compile(
@@ -353,7 +353,7 @@ class CorpusGoldenTest {
                     });
         }
 
-        if (exp.invariantes.contains("moldura_compiled_code_preservada")) {
+        if (exp.invariants.contains("compiled_code_moulding_preserved")) {
             // SPEC §5.1: the JIT moulding is structure the ThreadMine parsers
             // read, so it survives verbatim — on the allowlisted frame and on
             // the tokenized one alike. Only the file name in front of it moves.
@@ -363,13 +363,13 @@ class CorpusGoldenTest {
                     "the no-line-number moulding form must survive glued to the source file");
         }
 
-        if (exp.invariantes.contains("ordem_threadinfo_stacktrace_preservada")) {
+        if (exp.invariants.contains("threadinfo_stacktrace_order_preserved")) {
             assertEquals(threadStackKinds(text), threadStackKinds(out),
                     "relative 3XMTHREADINFO/4XESTACKTRACE order must be preserved (SPEC 5-B.7)");
         }
 
-        if (exp.invariantes.contains("blocked_on_consistente")
-                || exp.invariantes.contains("deadlock_nomes_consistentes")) {
+        if (exp.invariants.contains("blocked_on_consistent")
+                || exp.invariants.contains("deadlock_names_consistent")) {
             Set<String> headerNames = new java.util.HashSet<>();
             out.lines().filter(l -> l.startsWith("3XMTHREADINFO ")).forEach(l -> {
                 Matcher quoted = Pattern.compile("\"([^\"]*)\"").matcher(l);
@@ -386,7 +386,7 @@ class CorpusGoldenTest {
             });
         }
 
-        if (exp.invariantes.contains("frames_com_barra_tokenizados")) {
+        if (exp.invariants.contains("slash_frames_tokenized")) {
             List<String> allowlistFrames = text.lines()
                     .filter(l -> l.startsWith("4XESTACKTRACE")
                             && (l.contains(" at java/") || l.contains(" at jdk/")))
@@ -401,13 +401,13 @@ class CorpusGoldenTest {
         }
 
         ComplianceVerifier verifier = new ComplianceVerifier(lookup(matcher));
-        if (exp.invariantes.contains("verify_exit4_se_secao_proibida_sobrevive")) {
+        if (exp.invariants.contains("verify_exit4_if_forbidden_section_survives")) {
             assertFalse(out.contains("LKDEADLOCK"), "no LK line may survive, deadlock block included");
             String tampered = out + "1CICMDLINE     /opt/java/bin/java -Dcorp.db.password=x\n";
             assertFalse(verifier.verify(text, tampered).passed(),
                     "verify must fail when a forbidden section line survives (SPEC 5-B.9)");
         }
-        if (exp.invariantes.contains("verify_exit4_se_1tifilename_com_conteudo")) {
+        if (exp.invariants.contains("verify_exit4_if_1tifilename_has_content")) {
             String originalFilename = text.lines()
                     .filter(l -> l.startsWith("1TIFILENAME")).findFirst().orElseThrow();
             String tampered = out.replace("1TIFILENAME    [tm-anon: redacted]", originalFilename);

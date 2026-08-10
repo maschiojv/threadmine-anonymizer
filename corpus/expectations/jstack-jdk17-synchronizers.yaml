@@ -1,10 +1,10 @@
-# jstack JDK 17 com -l: blocos "Locked ownable synchronizers:" apos CADA thread
-# (inclusive "- None"), lock ReentrantLock held/parked entre duas threads do mesmo pool.
-formato: hotspot-jstack
-ancoras_preservadas:
+# jstack JDK 17 with -l: "Locked ownable synchronizers:" blocks after EVERY thread
+# (including "- None"), a ReentrantLock held/parked between two threads of the same pool.
+format: hotspot-jstack
+preserved_anchors:
   - "Full thread dump OpenJDK 64-Bit Server VM (17.0.8+7-LTS mixed mode, sharing):"
   - "java.lang.Thread.State:"
-threads_allowlist_verbatim:
+allowlisted_threads_verbatim:
   - "Reference Handler"
   - "http-nio-8080-exec-1"
   - "Monitor Deflation Thread"
@@ -16,26 +16,26 @@ threads_allowlist_verbatim:
   - "G1 Conc#0"
   - "G1 Service"
   - "VM Periodic Task Thread"
-threads_tokenizadas:
-  "main": {}   # corrigido apos conferir contra a allowlist real: a allowlist-v1 real nao tem regra p/ "main" -> tokenizada
-  "pgto-worker-1": { preserva_sufixo: "-1" }
-  "pgto-worker-2": { preserva_sufixo: "-2" }  # mesmo prefixo => mesmo token base de pgto-worker-1
-classes_tokenizadas:
+tokenized_threads:
+  "main": {}   # fixed after checking against the real allowlist: the real allowlist-v1 has no rule for "main" -> tokenized
+  "pgto-worker-1": { keeps_suffix: "-1" }
+  "pgto-worker-2": { keeps_suffix: "-2" }  # same prefix => same base token as pgto-worker-1
+tokenized_classes:
   - "com.acme.gateway.Bootstrap"
   - "com.acme.payment.gateway.AcquirerClient"
   - "com.acme.payment.LedgerService"
   - "com.acme.payment.PaymentFacade"
-linhas_stripadas:
+stripped_lines:
   - "Threads class SMR info:"
   - "_java_thread_list"
-  - "Locked ownable synchronizers:"   # bloco inteiro (marcador + "- None" + entradas <0x...>)
+  - "Locked ownable synchronizers:"   # whole block (marker + "- None" + <0x...> entries)
   - "JNI global refs"
-invariantes:
-  - determinismo_intra_dump
-  - blank_lines_preservadas
-  - enderecos_lock_verbatim
-# Armadilhas cobertas: strip do bloco "Locked ownable synchronizers" nao pode engolir a linha em
-# branco que delimita a proxima thread (usar "# [tm-anon: stripped]" se necessario); o endereco
-# <0x000000061f8a2b40> aparece no held (synchronizers) E no "parking to wait for" de outra thread
-# - correlacao por endereco sobrevive porque enderecos sao sempre verbatim; classes
-# java.util.concurrent.* sao allowlist -> verbatim.
+invariants:
+  - intra_dump_determinism
+  - blank_lines_preserved
+  - lock_addresses_verbatim
+# Traps covered: stripping the "Locked ownable synchronizers" block must not swallow the blank
+# line that delimits the next thread (use "# [tm-anon: stripped]" if needed); the address
+# <0x000000061f8a2b40> shows up both in the held (synchronizers) entry AND in another thread's
+# "parking to wait for" - correlation by address survives because addresses are always verbatim;
+# java.util.concurrent.* classes are allowlisted -> verbatim.

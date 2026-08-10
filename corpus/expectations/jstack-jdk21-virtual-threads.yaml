@@ -1,37 +1,37 @@
-# jstack JDK 21 com virtual threads: VT montada em carrier, VT pinned (<pinned: synchronized>),
-# VT sem carrier (desmontada... aqui: parked sem linha de carrier), VT com nome custom.
-formato: hotspot-vt
-ancoras_preservadas:
+# jstack JDK 21 with virtual threads: VT mounted on a carrier, VT pinned (<pinned: synchronized>),
+# VT with no carrier (unmounted... here: parked with no carrier line), VT with a custom name.
+format: hotspot-vt
+preserved_anchors:
   - "Full thread dump OpenJDK 64-Bit Server VM (21.0.3+9-LTS mixed mode, sharing):"
   - "java.lang.Thread.State:"
   - "<pinned: synchronized>"
   - "<virtual thread is mounted on carrier thread \"ForkJoinPool-1-worker-1\">"
   - "<virtual thread is mounted on carrier thread \"ForkJoinPool-1-worker-2\">"
   - "<virtual thread is mounted on carrier thread \"ForkJoinPool-1-worker-3\">"
-threads_allowlist_verbatim:
+allowlisted_threads_verbatim:
   - "ForkJoinPool-1-worker-1"
   - "ForkJoinPool-1-worker-2"
   - "ForkJoinPool-1-worker-3"
   - "Reference Handler"
   - "Finalizer"
-threads_tokenizadas:
-  "main": {}   # corrigido apos conferir contra a allowlist real: a allowlist-v1 real nao tem regra p/ "main" -> tokenizada
-  "order-vt-9": { preserva_sufixo: "-9" }   # VT nomeada: cabecalho `"order-vt-9" #23 virtual` tokeniza so o nome
-classes_tokenizadas:
+tokenized_threads:
+  "main": {}   # fixed after checking against the real allowlist: the real allowlist-v1 has no rule for "main" -> tokenized
+  "order-vt-9": { keeps_suffix: "-9" }   # named VT: the `"order-vt-9" #23 virtual` header tokenizes only the name
+tokenized_classes:
   - "com.acme.gateway.Bootstrap"
   - "com.acme.order.OrderService"
   - "com.acme.order.handler.OrderHandler"
   - "com.acme.cache.SharedCache"
   - "com.acme.payment.gateway.AcquirerClient"
   - "com.acme.order.queue.EventConsumer"
-linhas_stripadas:
+stripped_lines:
   - "JNI global refs"
-invariantes:
-  - determinismo_intra_dump
-  - blank_lines_preservadas
-  - enderecos_lock_verbatim
-# Armadilhas cobertas: cabecalho de VT anonima (`"" #21 virtual`) - aspas vazias preservadas, nada
-# a tokenizar; palavra-chave `virtual` no cabecalho intocada; marcadores Loom preservados BYTE A
-# BYTE (o parser do ThreadMine casa por eles) - o nome do carrier dentro do marcador e allowlist
-# (ForkJoinPool-N-worker-N), entao o marcador inteiro sai verbatim; VT #24/#25 sem linha de
-# carrier = VT desmontada/unmounted nao pode ganhar linha nova.
+invariants:
+  - intra_dump_determinism
+  - blank_lines_preserved
+  - lock_addresses_verbatim
+# Pitfalls covered: anonymous VT header (`"" #21 virtual`) - empty quotes preserved, nothing
+# to tokenize; the `virtual` keyword in the header untouched; Loom markers preserved BYTE FOR
+# BYTE (the ThreadMine parser matches on them) - the carrier name inside the marker is allowlisted
+# (ForkJoinPool-N-worker-N), so the whole marker comes out verbatim; VT #24/#25 with no carrier
+# line = an unmounted VT must not gain a new line.

@@ -58,7 +58,7 @@ class JavacoreNoLeakTest {
                     "PaymentRouter", "CardSwitchClient", "AcmeServerSocket",
                     "HealthBoard", "ScoreMatrix", "AcmeModuleClassLoader",
                     "com.acme", "com/acme"),
-            "openj9-javacore-moderno.txt", List.of(
+            "openj9-javacore-modern.txt", List.of(
                     // CI-family version token (dump already has 1XMJAVAVERSION: no re-emission)
                     "1CIJAVAVERSION",
                     // 1TIFILENAME and deploy paths

@@ -1,10 +1,10 @@
-# jstack JDK 8: sem cpu=/elapsed=, sem prefixo de modulo nos frames, "JNI global references:"
-# (singular, sem weak refs) e secao Heap no rodape (estilo kill -3).
-formato: hotspot-jstack
-ancoras_preservadas:
+# jstack JDK 8: no cpu=/elapsed=, no module prefix on frames, "JNI global references:"
+# (singular, no weak refs) and a Heap section at the bottom (kill -3 style).
+format: hotspot-jstack
+preserved_anchors:
   - "Full thread dump Java HotSpot(TM) 64-Bit Server VM (25.362-b09 mixed mode):"
   - "java.lang.Thread.State:"
-threads_allowlist_verbatim:
+allowlisted_threads_verbatim:
   - "http-nio-8080-exec-1"
   - "http-nio-8080-exec-2"
   - "DestroyJavaVM"
@@ -18,22 +18,22 @@ threads_allowlist_verbatim:
   - "GC task thread#0 (ParallelGC)"
   - "GC task thread#1 (ParallelGC)"
   - "VM Periodic Task Thread"
-threads_tokenizadas:
-  "order-dispatcher": {}                      # nome inteiro -> t.....x.....
-  "pgto-worker-1": { preserva_sufixo: "-1" }  # token do prefixo + "-1" literal
-classes_tokenizadas:
+tokenized_threads:
+  "order-dispatcher": {}                      # whole name -> t.....x.....
+  "pgto-worker-1": { keeps_suffix: "-1" }  # prefix token + literal "-1"
+tokenized_classes:
   - "com.acme.order.OrderDispatcher"
   - "com.acme.payment.LedgerService"
-  - "com.acme.payment.LedgerLock"            # tambem aparece apos "(a " na linha de lock
+  - "com.acme.payment.LedgerLock"            # also appears after "(a " on the lock line
   - "com.acme.payment.PaymentFacade"
   - "com.acme.payment.gateway.AcquirerClient"
   - "com.acme.web.PaymentController"
-linhas_stripadas:
+stripped_lines:
   - "JNI global references:"
-  - "Heap"            # secao inteira (PSYoungGen/ParOldGen/Metaspace/eden/from/to) strippada
-invariantes:
-  - determinismo_intra_dump
-  - blank_lines_preservadas
-  - enderecos_lock_verbatim   # <0x00000000e1a2b3c8> etc. intocados
-# Armadilhas cobertas: frames JDK 8 sem modulo (parser nao pode assumir java.base@);
-# org.apache.coyote/catalina/tomcat sao allowlist required -> frames Tomcat verbatim.
+  - "Heap"            # whole section (PSYoungGen/ParOldGen/Metaspace/eden/from/to) stripped
+invariants:
+  - intra_dump_determinism
+  - blank_lines_preserved
+  - lock_addresses_verbatim   # <0x00000000e1a2b3c8> etc. untouched
+# Traps covered: JDK 8 frames carry no module (the parser cannot assume java.base@);
+# org.apache.coyote/catalina/tomcat are allowlist required -> Tomcat frames verbatim.

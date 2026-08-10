@@ -1,34 +1,34 @@
-# GraalVM Native Image: estado INLINE no cabecalho da thread, tid decimal, sem linha
-# "java.lang.Thread.State:" separada, e blocos "Heap: { ... }" / "Isolates: { ... }"
-# delimitados por chave (o analisador ignora os dois).
-# Cobre o dialeto que antes era recusado por falta de suporte.
-formato: hotspot-jstack
-ancoras_preservadas:
+# GraalVM Native Image: state INLINE in the thread header, decimal tid, no separate
+# "java.lang.Thread.State:" line, and "Heap: { ... }" / "Isolates: { ... }" blocks
+# delimited by braces (the analyzer ignores both).
+# Covers the dialect that used to be rejected as unsupported.
+format: hotspot-jstack
+preserved_anchors:
   - "Full thread dump GraalVM Native Image 24.1.1 (Java Version 21.0.5+9-LTS):"
-threads_allowlist_verbatim:
+allowlisted_threads_verbatim:
   - "http-nio-8080-exec-1"
   - "Reference Handler"
   - "VM Thread"
-threads_tokenizadas:
-  "main": {}   # a allowlist-v1 real nao tem regra p/ "main" -> tokenizada (mesma decisao das demais fixtures)
-  "pgto-worker-1": { preserva_sufixo: "-1" }
-  "pgto-worker-2": { preserva_sufixo: "-2" }
-classes_tokenizadas:
+tokenized_threads:
+  "main": {}   # the real allowlist-v1 has no rule for "main" -> tokenized (same decision as the other fixtures)
+  "pgto-worker-1": { keeps_suffix: "-1" }
+  "pgto-worker-2": { keeps_suffix: "-2" }
+tokenized_classes:
   - "com.acme.gateway.Bootstrap"
   - "com.acme.payment.LedgerService"
   - "com.acme.payment.PaymentFacade"
   - "com.acme.payment.gateway.AcquirerClient"
-linhas_stripadas:
+stripped_lines:
   - "Heap: {"
   - "Isolates: {"
   - "Young generation"
   - "Image heap"
-invariantes:
-  - determinismo_intra_dump
-  - blank_lines_preservadas
-  - sufixo_numerico_preservado
-# Armadilhas cobertas: o bloco Isolates lista objetos da image heap por FQCN
-# ("Object at 0x...: com.acme.boot.ServiceRegistry") -- e o unico lugar do dump onde uma
-# classe da aplicacao aparece FORA de um frame, e a SPEC 5.7 manda stripar a secao inteira;
-# a delimitacao por chave (nao por indentacao) exige contar profundidade de chaves, senao o
-# "}" final vaza como linha nao classificada.
+invariants:
+  - intra_dump_determinism
+  - blank_lines_preserved
+  - numeric_suffix_preserved
+# Traps covered: the Isolates block lists image-heap objects by FQCN
+# ("Object at 0x...: com.acme.boot.ServiceRegistry") -- it is the only place in the dump where an
+# application class shows up OUTSIDE a frame, and SPEC 5.7 requires stripping the whole section;
+# brace delimiting (not indentation) means tracking brace depth, otherwise the
+# closing "}" leaks as an unclassified line.

@@ -1,16 +1,16 @@
-# jcmd <pid> Thread.dump_to_file -format=text no JDK 24+ (jdk.internal.vm.ThreadDumper):
+# jcmd <pid> Thread.dump_to_file -format=text on JDK 24+ (jdk.internal.vm.ThreadDumper):
 #   writer.println("#" + threadId + " \"" + name + "\" " + (isVirtual ? "virtual " : "")
 #                  + state + " " + Instant.now());
 #   writer.print("    at "); writer.println(stackTraceElement);
 #   writer.println("    - locked " + decorateObject(o));      // decorateObject = "<" + Objects.toIdentityString(obj) + ">"
 #   writer.println("    - lock is eliminated");
 #   writer.println("    - parking to wait for " + decorateObject(parkBlocker) + ", owner #N");
-# Duas diferencas duras em relacao ao jstack: `virtual ` vem ANTES do estado (minusculo) e o
-# monitor entre <> NAO e um endereco, e sim FQCN@identityHash — ou seja, o nome da classe da
-# aplicacao mora dentro dos <>. Preservar o conteudo dos <> verbatim (correto para endereco)
-# vazaria a classe; por isso o conteudo e classificado antes (SPEC 5.4/5.8).
-formato: hotspot-jcmd-text
-ancoras_preservadas:
+# Two hard differences from jstack: `virtual ` comes BEFORE the state (lowercase) and the
+# monitor inside <> is NOT an address, it is FQCN@identityHash — that is, the application class
+# name lives inside the <>. Preserving the contents of <> verbatim (correct for an address)
+# would leak the class; that is why the contents are classified first (SPEC 5.4/5.8).
+format: hotspot-jcmd-text
+preserved_anchors:
   - "41215"
   - "2026-07-24T13:44:02.113921Z"
   - "25.0.1+9-LTS"
@@ -23,16 +23,16 @@ ancoras_preservadas:
   - "@6e8cf4c6>"
   - "- locked <java.util.concurrent.ThreadPoolExecutor$Worker@1a2b3c4d>"
   - "- parking to wait for <java.util.concurrent.locks.ReentrantLock$NonfairSync@5e8f9a3b>"
-threads_allowlist_verbatim:
+allowlisted_threads_verbatim:
   - "ForkJoinPool-1-worker-1"
-threads_tokenizadas:
+tokenized_threads:
   "main": {}
-  "pgto-worker-1": { preserva_sufixo: "-1" }
-  "pgto-worker-2": { preserva_sufixo: "-2" }
-  "pgto-worker-3": { preserva_sufixo: "-3" }
+  "pgto-worker-1": { keeps_suffix: "-1" }
+  "pgto-worker-2": { keeps_suffix: "-2" }
+  "pgto-worker-3": { keeps_suffix: "-3" }
   "order-dispatcher": {}
-  "sync-/api/orders?tenant=99887766": { marcador_rota: true }
-classes_tokenizadas:
+  "sync-/api/orders?tenant=99887766": { route_marker: true }
+tokenized_classes:
   - "com.acme.gateway.Bootstrap"
   - "com.acme.payment.LedgerService"
   - "com.acme.payment.LedgerLock"
@@ -41,16 +41,16 @@ classes_tokenizadas:
   - "com.acme.order.queue.OrderQueue"
   - "com.acme.order.queue.EventConsumer"
   - "com.acme.order.OrderDispatcher"
-linhas_stripadas: []
-invariantes:
-  - determinismo_intra_dump
-  - determinismo_inter_dump
-  - blank_lines_preservadas
-  - sufixo_numerico_preservado
-  - marcador_rota_q
-# Armadilhas cobertas: `<com.acme.payment.LedgerLock@6e8cf4c6>` tem que virar classe
-# tokenizada + @hash verbatim (mesmo token da classe citada em frame), enquanto
-# `<java.util.concurrent...@hash>` fica intacto por allowlist; o trailer `, owner #30`
-# sobrevive mas qualquer outro trailer derruba a linha por fail-closed; `- lock is
-# eliminated` nao tem identificador e e estrutura; frames aqui tem `at ` com 4 espacos
-# (o dialeto JDK 21 usa 6 espacos e nenhum `at `).
+stripped_lines: []
+invariants:
+  - intra_dump_determinism
+  - inter_dump_determinism
+  - blank_lines_preserved
+  - numeric_suffix_preserved
+  - route_marker_q
+# Traps covered: `<com.acme.payment.LedgerLock@6e8cf4c6>` has to become a tokenized
+# class + verbatim @hash (the same token as the class cited in a frame), while
+# `<java.util.concurrent...@hash>` stays intact by allowlist; the `, owner #30` trailer
+# survives but any other trailer drops the line via fail-closed; `- lock is
+# eliminated` has no identifier and is structure; frames here use `at ` with 4 spaces
+# (the JDK 21 dialect uses 6 spaces and no `at `).

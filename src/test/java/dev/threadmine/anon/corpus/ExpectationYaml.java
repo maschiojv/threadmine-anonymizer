@@ -16,29 +16,29 @@ import java.util.Set;
  */
 final class ExpectationYaml {
 
-    String formato = "";
-    boolean idsNativosVerbatim = false;
-    final List<String> ancorasPreservadas = new ArrayList<>();
-    final List<String> threadsAllowlistVerbatim = new ArrayList<>();
-    final Map<String, Tokenized> threadsTokenizadas = new LinkedHashMap<>();
-    final List<String> classesTokenizadas = new ArrayList<>();
-    final List<String> linhasStripadas = new ArrayList<>();
-    final Set<String> invariantes = new LinkedHashSet<>();
+    String format = "";
+    boolean nativeIdsVerbatim = false;
+    final List<String> preservedAnchors = new ArrayList<>();
+    final List<String> allowlistedThreadsVerbatim = new ArrayList<>();
+    final Map<String, Tokenized> tokenizedThreads = new LinkedHashMap<>();
+    final List<String> tokenizedClasses = new ArrayList<>();
+    final List<String> strippedLines = new ArrayList<>();
+    final Set<String> invariants = new LinkedHashSet<>();
     // javacore extensions (SPEC §5-B / §6)
-    final List<String> ancorasDeteccao4kb = new ArrayList<>();
-    final List<String> secoesPreservadas = new ArrayList<>();
-    final List<String> secoesStripadas = new ArrayList<>();
-    final List<String> linhasRedigidas = new ArrayList<>();
+    final List<String> detectionAnchors4kb = new ArrayList<>();
+    final List<String> preservedSections = new ArrayList<>();
+    final List<String> strippedSections = new ArrayList<>();
+    final List<String> redactedLines = new ArrayList<>();
 
     boolean isJavacore() {
-        return formato.startsWith("openj9");
+        return format.startsWith("openj9");
     }
 
     boolean isJson() {
-        return formato.startsWith("hotspot-json");
+        return format.startsWith("hotspot-json");
     }
 
-    record Tokenized(String preservaSufixo, boolean marcadorRota) {
+    record Tokenized(String keepsSuffix, boolean routeMarker) {
     }
 
     static ExpectationYaml parse(String yaml) {
@@ -56,11 +56,11 @@ final class ExpectationYaml {
                 }
                 String key = line.substring(0, colon).trim();
                 String rest = line.substring(colon + 1).trim();
-                if (key.equals("formato")) {
-                    result.formato = rest;
+                if (key.equals("format")) {
+                    result.format = rest;
                     section = null;
-                } else if (key.equals("ids_nativos_verbatim")) {
-                    result.idsNativosVerbatim = Boolean.parseBoolean(rest);
+                } else if (key.equals("native_ids_verbatim")) {
+                    result.nativeIdsVerbatim = Boolean.parseBoolean(rest);
                     section = null;
                 } else {
                     section = key;
@@ -82,22 +82,22 @@ final class ExpectationYaml {
 
     private void addListItem(String section, String value) {
         switch (section) {
-            case "ancoras_preservadas" -> ancorasPreservadas.add(value);
-            case "threads_allowlist_verbatim" -> threadsAllowlistVerbatim.add(value);
-            case "classes_tokenizadas" -> classesTokenizadas.add(value);
-            case "linhas_stripadas" -> linhasStripadas.add(value);
-            case "invariantes" -> invariantes.add(value);
-            case "ancoras_deteccao_4kb" -> ancorasDeteccao4kb.add(value);
-            case "secoes_preservadas" -> secoesPreservadas.add(value);
-            case "secoes_stripadas" -> secoesStripadas.add(value);
-            case "linhas_redigidas" -> linhasRedigidas.add(value);
+            case "preserved_anchors" -> preservedAnchors.add(value);
+            case "allowlisted_threads_verbatim" -> allowlistedThreadsVerbatim.add(value);
+            case "tokenized_classes" -> tokenizedClasses.add(value);
+            case "stripped_lines" -> strippedLines.add(value);
+            case "invariants" -> invariants.add(value);
+            case "detection_anchors_4kb" -> detectionAnchors4kb.add(value);
+            case "preserved_sections" -> preservedSections.add(value);
+            case "stripped_sections" -> strippedSections.add(value);
+            case "redacted_lines" -> redactedLines.add(value);
             default -> throw new IllegalArgumentException("list item outside a known section: " + section);
         }
     }
 
     private void addMapItem(String section, String item) {
-        if (!"threads_tokenizadas".equals(section)) {
-            throw new IllegalArgumentException("map entry outside threads_tokenizadas: " + item);
+        if (!"tokenized_threads".equals(section)) {
+            throw new IllegalArgumentException("map entry outside tokenized_threads: " + item);
         }
         if (!item.startsWith("\"")) {
             throw new IllegalArgumentException("thread name key must be quoted: " + item);
@@ -113,21 +113,21 @@ final class ExpectationYaml {
             throw new IllegalArgumentException("expected inline map for thread " + name + ": " + inline);
         }
         String body = inline.substring(1, inline.length() - 1).strip();
-        String preservaSufixo = null;
-        boolean marcadorRota = false;
+        String keepsSuffix = null;
+        boolean routeMarker = false;
         if (!body.isEmpty()) {
             for (String pair : body.split(",")) {
                 int colon = pair.indexOf(':');
                 String key = pair.substring(0, colon).strip();
                 String value = parseScalar(pair.substring(colon + 1).strip());
                 switch (key) {
-                    case "preserva_sufixo" -> preservaSufixo = value;
-                    case "marcador_rota" -> marcadorRota = Boolean.parseBoolean(value);
+                    case "keeps_suffix" -> keepsSuffix = value;
+                    case "route_marker" -> routeMarker = Boolean.parseBoolean(value);
                     default -> throw new IllegalArgumentException("unknown tokenized attribute: " + key);
                 }
             }
         }
-        threadsTokenizadas.put(name, new Tokenized(preservaSufixo, marcadorRota));
+        tokenizedThreads.put(name, new Tokenized(keepsSuffix, routeMarker));
     }
 
     private static String parseScalar(String text) {

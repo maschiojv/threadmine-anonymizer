@@ -1,40 +1,40 @@
-# Edge: starvation REAL de pool custom - pgto-worker-1..8 TODOS BLOCKED no mesmo monitor,
-# segurado por billing-sched-1 fazendo IO lento. Contraste: http-nio-8080-exec-* ociosos em
-# TIMED_WAITING (parking) - pool ocioso NAO e starvation (falso-positivo historico do detector).
-formato: hotspot-jstack
-ancoras_preservadas:
+# Edge: REAL starvation of a custom pool - pgto-worker-1..8 ALL BLOCKED on the same monitor,
+# held by billing-sched-1 doing slow IO. Contrast: http-nio-8080-exec-* idle in
+# TIMED_WAITING (parking) - an idle pool is NOT starvation (historical false positive of the detector).
+format: hotspot-jstack
+preserved_anchors:
   - "Full thread dump OpenJDK 64-Bit Server VM (17.0.8+7-LTS mixed mode, sharing):"
   - "java.lang.Thread.State:"
-threads_allowlist_verbatim:
+allowlisted_threads_verbatim:
   - "http-nio-8080-exec-1"
   - "http-nio-8080-exec-2"
   - "VM Thread"
   - "GC Thread#0"
   - "VM Periodic Task Thread"
-threads_tokenizadas:
-  "pgto-worker-1": { preserva_sufixo: "-1" }
-  "pgto-worker-2": { preserva_sufixo: "-2" }
-  "pgto-worker-3": { preserva_sufixo: "-3" }
-  "pgto-worker-4": { preserva_sufixo: "-4" }
-  "pgto-worker-5": { preserva_sufixo: "-5" }
-  "pgto-worker-6": { preserva_sufixo: "-6" }
-  "pgto-worker-7": { preserva_sufixo: "-7" }
-  "pgto-worker-8": { preserva_sufixo: "-8" }
-  "billing-sched-1": { preserva_sufixo: "-1" }
-classes_tokenizadas:
+tokenized_threads:
+  "pgto-worker-1": { keeps_suffix: "-1" }
+  "pgto-worker-2": { keeps_suffix: "-2" }
+  "pgto-worker-3": { keeps_suffix: "-3" }
+  "pgto-worker-4": { keeps_suffix: "-4" }
+  "pgto-worker-5": { keeps_suffix: "-5" }
+  "pgto-worker-6": { keeps_suffix: "-6" }
+  "pgto-worker-7": { keeps_suffix: "-7" }
+  "pgto-worker-8": { keeps_suffix: "-8" }
+  "billing-sched-1": { keeps_suffix: "-1" }
+tokenized_classes:
   - "com.acme.payment.LedgerService"
   - "com.acme.payment.LedgerLock"
   - "com.acme.payment.PaymentFacade"
   - "com.acme.billing.sched.TariffJob"
-linhas_stripadas:
+stripped_lines:
   - "JNI global refs"
-invariantes:
-  - determinismo_intra_dump
-  - blank_lines_preservadas
-  - enderecos_lock_verbatim
-  - sufixo_numerico_preservado
-# Armadilhas cobertas: os 8 workers compartilham o MESMO prefixo => mesmo token base + sufixos
-# -1..-8 distintos - e isso que mantem a deteccao de pool/starvation no servidor (agrupamento por
-# prefixo e N threads do mesmo pool BLOCKED no mesmo <0x...>); se cada worker ganhasse token
-# independente, o detector veria 8 pools de 1 thread e a starvation sumiria. O monitor
-# <0x000000061fcc9b80> repete 9x e deve permanecer identico em todas.
+invariants:
+  - intra_dump_determinism
+  - blank_lines_preserved
+  - lock_addresses_verbatim
+  - numeric_suffix_preserved
+# Traps covered: the 8 workers share the SAME prefix => same base token + distinct
+# -1..-8 suffixes - that is what keeps pool/starvation detection working on the server (grouping by
+# prefix, and N threads of the same pool BLOCKED on the same <0x...>); if each worker got an
+# independent token, the detector would see 8 pools of 1 thread and the starvation would vanish. The
+# monitor <0x000000061fcc9b80> repeats 9x and must stay identical in all of them.

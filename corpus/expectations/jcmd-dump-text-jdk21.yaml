@@ -1,38 +1,38 @@
-# jcmd <pid> Thread.dump_to_file -format=text no JDK 21..23 (a forma REAL do GA do Loom):
-# jdk.internal.vm.ThreadDumper#dumpThread imprimia
+# jcmd <pid> Thread.dump_to_file -format=text on JDK 21..23 (the REAL shape of the Loom GA):
+# jdk.internal.vm.ThreadDumper#dumpThread used to print
 #   ps.format("#%d \"%s\"%s%n", threadId, name, isVirtual ? " virtual" : "")
-# ou seja: NENHUM estado no cabecalho, marcador `virtual` minusculo e como SUFIXO, e frames
-# indentados com 6 espacos vindos de StackTraceElement.toString() (sem "at ").
-# Consequencia: o arquivo inteiro nao tem uma unica linha `java.lang.Thread.State:` — a
-# deteccao de formato nao pode depender dela, e o lexer nao pode exigir estado no cabecalho.
-formato: hotspot-jcmd-text
-ancoras_preservadas:
+# that is: NO state in the header, lowercase `virtual` marker as a SUFFIX, and frames
+# indented with 6 spaces coming from StackTraceElement.toString() (no "at ").
+# Consequence: the whole file does not have a single `java.lang.Thread.State:` line — format
+# detection cannot rely on it, and the lexer cannot require a state in the header.
+format: hotspot-jcmd-text
+preserved_anchors:
   - "48350"
   - "2026-07-24T13:02:19.482190Z"
   - "21.0.3+9-LTS"
   - "\" virtual"
-threads_allowlist_verbatim:
+allowlisted_threads_verbatim:
   - "Reference Handler"
   - "ForkJoinPool-1-worker-1"
-threads_tokenizadas:
+tokenized_threads:
   "main": {}
-  "pgto-worker-1": { preserva_sufixo: "-1" }
-  "pgto-worker-2": { preserva_sufixo: "-2" }
-  "order-vt-9": { preserva_sufixo: "-9" }
-classes_tokenizadas:
+  "pgto-worker-1": { keeps_suffix: "-1" }
+  "pgto-worker-2": { keeps_suffix: "-2" }
+  "order-vt-9": { keeps_suffix: "-9" }
+tokenized_classes:
   - "com.acme.gateway.Bootstrap"
   - "com.acme.payment.LedgerService"
   - "com.acme.payment.PaymentFacade"
   - "com.acme.payment.gateway.AcquirerClient"
   - "com.acme.order.queue.EventConsumer"
-linhas_stripadas: []
-invariantes:
-  - determinismo_intra_dump
-  - determinismo_inter_dump
-  - blank_lines_preservadas
-  - sufixo_numerico_preservado
-# Armadilhas cobertas: cabecalho sem estado (`#1 "main"`) e VT anonima sem estado
-# (`#52 "" virtual`) — ambos eram redigidos pelo fail-closed antes; `virtual`
-# minusculo (a fixture jcmd-dump-text.txt usa a forma maiuscula, entao as duas convivem);
-# os tokens de `pgto-worker-*` e `order-vt-9` sao os MESMOS das outras fixtures sob o mesmo
-# vault (canonico identico), que e o que mantem timeline/diff do ThreadMine funcionando.
+stripped_lines: []
+invariants:
+  - intra_dump_determinism
+  - inter_dump_determinism
+  - blank_lines_preserved
+  - numeric_suffix_preserved
+# Traps covered: header with no state (`#1 "main"`) and an anonymous VT with no state
+# (`#52 "" virtual`) — both used to be redacted by fail-closed; lowercase
+# `virtual` (the jcmd-dump-text.txt fixture uses the uppercase form, so the two coexist);
+# the tokens for `pgto-worker-*` and `order-vt-9` are the SAME as in the other fixtures under the
+# same vault (identical canonical form), which is what keeps ThreadMine's timeline/diff working.

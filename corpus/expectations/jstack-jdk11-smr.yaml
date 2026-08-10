@@ -1,16 +1,16 @@
-# jstack JDK 11: SMR info, cpu=/elapsed=, modulo java.base@11.0.16/ nos frames,
+# jstack JDK 11: SMR info, cpu=/elapsed=, java.base@11.0.16/ module in the frames,
 # "JNI global refs: N, weak refs: N".
-formato: hotspot-jstack
-ancoras_preservadas:
+format: hotspot-jstack
+preserved_anchors:
   - "Full thread dump OpenJDK 64-Bit Server VM (11.0.16+8-LTS mixed mode):"
   - "java.lang.Thread.State:"
-threads_allowlist_verbatim:
+allowlisted_threads_verbatim:
   - "Reference Handler"
   - "Finalizer"
   - "Signal Dispatcher"
   - "C2 CompilerThread0"
   - "C1 CompilerThread0"
-  - "Thread-7"                 # regex ^Thread-\d+$ da allowlist
+  - "Thread-7"                 # allowlist regex ^Thread-\d+$
   - "Common-Cleaner"
   - "VM Thread"
   - "GC Thread#0"
@@ -19,25 +19,25 @@ threads_allowlist_verbatim:
   - "G1 Refine#0"
   - "G1 Young RemSet Sampling"
   - "VM Periodic Task Thread"
-threads_tokenizadas:
-  "main": {}   # corrigido apos conferir contra a allowlist real: a allowlist-v1 real nao tem regra p/ "main" -> tokenizada
-  "cache-refresher-2": { preserva_sufixo: "-2" }
-  "billing-sched-1": { preserva_sufixo: "-1" }
-classes_tokenizadas:
+tokenized_threads:
+  "main": {}   # fixed after checking against the real allowlist: the real allowlist-v1 has no rule for "main" -> tokenized
+  "cache-refresher-2": { keeps_suffix: "-2" }
+  "billing-sched-1": { keeps_suffix: "-1" }
+tokenized_classes:
   - "com.acme.gateway.Bootstrap"
-  - "com.acme.core.util.NamedThreadFactory"   # inner anonima NamedThreadFactory$1 -> C...$C...
+  - "com.acme.core.util.NamedThreadFactory"   # anonymous inner NamedThreadFactory$1 -> C...$C...
   - "com.acme.billing.sched.TariffJob"
-  - "com.acme.order.queue.OrderQueue"         # tambem apos "(a " nas linhas waiting on/locked
+  - "com.acme.order.queue.OrderQueue"         # also after "(a " on the waiting on/locked lines
   - "com.acme.order.OrderTailer"
-linhas_stripadas:
+stripped_lines:
   - "Threads class SMR info:"
   - "_java_thread_list"
   - "JNI global refs"
-invariantes:
-  - determinismo_intra_dump
-  - blank_lines_preservadas
-  - enderecos_lock_verbatim
-# Armadilhas cobertas: bloco SMR (enderecos multi-linha + chave "}") strippado sem quebrar a
-# contagem de linhas em branco; "G1 Young RemSet Sampling" e "VM Periodic Task Thread" SEM linha
-# em branco entre eles (aparece em dumps reais - delimitacao de thread nao pode depender so de
-# linha em branco); modulo java.base@11.0.16/ preservado dentro do frame.
+invariants:
+  - intra_dump_determinism
+  - blank_lines_preserved
+  - lock_addresses_verbatim
+# Pitfalls covered: the SMR block (multi-line addresses + the closing "}") stripped without
+# breaking the blank-line count; "G1 Young RemSet Sampling" and "VM Periodic Task Thread" with NO
+# blank line between them (happens in real dumps - thread delimiting cannot rely on a blank line
+# alone); the java.base@11.0.16/ module preserved inside the frame.

@@ -1,30 +1,30 @@
-# jcmd <pid> Thread.print: identico ao jstack EXCETO a 1a linha "48350:" (pid + dois-pontos)
-# antes do timestamp - o detector de formato precisa tolerar esse preambulo nos primeiros 4KB.
-formato: hotspot-jstack
-ancoras_preservadas:
-  - "48350:"                        # preambulo do jcmd preservado (nao e identificador)
+# jcmd <pid> Thread.print: identical to jstack EXCEPT for the 1st line "48350:" (pid + colon)
+# before the timestamp - format detection has to tolerate that preamble in the first 4KB.
+format: hotspot-jstack
+preserved_anchors:
+  - "48350:"                        # jcmd preamble preserved (not an identifier)
   - "Full thread dump OpenJDK 64-Bit Server VM (17.0.8+7-LTS mixed mode, sharing):"
   - "java.lang.Thread.State:"
-threads_allowlist_verbatim:
+allowlisted_threads_verbatim:
   - "Reference Handler"
   - "Monitor Deflation Thread"
   - "VM Thread"
   - "GC Thread#0"
   - "VM Periodic Task Thread"
-threads_tokenizadas:
-  "main": {}   # corrigido apos conferir contra a allowlist real: a allowlist-v1 real nao tem regra p/ "main" -> tokenizada
-  "report-render-1": { preserva_sufixo: "-1" }
-  "report-render-2": { preserva_sufixo: "-2" }
-classes_tokenizadas:
+tokenized_threads:
+  "main": {}   # fixed after checking against the real allowlist: the real allowlist-v1 has no rule for "main" -> tokenized
+  "report-render-1": { keeps_suffix: "-1" }
+  "report-render-2": { keeps_suffix: "-2" }
+tokenized_classes:
   - "com.acme.gateway.Bootstrap"
   - "com.acme.report.PdfRenderer"
   - "com.acme.report.ReportJob"
-linhas_stripadas:
+stripped_lines:
   - "Threads class SMR info:"
   - "_java_thread_list"
   - "JNI global refs"
-invariantes:
-  - determinismo_intra_dump
-  - blank_lines_preservadas
-# Armadilha coberta: a linha "48350:" nao casa nenhuma regra de frame/thread - fail-closed NAO
-# pode redigi-la (e o preambulo padrao do jcmd; precisa de regra propria de preservacao).
+invariants:
+  - intra_dump_determinism
+  - blank_lines_preserved
+# Trap covered: the "48350:" line matches no frame/thread rule - fail-closed must NOT
+# redact it (it is jcmd's standard preamble; it needs its own preservation rule).

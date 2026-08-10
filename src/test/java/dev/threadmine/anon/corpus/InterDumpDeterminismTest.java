@@ -81,7 +81,7 @@ class InterDumpDeterminismTest {
         // the OpenJ9 javacore fixture; the same vault must hand both dialects
         // the same base token, or cross-dump comparison dies at the server.
         String hotspot = Files.readString(FIXTURES.resolve("edge-pool-starvation.txt"), StandardCharsets.UTF_8);
-        String javacore = Files.readString(FIXTURES.resolve("openj9-javacore-moderno.txt"), StandardCharsets.UTF_8);
+        String javacore = Files.readString(FIXTURES.resolve("openj9-javacore-modern.txt"), StandardCharsets.UTF_8);
         Vault vault = Vault.create(tempDir.resolve("vault-cross.json"));
 
         String outHotspot = mask(hotspot, vault);

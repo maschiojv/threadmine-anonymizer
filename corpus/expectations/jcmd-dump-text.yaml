@@ -1,32 +1,32 @@
-# jcmd <pid> Thread.dump_to_file -format=text (JEP 425+): cabecalho de 3 linhas (pid,
-# timestamp ISO, versao), threads como `#N "nome" ESTADO`, frames indentados com 6 espacos e
-# prefixo de modulo `java.base/` (barra, NAO arroba), VTs como `#N "" VIRTUAL ESTADO`.
-formato: hotspot-jcmd-text
-ancoras_preservadas:
+# jcmd <pid> Thread.dump_to_file -format=text (JEP 425+): 3-line header (pid,
+# ISO timestamp, version), threads as `#N "name" STATE`, frames indented with 6 spaces and a
+# `java.base/` module prefix (slash, NOT at-sign), VTs as `#N "" VIRTUAL STATE`.
+format: hotspot-jcmd-text
+preserved_anchors:
   - "48350"
   - "2026-07-24T13:02:19.482190Z"
   - "21.0.3+9-LTS"
   - "VIRTUAL"
-threads_allowlist_verbatim:
+allowlisted_threads_verbatim:
   - "Reference Handler"
   - "Finalizer"
   - "ForkJoinPool-1-worker-1"
-threads_tokenizadas:
-  "main": {}   # corrigido apos conferir contra a allowlist real: a allowlist-v1 real nao tem regra p/ "main" -> tokenizada
-  "pgto-worker-1": { preserva_sufixo: "-1" }
-  "pgto-worker-2": { preserva_sufixo: "-2" }
-  "order-vt-9": { preserva_sufixo: "-9" }
-classes_tokenizadas:
+tokenized_threads:
+  "main": {}   # fixed after checking against the real allowlist: the real allowlist-v1 has no rule for "main" -> tokenized
+  "pgto-worker-1": { keeps_suffix: "-1" }
+  "pgto-worker-2": { keeps_suffix: "-2" }
+  "order-vt-9": { keeps_suffix: "-9" }
+tokenized_classes:
   - "com.acme.gateway.Bootstrap"
   - "com.acme.payment.LedgerService"
   - "com.acme.payment.PaymentFacade"
   - "com.acme.payment.gateway.AcquirerClient"
   - "com.acme.order.queue.EventConsumer"
-linhas_stripadas: []
-invariantes:
-  - determinismo_intra_dump
-  - blank_lines_preservadas
-# Armadilhas cobertas: frames SEM "at " e SEM modulo nos frames de app (so java.base/ nos de
-# JDK) - o lexer de frame nao pode exigir o prefixo "at "; `#52 ""` (VT anonima) preservada;
-# o numero apos # e o TID da thread (nao sequencial) - verbatim; nomes entre aspas tokenizados
-# com as MESMAS atribuicoes dos outros dialetos (mesmo canonico => mesmo token).
+stripped_lines: []
+invariants:
+  - intra_dump_determinism
+  - blank_lines_preserved
+# Traps covered: frames with NO "at " and NO module on app frames (only java.base/ on the
+# JDK ones) - the frame lexer cannot require the "at " prefix; `#52 ""` (anonymous VT) preserved;
+# the number after # is the thread TID (not sequential) - verbatim; quoted names tokenized
+# with the SAME assignments as the other dialects (same canonical form => same token).

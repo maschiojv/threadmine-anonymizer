@@ -1,31 +1,31 @@
-# Edge: arquivo com as LINHAS em ordem invertida (JNI refs primeiro, "Full thread dump" na
-# ultima linha) - acontece com ferramentas de coleta que empilham logs. O ThreadMine aceita
-# (fixture real-hotspot-jstack.txt do parser e assim); o tm-anon deve mascarar linha a linha
-# SEM reordenar e SEM depender de "header antes do corpo".
-formato: hotspot-jstack
-ancoras_preservadas:
+# Edge: file with the LINES in reverse order (JNI refs first, "Full thread dump" on the
+# last line) - happens with collection tools that stack logs. ThreadMine accepts it
+# (the parser's real-hotspot-jstack.txt fixture looks like this); tm-anon must mask line by line
+# WITHOUT reordering and WITHOUT relying on "header before body".
+format: hotspot-jstack
+preserved_anchors:
   - "Full thread dump OpenJDK 64-Bit Server VM (21.0.3+9-LTS mixed mode, sharing):"
   - "java.lang.Thread.State:"
-threads_allowlist_verbatim:
+allowlisted_threads_verbatim:
   - "Reference Handler"
   - "http-nio-8080-exec-1"
-threads_tokenizadas:
-  "main": {}   # corrigido apos conferir contra a allowlist real: a allowlist-v1 real nao tem regra p/ "main" -> tokenizada
-  "pgto-worker-1": { preserva_sufixo: "-1" }
-classes_tokenizadas:
+tokenized_threads:
+  "main": {}   # fixed after checking against the real allowlist: the real allowlist-v1 has no rule for "main" -> tokenized
+  "pgto-worker-1": { keeps_suffix: "-1" }
+tokenized_classes:
   - "com.acme.web.PaymentController"
   - "com.acme.payment.PaymentFacade"
   - "com.acme.payment.LedgerLock"
   - "com.acme.payment.LedgerService"
   - "com.acme.gateway.Bootstrap"
-linhas_stripadas:
+stripped_lines:
   - "JNI global refs"
-invariantes:
-  - ordem_linhas_preservada     # saida na MESMA ordem (invertida) da entrada
-  - determinismo_intra_dump
-  - blank_lines_preservadas
-  - enderecos_lock_verbatim
-# Armadilha coberta: a ancora "Full thread dump" esta FORA dos primeiros 4KB apenas em dumps
-# grandes; aqui esta na ultima linha de um arquivo pequeno (dentro dos 4KB) - a deteccao de
-# formato nao pode exigir que ela seja a 1a linha nao-vazia. Frames aparecem ANTES do cabecalho
-# da sua thread: o lexer classifica cada linha pelo formato dela, nao pela posicao.
+invariants:
+  - line_order_preserved     # output in the SAME (reversed) order as the input
+  - intra_dump_determinism
+  - blank_lines_preserved
+  - lock_addresses_verbatim
+# Pitfall covered: the "Full thread dump" anchor falls OUTSIDE the first 4KB only in large
+# dumps; here it is on the last line of a small file (within the 4KB) - format detection
+# must not require it to be the first non-blank line. Frames show up BEFORE their thread's
+# header: the lexer classifies each line by its own shape, not by its position.

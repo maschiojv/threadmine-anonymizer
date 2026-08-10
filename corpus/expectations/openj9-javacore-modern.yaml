@@ -1,0 +1,89 @@
+# Recent OpenJ9 javacore (Semeru/OpenJ9 0.41, Linux/container): modern 0SECTION names
+# (ENVINFO/LOCKS/THREADS/CLASSES) but the SAME SPEC 5-B token families (CI/LK/XM/CL);
+# threads with J9VMThread/omrthread_t, 3XMJAVALTHREAD/3XMTHREADINFO1/3XMCPUTIME, 3XMTHREADBLOCK
+# "Blocked on:", 3XMTHREADINFO3 and — THREADMINE PARSER DIALECT — "Java.lang.Thread.State:"
+# (stock OpenJ9 prints "Java callstack:"; see the notes in the INDEX). SLASH FRAMES:
+# com/acme/payment/WalletService — the rewriter must normalize before longest-prefix/token.
+format: openj9-javacore
+detection_anchors_4kb:
+  # 1TISIGINFO is on line 5; the whole TITLE fits in the first 4KB of the original AND of the masked
+  # file (the strip only shrinks what comes before XM). 1XMJAVAVERSION and 3XMTHREADINFO should
+  # survive too, but sit beyond 4KB in the original — they do not count as guaranteed anchors.
+  - "1TISIGINFO"
+preserved_sections:
+  - "TITLE"              # 1TISIGINFO/1TIDATETIME (and the other neutral metadata lines); 1TIFILENAME redacted
+  - "THREADS"            # XM family — includes 1XMJAVAVERSION, 1XMPOOLINFO, 1XMCURTHDINFO, thread blocks
+stripped_sections:        # name = what the 0SECTION line of this fixture shows; SPEC family in ()
+  - "GPINFO"             # XH family — not in the 5-B.2 list -> fail-closed 5-B.6
+  - "ENVINFO"            # CI family — cmdline w/ -Dacme.db.password, 2CIENVVAR w/ HOSTNAME and ACME_DB_PASSWORD
+  - "NATIVEMEMINFO"      # MEMUSER family — not in the list -> fail-closed 5-B.6
+  - "MEMINFO"            # ST family
+  - "LOCKS"              # LK family — com/acme/payment/WalletService@0x... monitor + pgto-worker-* names
+  - "HOOKS"              # HK family — not in the list -> fail-closed 5-B.6
+  - "CLASSES"            # CL family — 3CLTEXTCLASS with the app's com/acme/* classes
+  - "Javadump End section"
+redacted_lines:
+  - "1TIFILENAME"        # /opt/acme/payments/javacore... — path leaks product/deploy; ALWAYS redacted (5-B.3)
+  - "3XMTHREADINFO      Anonymous native thread"   # 3XMTHREADINFO with NO quotes: does not match the thread-name
+                        # rule -> fail-closed 5-B.6 (candidate for a structural marker in allowlist v2)
+  - "4XENATIVESTACK"     # native stack (.so modules + offsets): no rule in 5/5-B covers it -> fail-closed
+preserved_anchors:
+  - "1TISIGINFO     Dump Event \"user\" (00004000) received"
+  - "1TIDATETIME    Date: 2026/02/10 at 09:30:11:224 (UTC)"
+  - "1XMJAVAVERSION JRE 17 Linux amd64-64 build 17.0.9+9 (openj9-0.41.0)"   # the parser's only version source
+  - "1XMPOOLINFO"
+  - "1XMCURTHDINFO"
+  - "3XMTHREADINFO"
+  - "3XMTHREADINFO3           Java.lang.Thread.State:"
+  - "3XMTHREADBLOCK     Blocked on:"
+  - "4XESTACKTRACE"
+allowlisted_threads_verbatim:
+  - "Signal Dispatcher"        # exact prefix from allowlist-v1
+  - "Finalizer thread"         # "Finalizer" prefix
+  - "Common-Cleaner"           # exact prefix
+  - "Concurrent Mark Helper"   # regex (?i)^(GC |...|Concurrent Mark|...)
+tokenized_threads:
+  "main": {}
+  "pgto-worker-1": { keeps_suffix: "-1" }   # app pool: same base token + suffix (SPEC 5.3c)
+  "pgto-worker-2": { keeps_suffix: "-2" }
+  "pgto-worker-3": { keeps_suffix: "-3" }
+  "pgto-worker-4": { keeps_suffix: "-4" }
+  "http-sync tenant-acme /api/payments?invoice=99887766": { route_marker: true }   # "/", "?", digits>=8 -> t.../q
+  # OpenJ9 infra threads with NO allowlist-v1 rule (allowlist v2 candidates — if v2 takes them,
+  # move them to allowlisted_threads_verbatim; the source of truth is the 1B artifact):
+  "JIT Compilation Thread-000 Suspended": {}
+  "JIT Compilation Thread-001 Suspended": {}
+  "IProfiler": {}
+tokenized_classes:
+  # Canonical form uses DOTS; in the file they appear with SLASHES (com/acme/...) in 4XESTACKTRACE,
+  # 3XMTHREADBLOCK and 3LKMONOBJECT. New invariant: same dotted canonical => same token a
+  # HotSpot dump would produce; the slash is re-emitted as punctuation between segments, never
+  # inside the token (the SPEC §1 grammar forbids "/" in a token).
+  - "com.acme.boot.Application"
+  - "com.acme.payment.WalletService"    # in a frame, in 3XMTHREADBLOCK "Blocked on:" and in LOCKS (stripped)
+  - "com.acme.payment.PaymentWorker"
+  - "com.acme.payment.PaymentQueue"
+  - "com.acme.gateway.CardSwitchClient"
+  - "com.acme.api.PaymentSyncHandler"
+native_ids_verbatim: true   # J9VMThread/omrthread_t/java\/lang\/Thread ptr/native thread ID (5-B.4);
+                             # includes the J9VMThread after "Owned by:" in 3XMTHREADBLOCK (5-B.5: only
+                             # the target class is tokenized; the NAME quoted in Owned by: gets the owner thread's token)
+invariants:
+  - intra_dump_determinism
+  - inter_dump_determinism            # pgto-worker-N and com.acme.* already exist in the HotSpot fixtures:
+                                       # same canonicals => same tokens (cross-dialect timeline/comparison)
+  - native_ids_verbatim
+  - numeric_suffix_preserved
+  - route_marker_q
+  - threadinfo_stacktrace_order_preserved
+  - slash_frames_tokenized       # new: normalize "/"->"." for allowlist+canonical; java/util/... is
+                                       # allowlisted (java.) and must NOT be tokenized just because it came with slashes
+  - blocked_on_consistent             # name in "Owned by:" = same token as the owner thread's header
+  - verify_exit4_if_forbidden_section_survives
+  - verify_exit4_if_1tifilename_has_content
+# Traps covered: (1) slash frames WITH a "(Compiled Code)" suffix inside the file:line parens —
+# "(WalletService.java:88(Compiled Code))" moulding preserved, only class/file tokenized; (2) an
+# infra thread with no java stack (JIT/IProfiler: 3XMTHREADINFO with no 4XESTACKTRACE) does not
+# break the lexer; (3) "Anonymous native thread" (3XMTHREADINFO with no quotes) hits fail-closed
+# without taking the file down; (4) NULL blocks between threads are free (parser closes a thread
+# at the next 3XMTHREADINFO — 5-B.7); (5) a route name with spaces + "?" is ONE token t.../q, never split.

@@ -1,18 +1,18 @@
-# Edge: dump SEM a linha "Full thread dump" (recorte colado de um log, cabecalhos minimos sem
-# os_prio/cpu/elapsed). O parser do ThreadMine aceita esse formato (fixture
-# real-hotspot-deadlock.txt e assim) - logo o tm-anon TAMBEM deve aceitar: a ancora
-# "Full thread dump" e SUFICIENTE mas nao NECESSARIA; cabecalho de thread `"nome" #N prio=`
-# tambem identifica hotspot-jstack. Recusar aqui bloquearia uploads validos (fail-closed e para
-# formato DESCONHECIDO, nao para jstack parcial).
-formato: hotspot-jstack
-ancoras_preservadas:
+# Edge: dump WITHOUT the "Full thread dump" line (snippet pasted from a log, minimal headers with
+# no os_prio/cpu/elapsed). The ThreadMine parser accepts this format (the
+# real-hotspot-deadlock.txt fixture looks like this) - so tm-anon must accept it TOO: the
+# "Full thread dump" anchor is SUFFICIENT but not NECESSARY; a thread header `"name" #N prio=`
+# also identifies hotspot-jstack. Rejecting here would block valid uploads (fail-closed is for
+# UNKNOWN formats, not for a partial jstack).
+format: hotspot-jstack
+preserved_anchors:
   - "java.lang.Thread.State:"
-threads_allowlist_verbatim:
+allowlisted_threads_verbatim:
   - "http-nio-8080-exec-1"
-threads_tokenizadas:
-  "pgto-worker-1": { preserva_sufixo: "-1" }
-  "pgto-worker-2": { preserva_sufixo: "-2" }
-classes_tokenizadas:
+tokenized_threads:
+  "pgto-worker-1": { keeps_suffix: "-1" }
+  "pgto-worker-2": { keeps_suffix: "-2" }
+tokenized_classes:
   - "com.acme.payment.LedgerService"
   - "com.acme.payment.LedgerLock"
   - "com.acme.payment.PaymentFacade"
@@ -20,13 +20,13 @@ classes_tokenizadas:
   - "com.acme.stock.StockSync"
   - "com.acme.order.OrderService"
   - "com.acme.web.PaymentController"
-linhas_stripadas: []
-invariantes:
-  - aceita_sem_header_full_thread_dump
-  - determinismo_intra_dump
-  - blank_lines_preservadas
-  - enderecos_lock_verbatim
-# Armadilha coberta: cabecalho minimo (`"pgto-worker-1" #31 prio=5 tid=0x1000 nid=0x1000
-# waiting for monitor entry`, sem colchete de stack range) precisa ser reconhecido como
-# cabecalho de thread; a 1a linha do output ("# tm-anon v1") vira a unica coisa antes do
-# primeiro cabecalho.
+stripped_lines: []
+invariants:
+  - accepts_without_full_thread_dump_header
+  - intra_dump_determinism
+  - blank_lines_preserved
+  - lock_addresses_verbatim
+# Pitfall covered: a minimal header (`"pgto-worker-1" #31 prio=5 tid=0x1000 nid=0x1000
+# waiting for monitor entry`, no bracketed stack range) has to be recognized as a
+# thread header; the first output line ("# tm-anon v1") ends up being the only thing before the
+# first header.
