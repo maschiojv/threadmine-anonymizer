@@ -229,7 +229,7 @@ structured fields. That is why the token grammar is a distinctive
 ```
 tm-anon init   [--vault <path>]
 tm-anon mask   <dump> [-o <out>] [--vault <path>] [--strict] [--report <path>] [--dry-run] [--no-verify]
-tm-anon unmask <file> [-o <out>] [--vault <path>]
+tm-anon unmask <file> [-o <out>] [--format text|json|html] [--vault <path>]
 tm-anon verify <original> <masked> [--vault <path>]
 
 Exit codes: 0 ok - 1 usage - 2 unsupported input - 3 vault error - 4 verify failed
@@ -317,6 +317,14 @@ summary to stderr, so `tm-anon unmask export.json > plain.json` does the obvious
 thing. Tokens unknown to the vault are left alone and reported — that usually
 means the text was masked with a different vault, which is a fact about the
 input rather than an error. Idempotent.
+
+A real name can carry a backslash, a quote or a `<`, so a value dropped in
+verbatim would break the file it lands in. The output format decides how each
+restored value is escaped: it is inferred from the input file's extension
+(`.json` → JSON, `.html`/`.htm` → HTML, anything else → plain text) and
+`--format text|json|html` overrides that when the extension does not say what
+the file really is. An unrecognised value is a usage error, never a silent
+fallback to text.
 
 ### `verify`
 
