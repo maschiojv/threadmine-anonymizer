@@ -7,7 +7,8 @@
 #
 #   - the application package disappears from the masked file;
 #   - the allowlisted pool name survives (that is what keeps detection working);
-#   - verify says PASS;
+#   - mask gates its own output and says PASS;
+#   - verify says PASS on its own too;
 #   - unmask brings the real name back;
 #   - an input that is not a thread dump is refused with exit 2 (fail-closed).
 #
@@ -33,7 +34,9 @@ echo "--- init"
 run init --vault "$work/vault.json"
 
 echo "--- mask"
-run mask "$work/dump.txt" -o "$work/masked.txt" --vault "$work/vault.json"
+run mask "$work/dump.txt" -o "$work/masked.txt" --vault "$work/vault.json" | tee "$work/mask.txt"
+grep -q '^verify: PASS' "$work/mask.txt" \
+  || { echo "FAIL: mask did not run its own compliance gate"; exit 1; }
 
 echo "--- verify"
 run verify "$work/dump.txt" "$work/masked.txt" --vault "$work/vault.json" | tee "$work/verify.txt"

@@ -30,10 +30,13 @@ exactly why pasting a dump into a third-party analyzer is against policy.
 
 ```
 jstack <pid> > dump.txt
-tm-anon mask dump.txt                    # -> dump.anon.txt (no internal names left)
-tm-anon verify dump.txt dump.anon.txt    # compliance gate: must PASS
+tm-anon mask dump.txt                    # -> dump.anon.txt, and nothing is written
+                                         # unless the compliance check passes
                                          # upload dump.anon.txt, get the analysis back
 tm-anon unmask export.json               # your real names, back on your machine
+
+tm-anon verify dump.txt dump.anon.txt    # the same check on demand: CI, reviewers,
+                                         # a file you masked last month
 ```
 
 The masked dump is still analyzable: the same detections fire and the same
@@ -96,9 +99,16 @@ When the working directory is a git repository, `init` also adds the vault to
 $ tm-anon mask payments-prod.txt
 masked  payments-prod.txt -> payments-prod.anon.txt
 lines:  78 preserved, 10 tokenized, 22 stripped, 0 redacted
+verify: PASS - no identifier survived and the structure is intact.
 Reminder: upload the masked file under a neutral file name and title -
 the original name often carries the very identifiers you just masked.
 ```
+
+That `verify` line is not a summary of what masking believes it did: before
+writing the file, `mask` hands its own output to the compliance verifier — the
+same code the standalone `verify` command runs, which re-derives every
+identifier from the masked text instead of trusting the rewriter. A `FAIL`
+means no file is written at all (exit `4`).
 
 Before:
 
@@ -150,7 +160,12 @@ The diff is the whole design:
 Same vault, same name, same token — forever, and across dumps. That is what
 keeps multi-dump comparison and timelines working after masking.
 
-### 3. Verify before uploading
+### 3. Re-check any masked file, any time
+
+`mask` already ran this check on the file it wrote. The standalone command is
+for the cases where that is not the evidence you need: a file masked weeks ago,
+a CI step, or a security reviewer who wants the verdict from a command that
+never touched the masking.
 
 ```
 $ tm-anon verify payments-prod.txt payments-prod.anon.txt
@@ -170,10 +185,9 @@ Stripped lines: 10
 PASS - no identifier survived and the structure is intact.
 ```
 
-`verify` is the command to put in front of an upload, and the one to show a
-security reviewer. It re-reads the masked file with fresh eyes and reports any
-identifier that is neither a token nor on the allowlist. Exit code `4` when it
-fails, and the report names the offending line.
+It re-reads the masked file with fresh eyes and reports any identifier that is
+neither a token nor on the allowlist. Exit code `4` when it fails, and the
+report names the offending line.
 
 ### 4. Unmask the analysis output
 
@@ -214,7 +228,7 @@ structured fields. That is why the token grammar is a distinctive
 
 ```
 tm-anon init   [--vault <path>]
-tm-anon mask   <dump> [-o <out>] [--vault <path>] [--strict] [--report <path>] [--dry-run]
+tm-anon mask   <dump> [-o <out>] [--vault <path>] [--strict] [--report <path>] [--dry-run] [--no-verify]
 tm-anon unmask <file> [-o <out>] [--vault <path>]
 tm-anon verify <original> <masked> [--vault <path>]
 
@@ -255,14 +269,19 @@ copy. Without `-o` the output is `<name>.anon.<ext>`.
 | `--strict` | also tokenize the *recommended* allowlist (52 well-known open-source package prefixes: Jackson, SLF4J, Netty, Hibernate, Hikari, …). The *required* list is never tokenized — doing so would break detection. |
 | `--report <path>` | write counters and warnings to a file |
 | `--dry-run` | print the summary, write nothing, leave the vault untouched |
+| `--no-verify` | skip the compliance check on the output. The file gets written with nothing vouching for it. |
 
 ```
 $ tm-anon mask payments-prod.txt --dry-run
 dry-run: no output written, vault not updated.
 lines:  78 preserved, 10 tokenized, 22 stripped, 0 redacted
+verify: PASS - no identifier survived and the structure is intact.
 Reminder: upload the masked file under a neutral file name and title -
 the original name often carries the very identifiers you just masked.
 ```
+
+`--dry-run` still runs the check, which makes it the cheap way to ask "would
+this dump survive masking?" without producing anything.
 
 Report file (`--report r.txt`):
 
@@ -278,8 +297,11 @@ warnings: 0
 ```
 
 **Fail-closed.** A line no rule recognizes is replaced by
-`# [tm-anon: redacted]`, never passed through verbatim. A file that is not a
-recognizable HotSpot dump is refused outright:
+`# [tm-anon: redacted]`, never passed through verbatim. Output that does not
+pass the compliance check is not written, so a file that failed the gate never
+exists to be uploaded by mistake (exit `4`, and the report on stderr names the
+identifier that survived). And a file that is not a recognizable HotSpot dump is
+refused outright:
 
 ```
 $ tm-anon mask notadump.txt
@@ -302,6 +324,10 @@ Compliance report over the pair (original, masked): residual identifiers,
 structural anchors, thread/frame/blank-line counts, token count. When a vault is
 present it also cross-checks that the tokens in the masked file belong to that
 vault. Exit `0` on PASS, `4` on FAIL.
+
+This is the check `mask` runs on itself, exposed as a command of its own. Run
+it on files you did not just mask, in CI, or when someone needs the verdict
+from a tool invocation that had no part in producing the file.
 
 ## Supported dump formats
 

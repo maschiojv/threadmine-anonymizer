@@ -1,6 +1,7 @@
 package dev.threadmine.anon.cli;
 
 import dev.threadmine.anon.core.Vault;
+import dev.threadmine.anon.verify.VerifyReport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -11,6 +12,7 @@ import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -28,6 +30,20 @@ class MaskCommandTest {
 
             JNI global refs: 19, weak refs: 0
             """;
+
+    /**
+     * A gate that reports one surviving application class. The real verifier
+     * clears this dump, so the fail-closed path needs a stand-in to be
+     * exercised at all - what is under test is what mask does with a FAIL,
+     * not how the verdict was reached.
+     */
+    private static final ComplianceGate LEAKING = (original, masked, engine) -> new VerifyReport(
+            List.of(new VerifyReport.Finding(5, VerifyReport.Finding.Kind.FRAME_CLASS,
+                    "com.acme.payment.LedgerService",
+                    "\tat com.acme.payment.LedgerService.applyEntry(LedgerService.java:88)")),
+            List.of(),
+            new VerifyReport.Counts(1, 1, 2, 2, 3, 3, 4),
+            List.of(), 0, 0);
 
     @TempDir
     Path tempDir;
@@ -51,6 +67,13 @@ class MaskCommandTest {
         return Main.run(args,
                 new PrintStream(stdout, true, StandardCharsets.UTF_8),
                 new PrintStream(stderr, true, StandardCharsets.UTF_8));
+    }
+
+    private int runWithGate(ComplianceGate gate, String... args) {
+        return MaskCommand.run(args,
+                new PrintStream(stdout, true, StandardCharsets.UTF_8),
+                new PrintStream(stderr, true, StandardCharsets.UTF_8),
+                gate);
     }
 
     private String out() {
@@ -199,6 +222,76 @@ class MaskCommandTest {
 
         assertTrue(err().contains("OpenJ9 javacore"),
                 "the refusal must list javacore among supported formats: " + err());
+    }
+
+    @Test
+    void maskRunsTheComplianceGateAndAnnouncesPass() {
+        int exit = run("mask", dumpFile.toString(), "--vault", vaultFile.toString());
+
+        assertEquals(0, exit, err());
+        assertTrue(out().contains("PASS"),
+                "mask must run verify itself and say so: " + out());
+    }
+
+    @Test
+    void noVerifyFlagSkipsTheGateAndSaysTheFileIsUnchecked() throws IOException {
+        int exit = run("mask", dumpFile.toString(), "--vault", vaultFile.toString(), "--no-verify");
+
+        assertEquals(0, exit, err());
+        assertTrue(Files.exists(tempDir.resolve("dump.anon.txt")));
+        assertFalse(out().contains("PASS"), "the gate did not run, so nothing passed: " + out());
+        assertTrue(out().contains("verify"),
+                "skipping the gate must be stated, not silent: " + out());
+    }
+
+    @Test
+    void aFailedGateWritesNoFileAndExitsFour() {
+        int exit = runWithGate(LEAKING, "mask", dumpFile.toString(), "--vault", vaultFile.toString());
+
+        assertEquals(4, exit, out() + err());
+        assertFalse(Files.exists(tempDir.resolve("dump.anon.txt")),
+                "a file that failed the gate must never reach the disk");
+    }
+
+    @Test
+    void aFailedGateNamesTheLeakThatCausedIt() {
+        runWithGate(LEAKING, "mask", dumpFile.toString(), "--vault", vaultFile.toString());
+
+        String diagnostics = out() + err();
+        assertTrue(diagnostics.contains("FAIL"), diagnostics);
+        assertTrue(diagnostics.contains("com.acme.payment.LedgerService"),
+                "the report must name the identifier that survived: " + diagnostics);
+    }
+
+    @Test
+    void aFailedGateLeavesTheVaultUntouched() throws IOException {
+        String before = Files.readString(vaultFile);
+
+        runWithGate(LEAKING, "mask", dumpFile.toString(), "--vault", vaultFile.toString());
+
+        assertEquals(before, Files.readString(vaultFile),
+                "no output means no pseudonyms to remember");
+    }
+
+    @Test
+    void aFailedGateInDryRunAlsoExitsFour() {
+        int exit = runWithGate(LEAKING, "mask", dumpFile.toString(), "--dry-run",
+                "--vault", vaultFile.toString());
+
+        assertEquals(4, exit, out() + err());
+    }
+
+    @Test
+    void noVerifyFlagDoesNotEvenConsultTheGate() {
+        ComplianceGate exploding = (original, masked, engine) -> {
+            throw new AssertionError("--no-verify must not run the gate");
+        };
+
+        int exit = runWithGate(exploding, "mask", dumpFile.toString(),
+                "--vault", vaultFile.toString(), "--no-verify");
+
+        assertEquals(0, exit, err());
+        assertTrue(Files.exists(tempDir.resolve("dump.anon.txt")));
     }
 
     @Test

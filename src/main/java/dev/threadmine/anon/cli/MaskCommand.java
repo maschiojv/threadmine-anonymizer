@@ -9,6 +9,7 @@ import dev.threadmine.anon.format.hotspot.HotspotRewriter;
 import dev.threadmine.anon.format.hotspot.MaskResult;
 import dev.threadmine.anon.format.json.JsonThreadDumpRewriter;
 import dev.threadmine.anon.format.openj9.JavacoreRewriter;
+import dev.threadmine.anon.verify.VerifyReport;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -20,8 +21,9 @@ import java.util.List;
 
 /**
  * {@code tm-anon mask <dump> [-o <out>] [--vault <path>] [--strict]
- * [--report <path>] [--dry-run]} (SPEC §4). Exit codes: 0 ok, 1 usage,
- * 2 unsupported format (fail-closed), 3 vault error.
+ * [--report <path>] [--dry-run] [--no-verify]} (SPEC §4). Exit codes: 0 ok,
+ * 1 usage, 2 unsupported format (fail-closed), 3 vault error, 4 the output
+ * failed the compliance gate and was therefore not written.
  */
 final class MaskCommand {
 
@@ -35,12 +37,18 @@ final class MaskCommand {
     }
 
     static int run(String[] args, PrintStream out, PrintStream err) {
+        return run(args, out, err, ComplianceGate.standard());
+    }
+
+    /** Seam for tests: the compliance gate is supplied instead of built from the classpath. */
+    static int run(String[] args, PrintStream out, PrintStream err, ComplianceGate complianceGate) {
         Path input = null;
         Path output = null;
         Path vaultPath = Path.of(DEFAULT_VAULT);
         Path reportPath = null;
         boolean strict = false;
         boolean dryRun = false;
+        boolean gate = true;
 
         for (int i = 1; i < args.length; i++) {
             String arg = args[i];
@@ -65,6 +73,7 @@ final class MaskCommand {
                 }
                 case "--strict" -> strict = true;
                 case "--dry-run" -> dryRun = true;
+                case "--no-verify" -> gate = false;
                 default -> {
                     if (arg.startsWith("-") || input != null) {
                         return usage(err, "unexpected argument: " + arg);
@@ -111,8 +120,20 @@ final class MaskCommand {
             } else {
                 result = new HotspotRewriter(engine, allowlist).mask(text);
             }
+            VerifyReport report = gate ? complianceGate.check(text, result.output(), engine) : null;
+            if (report != null && !report.passed()) {
+                // Nothing is written and the vault is not saved: a file that
+                // failed the gate must not exist at all, or it is one careless
+                // upload away from being the leak it was supposed to prevent.
+                VerifyReportPrinter.print(report, input.toString(), "(not written)", err);
+                err.println();
+                err.println("tm-anon: the masked output did not pass verify, so it was not written.");
+                err.println("Report this dump shape at https://github.com/maschiojv/threadmine-anonymizer/issues");
+                err.println("- a leak that gets this far is a bug in mask, not something for you to work around.");
+                return ExitCodes.VERIFY_FAILED;
+            }
             if (dryRun) {
-                return finish(result, null, input, reportPath, out, true);
+                return finish(result, report, null, input, reportPath, out, true);
             }
             Path target = output != null ? output : defaultOutput(input);
             try {
@@ -122,7 +143,7 @@ final class MaskCommand {
                 return ExitCodes.USAGE;
             }
             vault.save();
-            return finish(result, target, input, reportPath, out, false);
+            return finish(result, report, target, input, reportPath, out, false);
         } catch (VaultException e) {
             err.println("tm-anon: vault error: " + e.getMessage());
             if (!Files.exists(vaultPath)) {
@@ -140,11 +161,12 @@ final class MaskCommand {
 
     private static int usage(PrintStream err, String message) {
         err.println("tm-anon mask: " + message);
-        err.println("usage: tm-anon mask <dump> [-o <out>] [--vault <path>] [--strict] [--report <path>] [--dry-run]");
+        err.println("usage: tm-anon mask <dump> [-o <out>] [--vault <path>] [--strict] [--report <path>]"
+                + " [--dry-run] [--no-verify]");
         return ExitCodes.USAGE;
     }
 
-    private static int finish(MaskResult result, Path target, Path input, Path reportPath,
+    private static int finish(MaskResult result, VerifyReport report, Path target, Path input, Path reportPath,
                               PrintStream out, boolean dryRun) throws IOException {
         if (dryRun) {
             out.println("dry-run: no output written, vault not updated.");
@@ -157,6 +179,13 @@ final class MaskCommand {
                 + result.redactedLines() + " redacted");
         for (String warning : result.warnings()) {
             out.println("warning: " + warning);
+        }
+        if (report == null) {
+            out.println("verify: skipped (--no-verify) - nothing checked this file, run"
+                    + " `tm-anon verify " + input + " " + (target == null ? "<masked>" : target)
+                    + "` before uploading.");
+        } else {
+            out.println("verify: " + VerifyReportPrinter.verdict(report));
         }
         out.println("Reminder: upload the masked file under a neutral file name and title -");
         out.println("the original name often carries the very identifiers you just masked.");
