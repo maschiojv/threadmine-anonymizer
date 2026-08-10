@@ -19,7 +19,7 @@
  *                            [--fixtures DIR] [--out DIR] [extra-dump.txt ...]
  *
  * Defaults: base-url http://localhost:8090, fixtures corpus/fixtures,
- * jar target/tm-anon-0.1.0-SNAPSHOT.jar, out e2e/out. The API key can also be
+ * jar target/tm-anon-0.2.0-SNAPSHOT.jar, out e2e/out. The API key can also be
  * given via the TM_API_KEY environment variable.
  *
  * Exit codes: 0 = all fixtures IGUAL or EXPECTED deviation; 1 = usage;
@@ -495,7 +495,7 @@ public class parity {
 
         baseUrl = "http://localhost:8090";
         apiKey = System.getenv("TM_API_KEY");
-        Path jar = Path.of("target/tm-anon-0.1.0-SNAPSHOT.jar");
+        Path jar = Path.of("target/tm-anon-0.2.0-SNAPSHOT.jar");
         Path fixturesDir = Path.of("corpus/fixtures");
         Path outDir = Path.of("e2e/out");
         List<Path> extraDumps = new ArrayList<>();
