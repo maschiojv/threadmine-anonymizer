@@ -1,5 +1,6 @@
 package dev.threadmine.anon.unmask;
 
+import dev.threadmine.anon.core.JsonText;
 import dev.threadmine.anon.core.TokenEngine;
 
 import java.util.LinkedHashMap;
@@ -16,6 +17,11 @@ import java.util.regex.Matcher;
  * about thread dump structure: it finds tokens with the single recognition
  * regex (SPEC §1) and replaces them, which is what makes it work on formats
  * nobody has thought of yet.
+ *
+ * <p>How each restored value is escaped on its way in depends on the
+ * {@link UnmaskFormat} the caller asks for: a real name carrying a backslash or
+ * a quote is written verbatim in {@code TEXT} and as a JSON string fragment in
+ * {@code JSON} and {@code HTML}, so the output stays parseable.</p>
  *
  * <p>Unknown tokens are left exactly as they were and reported. Unmask never
  * fails because of them: a partially reversible report is more useful than an
@@ -40,9 +46,18 @@ public final class Unmasker {
         this.engine = Objects.requireNonNull(engine);
     }
 
-    /** Replaces every recognizable token; the input is returned unchanged when there are none. */
+    /** Replaces every recognizable token, treating the text as plain text. */
     public UnmaskResult unmask(String text) {
+        return unmask(text, UnmaskFormat.TEXT);
+    }
+
+    /**
+     * Replaces every recognizable token, escaping each restored value for
+     * {@code format}. The input is returned unchanged when there are no tokens.
+     */
+    public UnmaskResult unmask(String text, UnmaskFormat format) {
         Objects.requireNonNull(text);
+        Objects.requireNonNull(format);
         Matcher matcher = TokenEngine.TOKEN_PATTERN.matcher(text);
         StringBuilder rebuilt = new StringBuilder(text.length());
         Set<String> restored = new LinkedHashSet<>();
@@ -56,6 +71,9 @@ public final class Unmasker {
             String replacement;
             if (canonical.isPresent()) {
                 replacement = render(token.charAt(0), canonical.get());
+                if (format.escapesAsJsonString()) {
+                    replacement = JsonText.escape(replacement, true);
+                }
                 restored.add(token);
                 replacedOccurrences++;
             } else {
@@ -63,9 +81,9 @@ public final class Unmasker {
                 unresolved.merge(token, 1, Integer::sum);
                 unresolvedOccurrences++;
             }
-            // quoteReplacement: real names carry $ (inner classes, lambdas)
-            // and \ (Windows-flavoured thread names), both of which are magic
-            // in a replacement string.
+            // quoteReplacement runs LAST: real names carry $ and \, and the
+            // JSON escaping above adds more backslashes — all of them are magic
+            // in a replacement string and must be neutralised after escaping.
             matcher.appendReplacement(rebuilt, Matcher.quoteReplacement(replacement));
         }
         matcher.appendTail(rebuilt);

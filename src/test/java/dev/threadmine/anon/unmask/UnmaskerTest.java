@@ -4,11 +4,13 @@ import dev.threadmine.anon.core.HmacTokenEngine;
 import dev.threadmine.anon.core.TokenEngine;
 import dev.threadmine.anon.core.TokenType;
 import dev.threadmine.anon.core.Vault;
+import dev.threadmine.anon.format.json.Json;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 
 import static dev.threadmine.anon.unmask.VaultFixture.vault;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -290,5 +292,59 @@ class UnmaskerTest {
                 + packageToken + "." + classToken + "." + methodToken);
 
         assertEquals("\"pgto-worker-3\" ran billing.InvoiceService.issue", result.text());
+    }
+
+    // --- format-aware escaping ---------------------------------------------
+
+    @SuppressWarnings("unchecked")
+    private static Map<String, Object> parseObject(String json) {
+        return (Map<String, Object>) Json.parse(json);
+    }
+
+    @Test
+    void keepsTheExportJsonParseableWhenNamesCarryBackslashesAndQuotes(@TempDir Path dir) {
+        Unmasker unmasker = unmasker(dir, vault()
+                .with("t1a2b3xc4d5e", "win\\path\\worker-1")
+                .with("t9f8e7xd6c5b", "pool\"1"));
+
+        String export = "{\"a\":\"t1a2b3xc4d5e\",\"b\":\"t9f8e7xd6c5b\"}";
+
+        String text = unmasker.unmask(export, UnmaskFormat.JSON).text();
+
+        // Parse it back: a string comparison would pass with a wrong-but-
+        // consistent escape, which is exactly the bug being fixed.
+        Map<String, Object> parsed = parseObject(text);
+        assertEquals("win\\path\\worker-1", parsed.get("a"));
+        assertEquals("pool\"1", parsed.get("b"));
+    }
+
+    @Test
+    void aThreadNamedLikeAClosingScriptTagCannotBreakOutOfTheIsland(@TempDir Path dir) {
+        Unmasker unmasker = unmasker(dir, vault().with("t1a2b3xc4d5e", "worker</script>"));
+
+        String island = "{\"nome\":\"t1a2b3xc4d5e\"}";
+
+        String text = unmasker.unmask(island, UnmaskFormat.HTML).text();
+
+        assertFalse(text.contains("</script>"), "the literal closing tag must never reach the output: " + text);
+        assertEquals("worker</script>", parseObject(text).get("nome"));
+    }
+
+    @Test
+    void textFormatIsUnchangedFromTheHistoricalBehaviour(@TempDir Path dir) {
+        Unmasker unmasker = unmasker(dir, vault().with("t2b3c4xd5e6f", "win\\path\\worker-1"));
+
+        assertEquals("win\\path\\worker-1", unmasker.unmask("t2b3c4xd5e6f", UnmaskFormat.TEXT).text());
+        assertEquals("win\\path\\worker-1", unmasker.unmask("t2b3c4xd5e6f").text());
+    }
+
+    @Test
+    void countsAreUnaffectedByEscaping(@TempDir Path dir) {
+        Unmasker unmasker = unmasker(dir, vault().with("t1a2b3xc4d5e", "pool\"1"));
+
+        UnmaskResult result = unmasker.unmask("{\"a\":\"t1a2b3xc4d5e\",\"b\":\"C00000x11111\"}", UnmaskFormat.JSON);
+
+        assertEquals(1, result.replacedOccurrences());
+        assertEquals(List.of("C00000x11111"), result.unresolvedTokens());
     }
 }
