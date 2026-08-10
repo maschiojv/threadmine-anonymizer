@@ -23,7 +23,7 @@ public final class Main {
             Usage:
               tm-anon init   [--vault <path>] [--encrypt]
               tm-anon mask   <dump> [-o <out>] [--vault <path>] [--strict] [--report <path>] [--dry-run] [--no-verify]
-              tm-anon unmask <file> [-o <out>] [--vault <path>]
+              tm-anon unmask <file> [-o <out>] [--format text|json|html] [--vault <path>]
               tm-anon verify <original> <masked> [--vault <path>]
 
             mask verifies its own output before writing it: if any identifier survived,
