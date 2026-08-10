@@ -10,7 +10,7 @@ ancoras_preservadas:
 threads_allowlist_verbatim:
   - "Reference Handler"
 threads_tokenizadas:
-  "main": {}   # corrigido na onda 2E: a allowlist-v1 real nao tem regra p/ "main" -> tokenizada
+  "main": {}   # corrigido apos conferir contra a allowlist real: a allowlist-v1 real nao tem regra p/ "main" -> tokenizada
   "pgto-worker-3": { preserva_sufixo: "-3" }
   "order-dispatcher": {}
 classes_tokenizadas:

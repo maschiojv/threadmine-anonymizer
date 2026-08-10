@@ -2,7 +2,7 @@
 # `Carrying virtual thread #N` NO LUGAR da linha `java.lang.Thread.State:` (HotSpot so
 # imprime uma das duas), e o bloco da VT montada traz o marcador
 # `<virtual thread is mounted on carrier thread "...">`. O numero apos `#` e o threadId da
-# VT, nao um nome — nada a tokenizar, tudo a preservar: o ParserHotSpotCore do ThreadMine
+# VT, nao um nome — nada a tokenizar, tudo a preservar: o parser HotSpot do ThreadMine
 # le a linha (CARRYING_VIRTUAL) e a allowlist v1 a lista como structuralMarker.
 # Tambem exercita a forma de cabecalho JDK 21+ com `#N [nid]` entre colchetes e sem nid=.
 formato: hotspot-vt

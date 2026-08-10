@@ -2,7 +2,7 @@
 # rodou-se um processo JDK 25 com pool de plataforma, virtual threads, lock contendido e
 # thread de rota, capturou-se o dump com jcmd, e trocaram-se APENAS os identificadores pelo
 # namespace ficticio. O schema (chaves, tipos, aninhamento) e o do proprio dumper do JDK.
-# Fecha o debito registrado pela onda 3I ("o -format=json vaza toString() de StructuredTaskScope").
+# Fecha o vazamento conhecido deste dialeto: o toString() de StructuredTaskScope no container.
 formato: hotspot-json
 ancoras_preservadas:
   - "\"threadDump\""

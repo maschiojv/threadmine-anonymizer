@@ -1,6 +1,6 @@
-# Azul Zing (Prime): corpo identico ao HotSpot -- o proprio ParserZingImpl do ThreadMine
-# delega ao ParserHotSpotCore -- mais o bloco de metadados "Zing thread dump header:" e as
-# threads do coletor C4. Fixture da onda 5 (debito "dialetos nao-HotSpot" da SPEC 6).
+# Azul Zing (Prime): corpo identico ao HotSpot -- o proprio analisador de Zing do ThreadMine
+# reusa o mesmo parser do HotSpot -- mais o bloco de metadados "Zing thread dump header:" e as
+# threads do coletor C4. Fixture da uma revisao posterior.
 formato: hotspot-jstack
 ancoras_preservadas:
   - "Full thread dump Zing (21.09.0.0-8-ZVM mixed mode):"
@@ -14,7 +14,7 @@ threads_allowlist_verbatim:
   - "VM Thread"
   - "VM Periodic Task Thread"
 threads_tokenizadas:
-  "main": {}   # a allowlist-v1 real nao tem regra p/ "main" -> tokenizada (mesma decisao da onda 2E)
+  "main": {}   # a allowlist-v1 real nao tem regra p/ "main" -> tokenizada (mesma decisao das demais fixtures)
   "pgto-worker-1": { preserva_sufixo: "-1" }
   "pgto-worker-2": { preserva_sufixo: "-2" }
 classes_tokenizadas:
@@ -33,6 +33,6 @@ invariantes:
   - enderecos_lock_verbatim
   - sufixo_numerico_preservado
 # Armadilhas cobertas: o banner "Full thread dump Zing" e a ancora que o
-# DetectorFormatoServiceImpl usa para rotear ao ParserZingImpl -- reescreve-lo quebraria a
+# analisador usa para rotear ao parser certo -- reescreve-lo quebraria a
 # deteccao de formato no servidor; as threads C4 sao infra publica da Azul e ficam verbatim
 # (ja cobertas pela allowlist v1), entao o agrupamento de GC sobrevive.

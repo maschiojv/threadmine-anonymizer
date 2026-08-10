@@ -1,21 +1,9 @@
 {
   "version": 1,
   "generatedFrom": {
-    "repo": "thread-forge",
-    "commit": "3a50432be6b6fc632409f3e2a8cabd6adf7d14b6",
-    "files": [
-      "backend/src/main/java/com/alliah/threadforge/analise/service/impl/detector/PadroesDeteccao.java:17-412",
-      "backend/src/main/java/com/alliah/threadforge/analise/service/impl/ParserHotSpotCore.java:48-115,213-234,459-463",
-      "backend/src/main/java/com/alliah/threadforge/analise/service/impl/detector/DetectorThreadOrfa.java:86-98",
-      "backend/src/main/java/com/alliah/threadforge/analise/service/impl/CatalogoRecomendacaoAcao.java:580-596",
-      "backend/src/main/java/com/alliah/threadforge/admin/prompts/service/impl/RenderizadorPrompt.java:64-68",
-      "backend/src/main/java/com/alliah/threadforge/analise/timeline/service/impl/calc/HeuristicaInteressante.java:23-29",
-      "backend/src/main/java/com/alliah/threadforge/analise/service/impl/DetectorFormatoServiceImpl.java:17-47",
-      "backend/src/main/java/com/alliah/threadforge/analise/comparacao/service/impl/diff/ContencaoCalc.java:34",
-      "backend/src/main/java/com/alliah/threadforge/analise/service/impl/detector/DetectorThreadLeak.java:42",
-      "backend/src/main/java/com/alliah/threadforge/analise/service/impl/detector/DetectorLockContention.java:34",
-      "backend/src/main/java/com/alliah/threadforge/analise/service/impl/detector/DetectorDeadlock.java:23-24"
-    ]
+    "analyzer": "ThreadMine",
+    "rationale": "SOURCES.md",
+    "note": "Every required entry mirrors a name the ThreadMine analyzer matches; SOURCES.md states the reason for each family and what breaks if it is masked."
   },
   "required": {
     "packagePrefixes": [

@@ -32,7 +32,7 @@ invariantes:
   - blank_lines_preservadas
   - sufixo_numerico_preservado
 # Armadilhas cobertas: cabecalho sem estado (`#1 "main"`) e VT anonima sem estado
-# (`#52 "" virtual`) — ambos eram redigidos pelo fail-closed antes da onda 3I; `virtual`
+# (`#52 "" virtual`) — ambos eram redigidos pelo fail-closed antes; `virtual`
 # minusculo (a fixture jcmd-dump-text.txt usa a forma maiuscula, entao as duas convivem);
 # os tokens de `pgto-worker-*` e `order-vt-9` sao os MESMOS das outras fixtures sob o mesmo
 # vault (canonico identico), que e o que mantem timeline/diff do ThreadMine funcionando.

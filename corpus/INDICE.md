@@ -10,7 +10,7 @@ linha não classificada → `# [tm-anon: redacted]`; endereços `<0x…>` sempre
 o que a expectation manda) e `CorpusMaskVerifyTest` (o resultado do mask passa no `verify`, com a
 mesma allowlist dos dois lados — foi ele que pegou o vazamento de `<FQCN@hash>` do JDK 24+); e
 **3 OpenJ9 javacore** (`formato: openj9-javacore`, contrato SPEC §5-B) que são o golden set da
-onda 4 — ainda SEM implementação que as consuma.
+o suporte a javacore — ainda SEM implementação que as consuma.
 
 Vocabulário de `invariantes`: `determinismo_intra_dump`, `determinismo_inter_dump`,
 `deadlock_nomes_consistentes`, `blank_lines_preservadas`, `enderecos_lock_verbatim`,
@@ -52,10 +52,10 @@ Vocabulário de `invariantes`: `determinismo_intra_dump`, `determinismo_inter_du
 
 ## Lacunas — status
 
-- ~~**Linha `Carrying virtual thread #N`**~~ **FECHADA (onda 3I)** — `jstack-jdk25-carrying.txt`,
+- ~~**Linha `Carrying virtual thread #N`**~~ **FECHADA** — `jstack-jdk25-carrying.txt`,
   duas ocorrências pinadas como âncora. Decisão (SPEC §5.6, não §5.7): **preservar byte a byte**.
   O `#N` é o *threadId* da VT montada, não um nome — não há o que tokenizar, e a linha é lida pelo
-  `ParserHotSpotCore.CARRYING_VIRTUAL` do ThreadMine e listada como `structuralMarker` na
+  lida pelo parser HotSpot do ThreadMine e listada como `structuralMarker` na
   allowlist v1. Detalhe do formato real que a fixture registra: a linha **substitui** a
   `java.lang.Thread.State:` do carrier (o HotSpot imprime uma OU outra), então existe bloco de
   thread legítimo sem linha de estado.
@@ -80,7 +80,7 @@ Vocabulário de `invariantes`: `determinismo_intra_dump`, `determinismo_inter_du
   `QUOTED_HEADER` do rewriter não casa (fail-closed → a thread inteira vira `redacted`). Não
   reproduzido em dump real e não coberto por fixture: registrado aqui em vez de "corrigido" com
   base em suposição.
-- **Notas de formato do javacore (decisões tomadas ao construir o corpus — ler antes de implementar a onda 4):**
+- **Notas de formato do javacore (decisões tomadas ao construir o corpus — ler antes de implementar a o suporte a javacore):**
   1. **`1XMJAVAVERSION` e `3XMTHREADINFO3 Java.lang.Thread.State:` são dialeto do PARSER do
      ThreadMine, não do OpenJ9 real.** Javacore de verdade tem a versão em `1CIJAVAVERSION`
      (seção ENVINFO/CI — que a §5-B manda stripar) e usa `3XMTHREADINFO3` como cabeçalho
@@ -88,7 +88,7 @@ Vocabulário de `invariantes`: `determinismo_intra_dump`, `determinismo_inter_du
      modernas incluem os dois tokens do parser (o golden set serve à paridade com o ThreadMine),
      mas o mask precisa aceitar javacores SEM eles. **Emenda IMPLEMENTADA (fix-javacore-version):**
      ao stripar a CI/ENVINFO, o payload da `1CIJAVAVERSION` é re-emitido uma única vez logo após
-     o marcador de strip, sob o token `1XMJAVAVERSION` (o único que o `ParserOpenJ9Impl` lê;
+     o marcador de strip, sob o token `1XMJAVAVERSION` (o único que o parser OpenJ9 lê;
      re-emitir o token `1CI` seria flagado pelo `verify` como seção proibida sobrevivente).
      Payload verbatim atrás de filtro fail-closed por palavra: vocabulário de versão passa;
      fragmento com cara de path/env/hostname vira `[tm-anon:redacted]` (sem dígitos, para nunca
@@ -107,12 +107,12 @@ Vocabulário de `invariantes`: `determinismo_intra_dump`, `determinismo_inter_du
      javacore real bem mascarado sai com exit 4 (falso positivo, mesma família do `(<generated>)`
      do CGLIB). Pinado pelo invariante `moldura_compiled_code_preservada` do fixture clássico.
   4. **Strip do LOCKS apaga a declaração explícita de deadlock** (`1LKDEADLOCK`). Custo aceito
-     pela §5-B (o `ParserOpenJ9Impl` ignora LK); a detecção sobrevive pelas `3XMTHREADBLOCK`
+     pela §5-B (o parser OpenJ9 ignora LK); a detecção sobrevive pelas `3XMTHREADBLOCK`
      cruzadas — pinado pela fixture de deadlock.
   5. Linhas sem regra dentro do XM/THREADS (`Anonymous native thread` sem aspas,
      `4XENATIVESTACK`, `3XMJAVALTHREAD`/`3XMTHREADINFO1`/`3XMCPUTIME`) — as três últimas são
      metadados neutros preserváveis, mas a §5-B não as cita; as expectations tratam só as duas
-     primeiras como fail-closed e deixam as demais como decisão da onda 4 (preservar é seguro:
+     primeiras como fail-closed e deixam as demais como decisão (preservar é seguro:
      não carregam identificador de app).
   6. **Allowlist v2 (candidatos OpenJ9):** `JIT Compilation Thread-`, `IProfiler`,
      `Attach API wait loop`, marcador estrutural p/ `Anonymous native thread`. Hoje as
@@ -133,5 +133,5 @@ Vocabulário de `invariantes`: `determinismo_intra_dump`, `determinismo_inter_du
   aceita as três formas e o regex do ThreadMine (`THREAD_HEADER_JCMD`) casa a dela — mas quem for
   usá-la como referência de formato deve preferir as duas fixtures novas.
 - Expectations citam entradas de allowlist pelo comportamento esperado (http-nio, FJP, Thread-N,
-  process reaper…); a fonte de verdade é o artefato da sessão 1B — se a allowlist-v1 divergir,
+  process reaper…); a fonte de verdade é o artefato da quem gerou a allowlist — se a allowlist-v1 divergir,
   ajustar os YAMLs, não o contrário.

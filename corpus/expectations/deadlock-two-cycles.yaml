@@ -12,7 +12,7 @@ threads_allowlist_verbatim:
   - "GC Thread#0"
   - "VM Periodic Task Thread"
 threads_tokenizadas:
-  "main": {}   # corrigido na onda 2E: a allowlist-v1 real nao tem regra p/ "main" -> tokenizada
+  "main": {}   # corrigido apos conferir contra a allowlist real: a allowlist-v1 real nao tem regra p/ "main" -> tokenizada
   "pgto-worker-1": { preserva_sufixo: "-1" }
   "pgto-worker-2": { preserva_sufixo: "-2" }
   "billing-sched-1": { preserva_sufixo: "-1" }
