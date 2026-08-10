@@ -1,5 +1,6 @@
 package dev.threadmine.anon.cli;
 
+import dev.threadmine.anon.format.json.Json;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -9,6 +10,7 @@ import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -43,6 +45,24 @@ class UnmaskCommandTest {
                   "map": {
                     "t1a2b3xc4d5e": "pgto-worker-1",
                     "Caaaaaxbbbbb": "com.acme.payment.LedgerService"
+                  },
+                  "collisions": {}
+                }
+                """.formatted("A".repeat(43) + "="), StandardCharsets.UTF_8);
+    }
+
+    /** A vault whose originals carry the characters that used to corrupt JSON output. */
+    private void writeHostileVault(Path dir) throws IOException {
+        // In a text block "\\\\" produces the two characters \\ , which is how a
+        // single backslash has to be written inside the vault's JSON.
+        Files.writeString(dir.resolve("tm-anon-vault.json"), """
+                {
+                  "version": 1,
+                  "createdAt": "2026-07-24T12:00:00Z",
+                  "key": "%s",
+                  "map": {
+                    "t1a2b3xc4d5e": "win\\\\path\\\\worker-1",
+                    "t9f8e7xd6c5b": "worker</script>"
                   },
                   "collisions": {}
                 }
@@ -107,6 +127,58 @@ class UnmaskCommandTest {
 
         assertEquals(0, run(dir, "report.json", "--vault", "team-a.vault.json"), stderr());
         assertEquals("pgto-worker-1", stdout());
+    }
+
+    // --- output format -----------------------------------------------------
+
+    @Test
+    void infersJsonFromTheInputExtensionAndKeepsTheOutputParseable(@TempDir Path dir) throws IOException {
+        writeHostileVault(dir);
+        Files.writeString(dir.resolve("export.json"), "{\"nome\":\"t1a2b3xc4d5e\"}");
+
+        int exit = run(dir, "export.json");
+
+        assertEquals(0, exit, stderr());
+        @SuppressWarnings("unchecked")
+        Map<String, Object> parsed = (Map<String, Object>) Json.parse(stdout());
+        assertEquals("win\\path\\worker-1", parsed.get("nome"));
+    }
+
+    @Test
+    void theExplicitFlagOverridesTheInferredFormat(@TempDir Path dir) throws IOException {
+        writeHostileVault(dir);
+        Files.writeString(dir.resolve("export.json"), "{\"nome\":\"t1a2b3xc4d5e\"}");
+
+        int exit = run(dir, "export.json", "--format", "text");
+
+        assertEquals(0, exit, stderr());
+        // Forced to text: the raw backslash lands in the output and breaks the JSON.
+        assertEquals("{\"nome\":\"win\\path\\worker-1\"}", stdout());
+    }
+
+    @Test
+    void htmlIsInferredAndKeepsAClosingScriptTagOutOfTheOutput(@TempDir Path dir) throws IOException {
+        writeHostileVault(dir);
+        Files.writeString(dir.resolve("report.html"), "{\"nome\":\"t9f8e7xd6c5b\"}");
+
+        int exit = run(dir, "report.html");
+
+        assertEquals(0, exit, stderr());
+        assertFalse(stdout().contains("</script>"), stdout());
+        @SuppressWarnings("unchecked")
+        Map<String, Object> parsed = (Map<String, Object>) Json.parse(stdout());
+        assertEquals("worker</script>", parsed.get("nome"));
+    }
+
+    @Test
+    void anUnknownFormatIsAUsageError(@TempDir Path dir) throws IOException {
+        writeHostileVault(dir);
+        Files.writeString(dir.resolve("dump.txt"), "t1a2b3xc4d5e");
+
+        int exit = run(dir, "dump.txt", "--format", "yaml");
+
+        assertEquals(1, exit, "an unknown format must not silently fall back");
+        assertTrue(stderr().contains("--format"), stderr());
     }
 
     // --- exit codes --------------------------------------------------------
