@@ -1,7 +1,7 @@
-# Deadlock de 1 ciclo (2 threads custom, classes de lock com.acme.*): bloco completo
+# Single-cycle deadlock (2 custom threads, com.acme.* lock classes): full block
 # "Found one Java-level deadlock:" + "===" + "Java stack information" + "Found 1 deadlock."
-formato: hotspot-jstack
-ancoras_preservadas:
+format: hotspot-jstack
+preserved_anchors:
   - "Full thread dump OpenJDK 64-Bit Server VM (17.0.8+7-LTS mixed mode, sharing):"
   - "java.lang.Thread.State:"
   - "Found one Java-level deadlock:"
@@ -9,35 +9,35 @@ ancoras_preservadas:
   - "Java stack information for the threads listed above:"
   - "==================================================="
   - "Found 1 deadlock."
-threads_allowlist_verbatim:
+allowlisted_threads_verbatim:
   - "Reference Handler"
   - "Finalizer"
   - "Attach Listener"
   - "VM Thread"
   - "GC Thread#0"
   - "VM Periodic Task Thread"
-threads_tokenizadas:
-  "main": {}   # corrigido apos conferir contra a allowlist real: a allowlist-v1 real nao tem regra p/ "main" -> tokenizada
-  "pgto-worker-1": { preserva_sufixo: "-1" }
-  "pgto-worker-2": { preserva_sufixo: "-2" }
-classes_tokenizadas:
+tokenized_threads:
+  "main": {}   # fixed after checking against the real allowlist: the real allowlist-v1 has no rule for "main" -> tokenized
+  "pgto-worker-1": { keeps_suffix: "-1" }
+  "pgto-worker-2": { keeps_suffix: "-2" }
+tokenized_classes:
   - "com.acme.payment.LedgerService"
-  - "com.acme.payment.LedgerLock"     # aparece em frame, "(a ...)", e "(object 0x..., a ...)" do bloco
+  - "com.acme.payment.LedgerLock"     # shows up in a frame, in "(a ...)", and in the block's "(object 0x..., a ...)"
   - "com.acme.payment.PaymentFacade"
   - "com.acme.stock.StockLatch"
   - "com.acme.stock.StockSync"
   - "com.acme.order.OrderService"
   - "com.acme.gateway.Bootstrap"
-linhas_stripadas:
+stripped_lines:
   - "Threads class SMR info:"
   - "_java_thread_list"
   - "JNI global refs"
-invariantes:
-  - determinismo_intra_dump
-  - deadlock_nomes_consistentes   # "pgto-worker-1" no bloco = MESMO token do cabecalho da thread
-  - blank_lines_preservadas
-  - enderecos_lock_verbatim       # monitor 0x..., object 0x..., <0x...> intocados
-# Armadilhas cobertas: os nomes entre aspas dentro do bloco de deadlock (incl. `which is held by
-# "pgto-worker-1"`) reescritos com o mesmo token (+ sufixo) dos cabecalhos; a classe em
-# `(object 0x000000061fcc9b90, a com.acme.stock.StockLatch)` tokenizada preservando a moldura
-# `(object ..., a ...)`; linhas de "===" byte a byte.
+invariants:
+  - intra_dump_determinism
+  - deadlock_names_consistent   # "pgto-worker-1" in the block = SAME token as the thread header
+  - blank_lines_preserved
+  - lock_addresses_verbatim       # monitor 0x..., object 0x..., <0x...> untouched
+# Pitfalls covered: the quoted names inside the deadlock block (incl. `which is held by
+# "pgto-worker-1"`) rewritten with the same token (+ suffix) as the headers; the class in
+# `(object 0x000000061fcc9b90, a com.acme.stock.StockLatch)` tokenized while preserving the
+# `(object ..., a ...)` moulding; "===" lines byte for byte.

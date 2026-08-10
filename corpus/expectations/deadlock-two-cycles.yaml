@@ -1,23 +1,23 @@
-# Deadlock de 2 ciclos SIMULTANEOS: dois blocos "Found one Java-level deadlock:" (um por ciclo,
-# cada um com sua secao "Java stack information") e fecho "Found 2 deadlocks." (plural).
-formato: hotspot-jstack
-ancoras_preservadas:
+# Deadlock with 2 SIMULTANEOUS cycles: two "Found one Java-level deadlock:" blocks (one per cycle,
+# each with its own "Java stack information" section) and a "Found 2 deadlocks." footer (plural).
+format: hotspot-jstack
+preserved_anchors:
   - "Full thread dump OpenJDK 64-Bit Server VM (21.0.3+9-LTS mixed mode, sharing):"
   - "java.lang.Thread.State:"
-  - "Found one Java-level deadlock:"     # ocorre 2x - ambas preservadas
+  - "Found one Java-level deadlock:"     # occurs 2x - both preserved
   - "Java stack information for the threads listed above:"
   - "Found 2 deadlocks."
-threads_allowlist_verbatim:
+allowlisted_threads_verbatim:
   - "VM Thread"
   - "GC Thread#0"
   - "VM Periodic Task Thread"
-threads_tokenizadas:
-  "main": {}   # corrigido apos conferir contra a allowlist real: a allowlist-v1 real nao tem regra p/ "main" -> tokenizada
-  "pgto-worker-1": { preserva_sufixo: "-1" }
-  "pgto-worker-2": { preserva_sufixo: "-2" }
-  "billing-sched-1": { preserva_sufixo: "-1" }
-  "report-render-1": { preserva_sufixo: "-1" }
-classes_tokenizadas:
+tokenized_threads:
+  "main": {}   # fixed after checking against the real allowlist: the real allowlist-v1 has no rule for "main" -> tokenized
+  "pgto-worker-1": { keeps_suffix: "-1" }
+  "pgto-worker-2": { keeps_suffix: "-2" }
+  "billing-sched-1": { keeps_suffix: "-1" }
+  "report-render-1": { keeps_suffix: "-1" }
+tokenized_classes:
   - "com.acme.payment.LedgerService"
   - "com.acme.payment.LedgerLock"
   - "com.acme.payment.PaymentFacade"
@@ -30,14 +30,14 @@ classes_tokenizadas:
   - "com.acme.report.RenderGate"
   - "com.acme.report.PdfRenderer"
   - "com.acme.report.ReportJob"
-linhas_stripadas:
+stripped_lines:
   - "JNI global refs"
-invariantes:
-  - determinismo_intra_dump
-  - deadlock_nomes_consistentes
-  - blank_lines_preservadas
-  - enderecos_lock_verbatim
-# Armadilhas cobertas: dois ciclos independentes - a reescrita nao pode misturar as atribuicoes
-# entre blocos; "billing-sched-1" e "report-render-1" terminam ambos em "-1" mas tem prefixos
-# diferentes => tokens base diferentes, mesmo sufixo literal; o fecho plural ("Found 2
-# deadlocks.") difere do singular e deve ser reconhecido como ancora, nao redigido.
+invariants:
+  - intra_dump_determinism
+  - deadlock_names_consistent
+  - blank_lines_preserved
+  - lock_addresses_verbatim
+# Traps covered: two independent cycles - the rewrite must not mix assignments
+# across blocks; "billing-sched-1" and "report-render-1" both end in "-1" but have different
+# prefixes => different base tokens, same literal suffix; the plural footer ("Found 2
+# deadlocks.") differs from the singular one and must be recognized as an anchor, not redacted.

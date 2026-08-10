@@ -1,54 +1,54 @@
-# Javacore IBM JDK classico (estilo J2RE 1.4.2, como o real-openj9.txt do ThreadMine):
-# SEM 1XMJAVAVERSION (a versao vive so em 1CIJAVAVERSION; a emenda da 5-B.2 re-emite o
-# payload logo apos o marcador de strip da CI, sob o token 1XMJAVAVERSION — o unico que o
-# o parser OpenJ9 le — para o ThreadMine nao parsear o mascarado com versaoJava=null),
-# threads com state:R/CW/B e TID/sys_thread_t/native ID na propria linha 3XMTHREADINFO,
-# secao XM delimitada por tokens (nao ha linha em branco entre threads — SPEC 5-B.7).
-# Schema §6 estendido p/ javacore: + ancoras_deteccao_4kb, secoes_preservadas,
-# secoes_stripadas, linhas_redigidas, ids_nativos_verbatim.
-formato: openj9-javacore
-ancoras_deteccao_4kb:
-  # SPEC 5-B.1: pelo menos UM dos tokens de deteccao (1TISIGINFO | 3XMTHREADINFO | 1XMJAVAVERSION)
-  # deve sobreviver DENTRO dos primeiros 4KB do arquivo mascarado. Neste fixture 1TISIGINFO
-  # (linha 4) sobrevive, e a emenda da 5-B.2 poe um 1XMJAVAVERSION sintetico logo apos o strip
-  # da CI — bem dentro dos 4KB, ja que o strip colapsa tudo que vinha antes.
+# Classic IBM JDK javacore (J2RE 1.4.2 style, like ThreadMine's real-openj9.txt):
+# NO 1XMJAVAVERSION (the version lives only in 1CIJAVAVERSION; the 5-B.2 amendment re-emits
+# the payload right after the CI strip marker, under the 1XMJAVAVERSION token — the only one
+# the OpenJ9 parser reads — so ThreadMine does not parse the masked file with versaoJava=null),
+# threads with state:R/CW/B and TID/sys_thread_t/native ID on the 3XMTHREADINFO line itself,
+# XM section delimited by tokens (there is no blank line between threads — SPEC 5-B.7).
+# Schema §6 extended for javacore: + detection_anchors_4kb, preserved_sections,
+# stripped_sections, redacted_lines, native_ids_verbatim.
+format: openj9-javacore
+detection_anchors_4kb:
+  # SPEC 5-B.1: at least ONE of the detection tokens (1TISIGINFO | 3XMTHREADINFO | 1XMJAVAVERSION)
+  # must survive WITHIN the first 4KB of the masked file. In this fixture 1TISIGINFO
+  # (line 4) survives, and the 5-B.2 amendment puts a synthetic 1XMJAVAVERSION right after the
+  # CI strip — well inside the 4KB, since the strip collapses everything that came before.
   - "1TISIGINFO"
   - "1XMJAVAVERSION"
-secoes_preservadas:
-  - "TITLE"            # minima: 1TISIGINFO + 1TIDATETIME preservadas; 1TIFILENAME redigida (5-B.3)
+preserved_sections:
+  - "TITLE"            # minimal: 1TISIGINFO + 1TIDATETIME preserved; 1TIFILENAME redacted (5-B.3)
   - "XM"
-secoes_stripadas:      # cada uma vira UMA linha "# [tm-anon: stripped section <NOME>]" (5-B.2)
-  - "XHPI"             # nao esta na lista fixa da 5-B.2 -> strip por fail-closed de secao desconhecida (5-B.6)
-  - "CI"               # 1CICMDLINE com -Dacme.db.password/host, 1CISYSCP, -Djava.class.path com jars do produto
+stripped_sections:      # each collapses into ONE line "# [tm-anon: stripped section <NAME>]" (5-B.2)
+  - "XHPI"             # not in the fixed 5-B.2 list -> stripped by the unknown-section fail-closed (5-B.6)
+  - "CI"               # 1CICMDLINE with -Dacme.db.password/host, 1CISYSCP, -Djava.class.path with the product jars
   - "DC"
   - "DG"
   - "ST"
   - "XE"
-  - "LK"               # monitores classe@endereco com.acme.* + nomes de thread em 3LKWAITNOTIFY/3LKWAITER
-  - "CL"               # classloader com/acme/kernel/AcmeModuleClassLoader + 3CLTEXTCLASS com classes do app
-  - "Javadump End section"   # 0SECTION final desconhecido -> mesmo fail-closed da 5-B.6
-linhas_redigidas:
-  - "1TIFILENAME"      # path local D:\acme\payserver\... (hostname/usuario/estrutura de dir) — SEMPRE redigido
-ancoras_preservadas:
+  - "LK"               # com.acme.* class@address monitors + thread names in 3LKWAITNOTIFY/3LKWAITER
+  - "CL"               # com/acme/kernel/AcmeModuleClassLoader classloader + 3CLTEXTCLASS with the app classes
+  - "Javadump End section"   # unknown trailing 0SECTION -> same fail-closed as 5-B.6
+redacted_lines:
+  - "1TIFILENAME"      # local path D:\acme\payserver\... (hostname/user/dir layout) — ALWAYS redacted
+preserved_anchors:
   - "1TISIGINFO     signal 3 received"
   - "1TIDATETIME    Date:                 2007/03/14 at 09:30:11"
-  - "J2RE 1.4.2 IBM Windows 32 build cn142sr2w-20050810"   # payload da 1CIJAVAVERSION: re-emitido
-                       # verbatim sob 1XMJAVAVERSION (emenda 5-B.2) — versao/vendor/build GA publico
-                       # da IBM, nada identificavel do cliente (auditado); tambem repete no 2XMFULLTHDDUMP
+  - "J2RE 1.4.2 IBM Windows 32 build cn142sr2w-20050810"   # 1CIJAVAVERSION payload: re-emitted
+                       # verbatim under 1XMJAVAVERSION (5-B.2 amendment) — public IBM GA version/vendor/build,
+                       # nothing customer-identifiable (audited); also repeated in 2XMFULLTHDDUMP
   - "1XMCURTHDINFO"
-  - "2XMFULLTHDDUMP"   # "Full thread dump Classic VM (...)": estrutural do XM; contem a frase
-                       # "Full thread dump" MUITO alem dos 4KB — nao pode reclassificar como HotSpot
+  - "2XMFULLTHDDUMP"   # "Full thread dump Classic VM (...)": structural to XM; contains the phrase
+                       # "Full thread dump" WELL beyond 4KB — must not be reclassified as HotSpot
   - "3XMTHREADINFO"
   - "4XESTACKTRACE"
-threads_allowlist_verbatim:
-  - "Signal dispatcher"    # regex (?i)^(VM |Signal |Finalizer|Reference Handler|Attach Listener) da allowlist-v1
+allowlisted_threads_verbatim:
+  - "Signal dispatcher"    # allowlist-v1 regex (?i)^(VM |Signal |Finalizer|Reference Handler|Attach Listener)
   - "Finalizer"
   - "Reference Handler"
   - "Thread-1"             # ^Thread-\d+$
-threads_tokenizadas:
-  # Nomes de pool classicos "X: 'N' for queue: 'Q'" NAO casam a heuristica de sufixo [-#]N da
-  # SPEC 5.3c (o numero fica no meio, entre aspas simples) -> regra 5.3d: token do nome inteiro,
-  # um token DIFERENTE por thread. Perde o agrupamento de pool — limitacao registrada no INDICE.
+tokenized_threads:
+  # Classic pool names "X: 'N' for queue: 'Q'" do NOT match the [-#]N suffix heuristic of
+  # SPEC 5.3c (the number sits in the middle, in single quotes) -> rule 5.3d: token for the whole
+  # name, a DIFFERENT token per thread. Loses pool grouping — limitation recorded in the INDEX.
   "QueueWorker: '0' for queue: 'acme.kernel.Default'": {}
   "QueueWorker: '1' for queue: 'acme.kernel.Default'": {}
   "QueueWorker: '2' for queue: 'acme.kernel.Default'": {}
@@ -56,10 +56,10 @@ threads_tokenizadas:
   "QueueWorker: '4' for queue: 'acme.kernel.Default'": {}
   "QueueWorker: '0' for queue: 'acme.kernel.System'": {}
   "ListenThread.Default": {}
-  "com.acme.health.CoreHealthMonitor": {}   # nome de thread que E um FQCN -> token de thread (t...), nao de classe
-  "main": {}                                # allowlist-v1 nao tem regra p/ "main" (mesma decisao das fixtures HotSpot)
-classes_tokenizadas:
-  # No XM os frames sao FQCN com PONTO (dialeto classico) — mesmas regras da SPEC 5.1.
+  "com.acme.health.CoreHealthMonitor": {}   # thread name that IS an FQCN -> thread token (t...), not a class token
+  "main": {}                                # allowlist-v1 has no rule for "main" (same decision as the HotSpot fixtures)
+tokenized_classes:
+  # In XM the frames are dotted FQCNs (classic dialect) — same SPEC 5.1 rules.
   - "com.acme.kernel.QueueWorker"
   - "com.acme.ledger.LedgerCache"
   - "com.acme.gateway.CardSwitchClient"
@@ -68,22 +68,23 @@ classes_tokenizadas:
   - "com.acme.server.ListenThread"
   - "com.acme.server.PayServer"
   - "com.acme.health.CoreHealthMonitorThread"
-ids_nativos_verbatim: true   # TID:0x... / sys_thread_t:0x... / native ID:0x... na 3XMTHREADINFO (5-B.4)
-invariantes:
-  - determinismo_intra_dump
-  - ids_nativos_verbatim
-  - ordem_threadinfo_stacktrace_preservada    # 5-B.7: ordem relativa 3XMTHREADINFO/4XESTACKTRACE intacta
-  - moldura_compiled_code_preservada          # 5.1: "(Compiled Code)" colado ao arquivo-fonte, SEM numero
-                       # de linha (dialeto 1.4.2) — a moldura sobrevive verbatim (o parser do ThreadMine
-                       # le "frame JIT-compilado") e so o nome do arquivo vira token
-  - verify_exit4_se_secao_proibida_sobrevive  # 5-B.9: CI/LK/CL/DC/DG/ST/XE vivas no mascarado = exit 4
-  - verify_exit4_se_1tifilename_com_conteudo  # 5-B.9
-# Armadilhas cobertas: (1) 1TISIGINFO e a UNICA ancora de deteccao nos 4KB — o strip do TITLE nao
-# pode toca-la; (2) thread sem stack ("Signal dispatcher": 3XMTHREADINFO seguida de outra
-# 3XMTHREADINFO, sem 4XESTACKTRACE) nao pode quebrar o lexer; (3) 2XMFULLTHDDUMP repete a versao
-# da JVM (nao-sensivel, preservar); (4) o mesmo nome de thread aparece em XM (preservado/tokenizado)
-# e em LK (stripado) — o token so precisa existir no XM; (5) frames JIT no dialeto 1.4.2 trazem
-# "(Compiled Code)" colado ao arquivo-fonte SEM numero de linha — "(Object.java(Compiled Code))"
-# numa classe de allowlist e "(LedgerCache.java(Compiled Code))" numa classe do app. Essa forma
-# (diferente do "(Arquivo.java:NN(Compiled Code))" do fixture moderno) e a que o verify tratava
-# como identificador residual: falso positivo em javacore real, exit 4 num arquivo bem mascarado.
+native_ids_verbatim: true   # TID:0x... / sys_thread_t:0x... / native ID:0x... on 3XMTHREADINFO (5-B.4)
+invariants:
+  - intra_dump_determinism
+  - native_ids_verbatim
+  - threadinfo_stacktrace_order_preserved    # 5-B.7: relative 3XMTHREADINFO/4XESTACKTRACE order intact
+  - compiled_code_moulding_preserved          # 5.1: "(Compiled Code)" glued to the source file, with NO line
+                       # number (1.4.2 dialect) — the moulding survives verbatim (the ThreadMine parser
+                       # reads it as a "JIT-compiled frame") and only the file name becomes a token
+  - verify_exit4_if_forbidden_section_survives  # 5-B.9: CI/LK/CL/DC/DG/ST/XE alive in the masked file = exit 4
+  - verify_exit4_if_1tifilename_has_content  # 5-B.9
+# Traps covered: (1) 1TISIGINFO is the ONLY detection anchor within 4KB — the TITLE strip must
+# not touch it; (2) a thread with no stack ("Signal dispatcher": 3XMTHREADINFO followed by
+# another 3XMTHREADINFO, no 4XESTACKTRACE) must not break the lexer; (3) 2XMFULLTHDDUMP repeats
+# the JVM version (non-sensitive, preserve it); (4) the same thread name appears in XM
+# (preserved/tokenized) and in LK (stripped) — the token only has to exist in XM; (5) JIT frames
+# in the 1.4.2 dialect carry "(Compiled Code)" glued to the source file with NO line number —
+# "(Object.java(Compiled Code))" on an allowlisted class and "(LedgerCache.java(Compiled Code))"
+# on an app class. This shape (unlike the modern fixture's "(File.java:NN(Compiled Code))") is
+# what verify used to treat as a residual identifier: a false positive on a real javacore, exit 4
+# on a properly masked file.

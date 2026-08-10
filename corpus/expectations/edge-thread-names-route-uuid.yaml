@@ -1,19 +1,19 @@
-# Edge: nomes de thread que carregam dado sensivel - rota com query string, UUID, hex longo -
-# exercitam a heuristica de rota (SPEC 5.3b) que roda ANTES da regra de sufixo numerico.
-formato: hotspot-jstack
-ancoras_preservadas:
+# Edge: thread names carrying sensitive data - route with query string, UUID, long hex -
+# exercise the route heuristic (SPEC 5.3b) that runs BEFORE the numeric-suffix rule.
+format: hotspot-jstack
+preserved_anchors:
   - "Full thread dump OpenJDK 64-Bit Server VM (21.0.3+9-LTS mixed mode, sharing):"
   - "java.lang.Thread.State:"
-threads_allowlist_verbatim:
-  - "Thread-7"              # ^Thread-\d+$ allowlist - NAO confundir com sufixo tokenizavel
+allowlisted_threads_verbatim:
+  - "Thread-7"              # ^Thread-\d+$ allowlist - do NOT confuse it with a tokenizable suffix
   - "http-nio-8080-exec-1"
   - "VM Thread"
-threads_tokenizadas:
-  "sync-/api/orders?id=99887766": { marcador_rota: true }   # rota (/ e ? e digitos>=8) -> token UNICO t...../q
-  "worker-550e8400-e29b-41d4-a716-446655440000": { marcador_rota: true }  # UUID -> t...../q (heuristica antes do sufixo)
-  "req-1a2b3c4d5e6f7a8b GET /api/v1/invoices/9f8e7d6c": { marcador_rota: true }  # hex>=16 + rota
-  "tenant-sync#4": { preserva_sufixo: "#4" }                # separador # tambem conta como sufixo
-classes_tokenizadas:
+tokenized_threads:
+  "sync-/api/orders?id=99887766": { route_marker: true }   # route (/ and ? and digits>=8) -> SINGLE token t...../q
+  "worker-550e8400-e29b-41d4-a716-446655440000": { route_marker: true }  # UUID -> t...../q (heuristic runs before the suffix rule)
+  "req-1a2b3c4d5e6f7a8b GET /api/v1/invoices/9f8e7d6c": { route_marker: true }  # hex>=16 + route
+  "tenant-sync#4": { keeps_suffix: "#4" }                # the # separator also counts as a suffix
+tokenized_classes:
   - "com.acme.order.sync.TenantSyncClient"
   - "com.acme.order.sync.TenantSyncWorker"
   - "com.acme.core.util.JobRunner"
@@ -21,14 +21,14 @@ classes_tokenizadas:
   - "com.acme.web.InvoiceController"
   - "com.acme.order.queue.OrderQueue"
   - "com.acme.order.OrderTailer"
-linhas_stripadas:
+stripped_lines:
   - "JNI global refs"
-invariantes:
-  - determinismo_intra_dump
-  - blank_lines_preservadas
-  - marcador_rota_q          # tokens de rota terminam no sufixo literal /q e nada do original vaza
-  - enderecos_lock_verbatim
-# Armadilhas cobertas: no mascarado NAO pode restar "99887766", "550e8400", "/api/" nem
-# "invoices" em nome de thread; a regra de sufixo NAO pode quebrar o UUID em
-# "worker-...-<token>-440000"; o nome com espacos e rota vira UM token so (aspas do cabecalho
-# preservadas); "Thread-7" fica verbatim (allowlist vence a heuristica).
+invariants:
+  - intra_dump_determinism
+  - blank_lines_preserved
+  - route_marker_q          # route tokens end in the literal /q suffix and nothing of the original leaks
+  - lock_addresses_verbatim
+# Traps covered: the masked output must NOT keep "99887766", "550e8400", "/api/" or
+# "invoices" in any thread name; the suffix rule must NOT split the UUID into
+# "worker-...-<token>-440000"; the name with spaces and a route becomes ONE single token (header
+# quotes preserved); "Thread-7" stays verbatim (allowlist beats the heuristic).

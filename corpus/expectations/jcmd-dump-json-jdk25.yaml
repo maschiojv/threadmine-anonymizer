@@ -1,17 +1,17 @@
-# jcmd <pid> Thread.dump_to_file -format=json (JDK 21+). Fixture DERIVADA DE CAPTURA REAL:
-# rodou-se um processo JDK 25 com pool de plataforma, virtual threads, lock contendido e
-# thread de rota, capturou-se o dump com jcmd, e trocaram-se APENAS os identificadores pelo
-# namespace ficticio. O schema (chaves, tipos, aninhamento) e o do proprio dumper do JDK.
-# Fecha o vazamento conhecido deste dialeto: o toString() de StructuredTaskScope no container.
-formato: hotspot-json
-ancoras_preservadas:
+# jcmd <pid> Thread.dump_to_file -format=json (JDK 21+). Fixture DERIVED FROM A REAL CAPTURE:
+# a JDK 25 process was run with a platform pool, virtual threads, a contended lock and a
+# route-named thread, the dump was captured with jcmd, and ONLY the identifiers were swapped for
+# the fictitious namespace. The schema (keys, types, nesting) is the JDK dumper's own.
+# Closes this dialect's known leak: StructuredTaskScope's toString() in the container.
+format: hotspot-json
+preserved_anchors:
   - "\"threadDump\""
   - "\"threadContainers\""
   - "\"stack\""
   - "\"blockedOn\""
   - "\"parkBlocker\""
   - "\"monitorsOwned\""
-threads_allowlist_verbatim:
+allowlisted_threads_verbatim:
   - "Reference Handler"
   - "Finalizer"
   - "Signal Dispatcher"
@@ -19,28 +19,28 @@ threads_allowlist_verbatim:
   - "Notification Thread"
   - "Common-Cleaner"
   - "VirtualThread-unblocker"
-threads_tokenizadas:
+tokenized_threads:
   "main": {}
-  "sync-/api/orders?id=99887766": { marcador_rota: true }
-classes_tokenizadas:
+  "sync-/api/orders?id=99887766": { route_marker: true }
+tokenized_classes:
   - "com.acme.gateway.Bootstrap"
   - "com.acme.payment.PaymentWorker"
-  - "com.acme.payment.LedgerLock"     # em blockedOn E em monitorsOwned[].locks[]
+  - "com.acme.payment.LedgerLock"     # in blockedOn AND in monitorsOwned[].locks[]
   - "com.acme.core.util.Sleeper"
-  - "com.acme.batch.LedgerScope"      # container: o vazamento que motivou o suporte
-linhas_stripadas: []
-invariantes:
-  - determinismo_intra_dump
-  - determinismo_inter_dump
-  - marcador_rota_q
-# Armadilhas cobertas:
-# 1. O marcador da SPEC 5.9 NAO pode ser a 1a linha "# tm-anon v1" -- isso invalidaria o JSON,
-#    que e a razao de ser do formato. Vai como 1a CHAVE do objeto raiz ("tmAnon"), preservando
-#    a string literal para busca por substring. Desvio deliberado, registrado na SPEC.
-# 2. "parent" referencia outro container pela string exata de "container": as duas tem que ser
-#    reescritas igual, senao a arvore de containers fica com link pendurado.
-# 3. "<root>" e estrutura, nao nome -- verbatim.
-# 4. parkBlocker e OBJETO ({"object": "..."}), nao string; monitorsOwned tem "depth" NUMERICO e
-#    "virtual" e BOOLEANO -- por isso o leitor JSON precisa da gramatica completa (o MiniJson do
-#    vault, restrito a objeto/string/inteiro, nao serve e continua restrito de proposito).
-# 5. Chave desconhecida (JDK futuro) -> valor redigido + warning, nao passa direto.
+  - "com.acme.batch.LedgerScope"      # container: the leak that motivated supporting this format
+stripped_lines: []
+invariants:
+  - intra_dump_determinism
+  - inter_dump_determinism
+  - route_marker_q
+# Traps covered:
+# 1. The SPEC 5.9 marker must NOT be a first line "# tm-anon v1" -- that would invalidate the JSON,
+#    which is the whole point of the format. It goes as the 1st KEY of the root object ("tmAnon"),
+#    keeping the literal string searchable by substring. Deliberate deviation, recorded in the SPEC.
+# 2. "parent" references another container by the exact "container" string: both have to be
+#    rewritten the same way, otherwise the container tree ends up with a dangling link.
+# 3. "<root>" is structure, not a name -- verbatim.
+# 4. parkBlocker is an OBJECT ({"object": "..."}), not a string; monitorsOwned has a NUMERIC "depth"
+#    and a BOOLEAN "virtual" -- that is why the JSON reader needs the full grammar (the vault's
+#    MiniJson, limited to object/string/integer, is not enough and stays limited on purpose).
+# 5. Unknown key (future JDK) -> redacted value + warning, never passed through.

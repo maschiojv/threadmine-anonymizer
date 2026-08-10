@@ -1,38 +1,38 @@
-# Azul Zing (Prime): corpo identico ao HotSpot -- o proprio analisador de Zing do ThreadMine
-# reusa o mesmo parser do HotSpot -- mais o bloco de metadados "Zing thread dump header:" e as
-# threads do coletor C4. Fixture da uma revisao posterior.
-formato: hotspot-jstack
-ancoras_preservadas:
+# Azul Zing (Prime): body identical to HotSpot -- ThreadMine's own Zing analyzer
+# reuses the same HotSpot parser -- plus the "Zing thread dump header:" metadata block and the
+# C4 collector threads. Fixture from a later revision.
+format: hotspot-jstack
+preserved_anchors:
   - "Full thread dump Zing (21.09.0.0-8-ZVM mixed mode):"
   - "java.lang.Thread.State:"
-threads_allowlist_verbatim:
+allowlisted_threads_verbatim:
   - "http-nio-8080-exec-1"
   - "Reference Handler"
-  - "C4 Collector Thread"      # regex (?i)^(GC |G1 |C4 |ZGC |...) da allowlist
+  - "C4 Collector Thread"      # allowlist regex (?i)^(GC |G1 |C4 |ZGC |...)
   - "C4 New Collector"
   - "C4 Old Collector"
   - "VM Thread"
   - "VM Periodic Task Thread"
-threads_tokenizadas:
-  "main": {}   # a allowlist-v1 real nao tem regra p/ "main" -> tokenizada (mesma decisao das demais fixtures)
-  "pgto-worker-1": { preserva_sufixo: "-1" }
-  "pgto-worker-2": { preserva_sufixo: "-2" }
-classes_tokenizadas:
+tokenized_threads:
+  "main": {}   # the real allowlist-v1 has no rule for "main" -> tokenized (same decision as the other fixtures)
+  "pgto-worker-1": { keeps_suffix: "-1" }
+  "pgto-worker-2": { keeps_suffix: "-2" }
+tokenized_classes:
   - "com.acme.gateway.Bootstrap"
   - "com.acme.payment.LedgerService"
-  - "com.acme.payment.LedgerLock"      # tambem apos "(a " nas linhas de lock
+  - "com.acme.payment.LedgerLock"      # also after "(a " on the lock lines
   - "com.acme.payment.PaymentFacade"
   - "com.acme.payment.gateway.AcquirerClient"
-linhas_stripadas:
-  - "Zing thread dump header:"   # bloco de metadados: nenhum parser do ThreadMine o le
+stripped_lines:
+  - "Zing thread dump header:"   # metadata block: no ThreadMine parser reads it
   - "Zing runtime version"
   - "JNI global refs"
-invariantes:
-  - determinismo_intra_dump
-  - blank_lines_preservadas
-  - enderecos_lock_verbatim
-  - sufixo_numerico_preservado
-# Armadilhas cobertas: o banner "Full thread dump Zing" e a ancora que o
-# analisador usa para rotear ao parser certo -- reescreve-lo quebraria a
-# deteccao de formato no servidor; as threads C4 sao infra publica da Azul e ficam verbatim
-# (ja cobertas pela allowlist v1), entao o agrupamento de GC sobrevive.
+invariants:
+  - intra_dump_determinism
+  - blank_lines_preserved
+  - lock_addresses_verbatim
+  - numeric_suffix_preserved
+# Traps covered: the "Full thread dump Zing" banner is the anchor the
+# analyzer uses to route to the right parser -- rewriting it would break
+# format detection on the server; the C4 threads are public Azul infrastructure and stay verbatim
+# (already covered by allowlist v1), so GC grouping survives.

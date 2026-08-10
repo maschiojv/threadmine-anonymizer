@@ -1,11 +1,11 @@
-# jstack JDK 25: cabecalho com [nid] apos #N, allocated=/defined_classes=, Object.wait0,
+# jstack JDK 25: header with [nid] after #N, allocated=/defined_classes=, Object.wait0,
 # Thread.runWith, VirtualThread-unblocker, ForkJoinPool-1-delayScheduler, process reaper,
-# "No compile task", blocos Locked ownable synchronizers, SMR, JNI refs.
-formato: hotspot-jstack
-ancoras_preservadas:
+# "No compile task", Locked ownable synchronizers blocks, SMR, JNI refs.
+format: hotspot-jstack
+preserved_anchors:
   - "Full thread dump OpenJDK 64-Bit Server VM (25+36-LTS mixed mode, sharing):"
   - "java.lang.Thread.State:"
-threads_allowlist_verbatim:
+allowlisted_threads_verbatim:
   - "Reference Handler"
   - "Finalizer"
   - "Signal Dispatcher"
@@ -22,28 +22,28 @@ threads_allowlist_verbatim:
   - "G1 Refine#0"
   - "G1 Conc#0"
   - "G1 Main Marker"
-threads_tokenizadas:
-  "main": {}   # corrigido apos conferir contra a allowlist real: a allowlist-v1 real nao tem regra p/ "main" -> tokenizada
-  "ForkJoinPool-1-delayScheduler": {}   # corrigido apos conferir contra a allowlist real: regex da allowlist cobre so -worker-N
-  "process reaper (pid 4242)": {}   # corrigido apos conferir contra a allowlist real: allowlist-v1 nao tem prefixo "process reaper"
-  "pgto-worker-4": { preserva_sufixo: "-4" }
-classes_tokenizadas:
+tokenized_threads:
+  "main": {}   # fixed after checking against the real allowlist: the real allowlist-v1 has no rule for "main" -> tokenized
+  "ForkJoinPool-1-delayScheduler": {}   # fixed after checking against the real allowlist: the allowlist regex covers only -worker-N
+  "process reaper (pid 4242)": {}   # fixed after checking against the real allowlist: allowlist-v1 has no "process reaper" prefix
+  "pgto-worker-4": { keeps_suffix: "-4" }
+tokenized_classes:
   - "com.acme.gateway.Bootstrap"
   - "com.acme.payment.gateway.AcquirerClient"
   - "com.acme.payment.LedgerService"
   - "com.acme.payment.LedgerLock"
   - "com.acme.payment.PaymentFacade"
-linhas_stripadas:
+stripped_lines:
   - "Threads class SMR info:"
   - "_java_thread_list"
   - "Locked ownable synchronizers:"
   - "No compile task"
   - "JNI global refs"
-invariantes:
-  - determinismo_intra_dump
-  - blank_lines_preservadas
-  - enderecos_lock_verbatim
-# Armadilhas cobertas: campos novos do 25 (allocated=412M, defined_classes=12, `#31 [27139]`,
-# nid decimal sem 0x) preservados verbatim no cabecalho tokenizado - a reescrita do nome nao pode
-# tocar o resto da linha; threads de infra sem stack (GC/VM) no rodape sem linha de estado;
-# `$$Lambda/0x...` (estilo JDK 21+, sem $N) dentro de frame java.base -> allowlist verbatim.
+invariants:
+  - intra_dump_determinism
+  - blank_lines_preserved
+  - lock_addresses_verbatim
+# Pitfalls covered: the new JDK 25 fields (allocated=412M, defined_classes=12, `#31 [27139]`,
+# decimal nid with no 0x) preserved verbatim in the tokenized header - rewriting the name must not
+# touch the rest of the line; stackless infra threads (GC/VM) in the footer with no state line;
+# `$$Lambda/0x...` (JDK 21+ style, no $N) inside a java.base frame -> allowlisted verbatim.

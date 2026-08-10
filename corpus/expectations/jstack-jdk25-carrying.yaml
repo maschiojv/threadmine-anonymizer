@@ -1,12 +1,12 @@
-# jstack/jcmd Thread.print de JDK 21+ com virtual threads MONTADAS: o carrier imprime
-# `Carrying virtual thread #N` NO LUGAR da linha `java.lang.Thread.State:` (HotSpot so
-# imprime uma das duas), e o bloco da VT montada traz o marcador
-# `<virtual thread is mounted on carrier thread "...">`. O numero apos `#` e o threadId da
-# VT, nao um nome — nada a tokenizar, tudo a preservar: o parser HotSpot do ThreadMine
-# le a linha (CARRYING_VIRTUAL) e a allowlist v1 a lista como structuralMarker.
-# Tambem exercita a forma de cabecalho JDK 21+ com `#N [nid]` entre colchetes e sem nid=.
-formato: hotspot-vt
-ancoras_preservadas:
+# jstack/jcmd Thread.print from JDK 21+ with MOUNTED virtual threads: the carrier prints
+# `Carrying virtual thread #N` INSTEAD OF the `java.lang.Thread.State:` line (HotSpot only
+# prints one of the two), and the mounted VT block carries the marker
+# `<virtual thread is mounted on carrier thread "...">`. The number after `#` is the VT's
+# threadId, not a name — nothing to tokenize, everything to preserve: the ThreadMine HotSpot
+# parser reads the line (CARRYING_VIRTUAL) and allowlist v1 lists it as a structuralMarker.
+# Also exercises the JDK 21+ header shape with `#N [nid]` in brackets and no nid=.
+format: hotspot-vt
+preserved_anchors:
   - "Full thread dump"
   - "java.lang.Thread.State:"
   - "Carrying virtual thread #32"
@@ -14,31 +14,31 @@ ancoras_preservadas:
   - "<pinned: synchronized>"
   - "<virtual thread is mounted on carrier thread \"ForkJoinPool-1-worker-1\">"
   - "<virtual thread is mounted on carrier thread \"ForkJoinPool-1-worker-2\">"
-threads_allowlist_verbatim:
+allowlisted_threads_verbatim:
   - "ForkJoinPool-1-worker-1"
   - "ForkJoinPool-1-worker-2"
   - "ForkJoinPool-1-worker-3"
   - "VirtualThread-unblocker"
   - "Reference Handler"
-threads_tokenizadas:
+tokenized_threads:
   "main": {}
-  "pedido-vt-7": { preserva_sufixo: "-7" }
-classes_tokenizadas:
+  "pedido-vt-7": { keeps_suffix: "-7" }
+tokenized_classes:
   - "com.acme.gateway.Bootstrap"
   - "com.acme.order.OrderService"
   - "com.acme.order.handler.OrderHandler"
   - "com.acme.stock.StockSync"
   - "com.acme.stock.StockLatch"
-linhas_stripadas:
+stripped_lines:
   - "JNI global refs"
-invariantes:
-  - determinismo_intra_dump
-  - blank_lines_preservadas
-  - enderecos_lock_verbatim
-  - ordem_linhas_preservada
-  - sufixo_numerico_preservado
-# Armadilhas cobertas: um bloco de thread SEM linha de estado (o carrier montado) nao pode
-# derrubar o lexer nem virar `redacted`; o nome do carrier dentro do marcador Loom recebe o
-# MESMO tratamento do cabecalho (aqui: allowlist, entao verbatim nas duas pontas); a VT
-# anonima `"" #32 virtual` nao tem nada a tokenizar; `#N [nid]` (colchetes, sem nid=) e a
-# forma de cabecalho do JDK 21+ em macOS/Linux recentes.
+invariants:
+  - intra_dump_determinism
+  - blank_lines_preserved
+  - lock_addresses_verbatim
+  - line_order_preserved
+  - numeric_suffix_preserved
+# Pitfalls covered: a thread block with NO state line (the mounted carrier) must not
+# crash the lexer or turn into `redacted`; the carrier name inside the Loom marker gets the
+# SAME treatment as the header (here: allowlisted, so verbatim on both ends); the anonymous
+# VT `"" #32 virtual` has nothing to tokenize; `#N [nid]` (brackets, no nid=) is the
+# JDK 21+ header shape on recent macOS/Linux.
