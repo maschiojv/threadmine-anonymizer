@@ -1,5 +1,7 @@
 package dev.threadmine.anon.format.json;
 
+import dev.threadmine.anon.core.JsonText;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -102,27 +104,7 @@ public final class Json {
     }
 
     private static void writeString(StringBuilder sb, String value) {
-        sb.append('"');
-        for (int i = 0; i < value.length(); i++) {
-            char c = value.charAt(i);
-            switch (c) {
-                case '"' -> sb.append("\\\"");
-                case '\\' -> sb.append("\\\\");
-                case '\n' -> sb.append("\\n");
-                case '\r' -> sb.append("\\r");
-                case '\t' -> sb.append("\\t");
-                case '\b' -> sb.append("\\b");
-                case '\f' -> sb.append("\\f");
-                default -> {
-                    if (c < 0x20) {
-                        sb.append(String.format("\\u%04x", (int) c));
-                    } else {
-                        sb.append(c);
-                    }
-                }
-            }
-        }
-        sb.append('"');
+        sb.append('"').append(JsonText.escape(value, false)).append('"');
     }
 
     private static final class Parser {
