@@ -39,7 +39,7 @@ exports, unmasked export) and the matrix in `e2e/out/matrix.md`.
 ## Prerequisites
 
 - JDK 21+ (`java` on PATH); jbang works too but is not required.
-- The fat jar: `./mvnw -DskipTests package` → `target/tm-anon-0.2.0-SNAPSHOT.jar`.
+- The fat jar: `./mvnw -DskipTests package` → `target/tm-anon-0.3.0-SNAPSHOT.jar`.
 - A running ThreadMine backend and an API key (`tf_...`).
 
 ## Run
@@ -51,7 +51,7 @@ java e2e/parity.java self-test
 # full sweep
 TM_API_KEY=tf_... java e2e/parity.java run \
     [--base-url http://localhost:8090] \
-    [--jar target/tm-anon-0.2.0-SNAPSHOT.jar] \
+    [--jar target/tm-anon-0.3.0-SNAPSHOT.jar] \
     [--fixtures corpus/fixtures] [--out e2e/out] \
     [extra-dump.txt ...]
 ```
