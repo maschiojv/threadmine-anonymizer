@@ -17,15 +17,27 @@ public final class Main {
         System.exit(run(args, System.out, System.err));
     }
 
-    private static final String USAGE = """
+    /**
+     * The banner is written with the command the user just typed, not with the
+     * bare tool name: a downloaded jar gives nobody a {@code tm-anon} command,
+     * so printing one turned every usage error into a second dead end.
+     */
+    private static String usage() {
+        String tm = Invocation.current();
+        String shortcut = tm.equals("tm-anon") ? "" : """
+
+                Shown as you launched it. To type just tm-anon, put the native binary for
+                your OS on your PATH, or alias the jar.
+                """;
+        return """
             tm-anon - local, offline anonymizer for JVM thread dumps
 
             Usage:
-              tm-anon init   [--vault <path>] [--encrypt]
-              tm-anon mask   <dump> [-o <out>] [--vault <path>] [--strict] [--report <path>] [--dry-run] [--no-verify]
-              tm-anon unmask <file> [-o <out>] [--format text|json|html] [--vault <path>]
-              tm-anon verify <original> <masked> [--vault <path>]
-
+              %1$s init   [--vault <path>] [--encrypt]
+              %1$s mask   <dump> [-o <out>] [--vault <path>] [--strict] [--report <path>] [--dry-run] [--no-verify]
+              %1$s unmask <file> [-o <out>] [--format text|json|html] [--vault <path>]
+              %1$s verify <original> <masked> [--vault <path>]
+            %2$s
             mask verifies its own output before writing it: if any identifier survived,
             nothing is written and the run exits 4. --no-verify skips that check, which
             leaves you with a file nothing has vouched for.
@@ -36,7 +48,8 @@ public final class Main {
             history and in the process list.
 
             Exit codes: 0 ok - 1 usage - 2 unsupported input - 3 vault error - 4 verify failed
-            """;
+            """.formatted(tm, shortcut);
+    }
 
     /** Testable entry point; returns the process exit code instead of exiting. */
     static int run(String[] args, PrintStream out, PrintStream err) {
@@ -46,7 +59,7 @@ public final class Main {
     /** Same, with the working directory supplied — relative paths resolve against it. */
     static int run(String[] args, Path workingDir, PrintStream out, PrintStream err) {
         if (args.length == 0) {
-            err.println(USAGE);
+            err.println(usage());
             return ExitCodes.USAGE;
         }
         String command = args[0];
@@ -66,7 +79,7 @@ public final class Main {
             }
             default -> {
                 err.println("unknown command: " + command);
-                err.println(USAGE);
+                err.println(usage());
             }
         }
         return ExitCodes.USAGE;
