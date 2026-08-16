@@ -43,6 +43,21 @@ class MainTest {
         assertTrue(usage.contains("verify"), "usage must list the verify command");
     }
 
+    // The banner is a copy-paste surface: whatever it prints has to run as-is.
+    // Under the test runner the launcher is not our jar, so the resolver lands
+    // on the documented default - the same line a downloaded jar produces.
+    @Test
+    void usageSpellsTheCommandsTheWayTheyCanBeRun() {
+        run();
+
+        String usage = err.toString(StandardCharsets.UTF_8);
+        assertTrue(usage.contains(Invocation.current() + " init"), usage);
+        assertTrue(usage.contains(Invocation.current() + " unmask"), usage);
+        assertTrue(usage.contains("java -jar tm-anon.jar init"),
+                "a jar launch must not advertise a tm-anon command that does not exist");
+        assertTrue(usage.contains("PATH"), "the banner must say how to get the short form");
+    }
+
     @Test
     void usageDocumentsTheExitCodeContract() {
         run();

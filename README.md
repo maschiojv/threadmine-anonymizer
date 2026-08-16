@@ -66,11 +66,25 @@ jbang alias add --name tm-anon tm-anon@maschiojv/threadmine-anonymizer   # then 
 ./mvnw package        # -> target/tm-anon-<version>.jar
 ```
 
-A shell alias makes the rest of this README copy-pasteable:
+**A downloaded jar gives you no `tm-anon` command.** Run it as you would any jar,
+which works everywhere with no setup:
+
+```bash
+java -jar tm-anon.jar init
+java -jar tm-anon.jar mask dump.txt
+```
+
+The rest of this README writes the short `tm-anon` form. To get it, either put
+the native binary for your OS on your `PATH` (on Windows, rename it to
+`tm-anon.exe`), or, on Linux and macOS, alias the jar:
 
 ```bash
 alias tm-anon='java -jar /path/to/tm-anon.jar'
 ```
+
+Windows `cmd` and PowerShell have no shell aliases — use the native binary or
+the `java -jar` form. The tool's own help prints whichever form you launched it
+with, so a mistyped command always answers with something you can actually run.
 
 ## Quickstart
 
@@ -221,6 +235,32 @@ After:
 Note the last two lines: tokens come back **inside prose**, not only in
 structured fields. That is why the token grammar is a distinctive
 `[pCmt]<hex>x<hex>` shape matched on word boundaries.
+
+### 5. Or unmask the whole report and read it in a browser
+
+JSON is a fine machine format and a poor way to read a diagnosis. When the
+analysis is exported as a **self-contained HTML report** — one file, all the
+data in an embedded JSON island, no network calls — `unmask` restores it in
+place and you open the result locally:
+
+```
+$ tm-anon unmask threadmine-report-a1b2c3d4.html -o report.plain.html
+Wrote report.plain.html
+Restored 18 token occurrence(s), 16 distinct.
+```
+
+(Real run, like everything else here: the island above holds the 16 tokens the
+masked fixture produced. The restored file still parses as JSON.)
+
+Same vault, same tokens; what changes is the escaping. A restored name carrying
+a `<` has to land escaped inside the island: dropped in literally, a value
+containing `</script>` would close the block early and take the page down with
+it. That is what `--format html` does, inferred here from the `.html`
+extension. Nothing leaves the machine in this step — the report has no network
+code, and neither does this tool.
+
+This is the flow ThreadMine's offline report was designed for; the export lives
+on the analysis side, `unmask` is the half that runs on your machine.
 
 ---
 
