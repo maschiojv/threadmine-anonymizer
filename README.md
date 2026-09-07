@@ -33,7 +33,8 @@ jstack <pid> > dump.txt
 tm-anon mask dump.txt                    # -> dump.anon.txt, and nothing is written
                                          # unless the compliance check passes
                                          # upload dump.anon.txt, get the analysis back
-tm-anon unmask export.json               # your real names, back on your machine
+tm-anon unmask report.html               # -> report.unmasked.html, your real
+                                         # names, back on your machine
 
 tm-anon verify dump.txt dump.anon.txt    # the same check on demand: CI, reviewers,
                                          # a file you masked last month
@@ -209,8 +210,8 @@ report names the offending line.
 works on export JSON, on CSV, and on prose an LLM wrote about your dump.
 
 ```
-$ tm-anon unmask analysis-export.json -o analysis-export.plain.json
-Wrote analysis-export.plain.json
+$ tm-anon unmask analysis-export.json
+Wrote analysis-export.unmasked.json
 Restored 11 token occurrence(s), 7 distinct.
 ```
 
@@ -244,8 +245,8 @@ data in an embedded JSON island, no network calls — `unmask` restores it in
 place and you open the result locally:
 
 ```
-$ tm-anon unmask threadmine-report-a1b2c3d4.html -o report.plain.html
-Wrote report.plain.html
+$ tm-anon unmask threadmine-relatorio-a1b2c3d4.html
+Wrote threadmine-relatorio-a1b2c3d4.unmasked.html
 Restored 18 token occurrence(s), 16 distinct.
 ```
 
@@ -269,7 +270,7 @@ on the analysis side, `unmask` is the half that runs on your machine.
 ```
 tm-anon init   [--vault <path>]
 tm-anon mask   <dump> [-o <out>] [--vault <path>] [--strict] [--report <path>] [--dry-run] [--no-verify]
-tm-anon unmask <file> [-o <out>] [--format text|json|html] [--vault <path>]
+tm-anon unmask <file> [-o <out>|-] [--format text|json|html] [--vault <path>]
 tm-anon verify <original> <masked> [--vault <path>]
 
 Exit codes: 0 ok - 1 usage - 2 unsupported input - 3 vault error - 4 verify failed
@@ -352,9 +353,13 @@ jcmd Thread.dump_to_file -format=text, ThreadMXBean/VisualVM) and OpenJ9 javacor
 
 ### `unmask`
 
-Restores real names in any text. Without `-o` the result goes to stdout and the
-summary to stderr, so `tm-anon unmask export.json > plain.json` does the obvious
-thing. Tokens unknown to the vault are left alone and reported — that usually
+Restores real names in any text. Without `-o` it writes next to the input, the
+way `mask` does: `report.html` becomes `report.unmasked.html`, and the
+`dump.anon.txt` that `mask` produced becomes `dump.unmasked.txt` — never
+`dump.txt`, which still holds the original. `-o -` asks for stdout instead, with
+the summary on stderr, so `tm-anon unmask export.json -o - > plain.json` still
+pipes. Restored text is the real names, which is why it is never printed unless
+you ask. Tokens unknown to the vault are left alone and reported — that usually
 means the text was masked with a different vault, which is a fact about the
 input rather than an error. Idempotent.
 

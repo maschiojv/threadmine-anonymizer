@@ -35,9 +35,13 @@ public final class Main {
             Usage:
               %1$s init   [--vault <path>] [--encrypt]
               %1$s mask   <dump> [-o <out>] [--vault <path>] [--strict] [--report <path>] [--dry-run] [--no-verify]
-              %1$s unmask <file> [-o <out>] [--format text|json|html] [--vault <path>]
+              %1$s unmask <file> [-o <out>|-] [--format text|json|html] [--vault <path>]
               %1$s verify <original> <masked> [--vault <path>]
             %2$s
+            Without -o both commands write next to the input: dump.txt becomes
+            dump.anon.txt, and dump.anon.txt becomes dump.unmasked.txt. Ask for stdout
+            with -o - ; unmask restores the real names, so it never prints them unasked.
+
             mask verifies its own output before writing it: if any identifier survived,
             nothing is written and the run exits 4. --no-verify skips that check, which
             leaves you with a file nothing has vouched for.

@@ -18,7 +18,7 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * {@code tm-anon unmask <file> [-o <out>] [--format text|json|html] [--vault <path>]}
+ * {@code tm-anon unmask <file> [-o <out>|-] [--format text|json|html] [--vault <path>]}
  * — puts real names back into anything ThreadMine produced: export JSON, CSV,
  * or a Vein narrative. The file is treated as opaque text, so a format tm-anon
  * has never seen still round-trips.
@@ -29,13 +29,23 @@ import java.util.Set;
  * which is what a caller reaching for stdin-like pipelines or an unusual
  * extension needs.</p>
  *
- * <p>Without {@code -o} the result goes to stdout and the summary to stderr,
- * so {@code tm-anon unmask export.json > plain.json} does the obvious thing.</p>
+ * <p>Without {@code -o} the result is written next to the input, the way
+ * {@code mask} names its own output: {@code report.html} becomes
+ * {@code report.unmasked.html}. Printing it instead was the older behaviour,
+ * chosen when the target was a small export a pipeline would swallow; a
+ * ThreadMine report is megabytes of HTML, and what it prints is the real
+ * names, straight into the terminal scrollback of whoever ran the command the
+ * way the product teaches it. {@code -o -} asks for stdout explicitly, and
+ * then the summary stays on stderr so the stream is still pipeable.</p>
  */
 final class UnmaskCommand {
 
     private static final String OUTPUT_OPTION = "-o";
     private static final String FORMAT_OPTION = "--format";
+    /** {@code -o -}: the one way to ask for the restored text on stdout. */
+    private static final String STDOUT = "-";
+    private static final String UNMASKED_MARKER = ".unmasked";
+    private static final String ANON_MARKER = ".anon";
     private static final int MAX_LISTED_UNRESOLVED = 10;
 
     private UnmaskCommand() {
@@ -51,7 +61,7 @@ final class UnmaskCommand {
         }
         if (args.positionals().size() != 1) {
             err.println("unmask: expected exactly one input file");
-            err.println("  usage: tm-anon unmask <file> [-o <out>] [--format text|json|html] [--vault <path>]");
+            err.println("  usage: tm-anon unmask <file> [-o <out>|-] [--format text|json|html] [--vault <path>]");
             return ExitCodes.USAGE;
         }
 
@@ -82,8 +92,9 @@ final class UnmaskCommand {
         }
 
         PrintStream summary = err;
-        if (args.value(OUTPUT_OPTION).isPresent()) {
-            Path output = workingDir.resolve(args.value(OUTPUT_OPTION).get());
+        Optional<String> requestedOutput = args.value(OUTPUT_OPTION);
+        if (!requestedOutput.map(STDOUT::equals).orElse(false)) {
+            Path output = requestedOutput.map(workingDir::resolve).orElseGet(() -> defaultOutput(input));
             try {
                 Files.writeString(output, result.text(), StandardCharsets.UTF_8);
             } catch (IOException e) {
@@ -101,6 +112,27 @@ final class UnmaskCommand {
                 + result.distinctTokensReplaced() + " distinct.");
         warnAboutUnresolved(result, err);
         return ExitCodes.OK;
+    }
+
+    /**
+     * {@code report.html -> report.unmasked.html}, and the name mask produced
+     * goes back the way it came: {@code dump.anon.txt -> dump.unmasked.txt},
+     * extensionless {@code dump -> dump.unmasked}.
+     *
+     * <p>Never {@code dump.txt}: that is the original, still on disk, and the
+     * one file unmask must not touch.</p>
+     */
+    private static Path defaultOutput(Path input) {
+        String name = input.getFileName().toString();
+        int dot = name.lastIndexOf('.');
+        String stem = dot <= 0 ? name : name.substring(0, dot);
+        String extension = dot <= 0 ? "" : name.substring(dot);
+        if (stem.endsWith(ANON_MARKER)) {
+            stem = stem.substring(0, stem.length() - ANON_MARKER.length());
+        }
+        String unmaskedName = stem + UNMASKED_MARKER + extension;
+        Path parent = input.getParent();
+        return parent == null ? Path.of(unmaskedName) : parent.resolve(unmaskedName);
     }
 
     /**
