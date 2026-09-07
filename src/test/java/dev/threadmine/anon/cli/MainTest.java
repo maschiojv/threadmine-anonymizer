@@ -97,7 +97,11 @@ class MainTest {
         Files.writeString(dir.resolve("report.json"), "no tokens here");
 
         assertEquals(0, runIn(dir, "unmask", "report.json"));
-        assertTrue(out.toString(StandardCharsets.UTF_8).contains("no tokens here"));
+        // Without -o the text lands in a file next to the input, and stdout
+        // says where — printing it was the old default.
+        assertEquals("no tokens here",
+                Files.readString(dir.resolve("report.unmasked.json"), StandardCharsets.UTF_8));
+        assertTrue(out.toString(StandardCharsets.UTF_8).contains("report.unmasked.json"));
     }
 
     @Test

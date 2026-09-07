@@ -70,15 +70,49 @@ class UnmaskCommandTest {
     }
 
     @Test
-    void writesTheUnmaskedTextToStdoutWhenNoOutputFileIsGiven(@TempDir Path dir) throws IOException {
+    void writesADerivedFileWhenNoOutputIsGiven(@TempDir Path dir) throws IOException {
         writeVault(dir);
         Files.writeString(dir.resolve("report.json"), "{\"thread\":\"t1a2b3xc4d5e\"}");
 
         int exit = run(dir, "report.json");
 
         assertEquals(0, exit, stderr());
+        assertEquals("{\"thread\":\"pgto-worker-1\"}",
+                Files.readString(dir.resolve("report.unmasked.json"), StandardCharsets.UTF_8));
+        assertTrue(stdout().contains("report.unmasked.json"), stdout());
+        // The restored text is the real names. Printing it by default put them
+        // in the terminal scrollback of anyone who ran the command the way the
+        // product teaches it - and buried the summary under megabytes of HTML.
+        assertFalse(stdout().contains("pgto-worker-1"), stdout());
+    }
+
+    @Test
+    void adashAsTheOutputStillPipesToStdout(@TempDir Path dir) throws IOException {
+        writeVault(dir);
+        Files.writeString(dir.resolve("report.json"), "{\"thread\":\"t1a2b3xc4d5e\"}");
+
+        int exit = run(dir, "report.json", "-o", "-");
+
+        assertEquals(0, exit, stderr());
         assertEquals("{\"thread\":\"pgto-worker-1\"}", stdout());
         assertTrue(stderr().contains("1"), "the summary belongs on stderr so stdout stays pipeable");
+        assertFalse(Files.exists(dir.resolve("report.unmasked.json")), "-o - writes no file");
+    }
+
+    @Test
+    void theDerivedNameUndoesTheOneMaskGave(@TempDir Path dir) throws IOException {
+        writeVault(dir);
+        Files.writeString(dir.resolve("dump.anon.txt"), "t1a2b3xc4d5e");
+        Files.writeString(dir.resolve("dump"), "t1a2b3xc4d5e");
+
+        assertEquals(0, run(dir, "dump.anon.txt"), stderr());
+        assertEquals(0, run(dir, "dump"), stderr());
+
+        // mask writes dump.txt -> dump.anon.txt, so unmask lands on
+        // dump.unmasked.txt: never on dump.txt, which still holds the original.
+        assertTrue(Files.exists(dir.resolve("dump.unmasked.txt")), "expected dump.unmasked.txt");
+        assertFalse(Files.exists(dir.resolve("dump.txt")), "the original must never be overwritten");
+        assertTrue(Files.exists(dir.resolve("dump.unmasked")), "extensionless input keeps having no extension");
     }
 
     @Test
@@ -101,7 +135,7 @@ class UnmaskCommandTest {
         String content = "line one\r\nline two\n\nno tokens at all\n";
         Files.writeString(dir.resolve("plain.txt"), content);
 
-        assertEquals(0, run(dir, "plain.txt"));
+        assertEquals(0, run(dir, "plain.txt", "-o", "-"));
         assertEquals(content, stdout());
     }
 
@@ -110,7 +144,7 @@ class UnmaskCommandTest {
         writeVault(dir);
         Files.writeString(dir.resolve("report.json"), "t1a2b3xc4d5e and C00000x11111 and C00000x11111");
 
-        int exit = run(dir, "report.json");
+        int exit = run(dir, "report.json", "-o", "-");
 
         assertEquals(0, exit, "unmask never fails because of an unknown token");
         assertEquals("pgto-worker-1 and C00000x11111 and C00000x11111", stdout());
@@ -125,7 +159,7 @@ class UnmaskCommandTest {
         Files.move(dir.resolve("tm-anon-vault.json"), dir.resolve("team-a.vault.json"));
         Files.writeString(dir.resolve("report.json"), "t1a2b3xc4d5e");
 
-        assertEquals(0, run(dir, "report.json", "--vault", "team-a.vault.json"), stderr());
+        assertEquals(0, run(dir, "report.json", "--vault", "team-a.vault.json", "-o", "-"), stderr());
         assertEquals("pgto-worker-1", stdout());
     }
 
@@ -136,7 +170,7 @@ class UnmaskCommandTest {
         writeHostileVault(dir);
         Files.writeString(dir.resolve("export.json"), "{\"nome\":\"t1a2b3xc4d5e\"}");
 
-        int exit = run(dir, "export.json");
+        int exit = run(dir, "export.json", "-o", "-");
 
         assertEquals(0, exit, stderr());
         @SuppressWarnings("unchecked")
@@ -149,7 +183,7 @@ class UnmaskCommandTest {
         writeHostileVault(dir);
         Files.writeString(dir.resolve("export.json"), "{\"nome\":\"t1a2b3xc4d5e\"}");
 
-        int exit = run(dir, "export.json", "--format", "text");
+        int exit = run(dir, "export.json", "--format", "text", "-o", "-");
 
         assertEquals(0, exit, stderr());
         // Forced to text: the raw backslash lands in the output and breaks the JSON.
@@ -161,7 +195,7 @@ class UnmaskCommandTest {
         writeHostileVault(dir);
         Files.writeString(dir.resolve("report.html"), "{\"nome\":\"t9f8e7xd6c5b\"}");
 
-        int exit = run(dir, "report.html");
+        int exit = run(dir, "report.html", "-o", "-");
 
         assertEquals(0, exit, stderr());
         assertFalse(stdout().contains("</script>"), stdout());
