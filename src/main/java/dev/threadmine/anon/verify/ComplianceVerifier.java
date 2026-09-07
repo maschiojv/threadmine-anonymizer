@@ -43,8 +43,13 @@ public final class ComplianceVerifier {
      */
     private static final Pattern CLASS_AT_HASH =
             Pattern.compile("([A-Za-z_$][\\w.$]*)@([0-9a-fA-F]{4,})(?![\\w.$/@])");
-    /** Module or classloader prefix on a frame: {@code java.base@21.0.3/} or {@code app//}. */
-    private static final Pattern MODULE_PREFIX = Pattern.compile("^(?:[\\w.$]+//|[\\w.$]+@[\\w.+-]+/)");
+    /**
+     * Module or classloader prefix on a frame: {@code java.base@21.0.3/},
+     * {@code app//}, or the two spelled together the way WildFly writes a named
+     * module loaded outside the boot loader, {@code org.jboss.threads@3.9.2//}.
+     */
+    private static final Pattern MODULE_PREFIX =
+            Pattern.compile("^(?:[\\w.$]+(?:@[\\w.+-]+)?//|[\\w.$]+@[\\w.+-]+/)");
     /**
      * The JIT moulding an OpenJ9/IBM javacore glues to the source file inside
      * the frame parenthesis: {@code (WalletService.java:88(Compiled Code))} in
