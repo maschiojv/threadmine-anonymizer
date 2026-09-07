@@ -618,4 +618,22 @@ class ComplianceVerifierTest {
         assertEquals(List.of(), paranoid.verify(withModule, withModule).residualIdentifiers(),
                 "a module spec is structure even when the allowlist allows nothing");
     }
+
+    @Test
+    void readsAVersionedModulePrefixWrittenWithTwoSlashes() {
+        // WildFly, and any named module loaded outside the boot loader, spells a
+        // frame as "name@version//fqcn": version AND two slashes. Consuming only
+        // one slash leaves "/org.apache...", the allowlist lookup misses, and
+        // every public-infrastructure frame is reported as a residual identifier.
+        String dump = """
+                Full thread dump OpenJDK 64-Bit Server VM (21.0.10+7-LTS mixed mode):
+
+                "t1a2b3xc4d5e" #15 prio=5 tid=0x1 nid=0x2 runnable
+                   java.lang.Thread.State: RUNNABLE
+                	at org.apache.tomcat@10.1.28//org.apache.tomcat.util.threads.TaskQueue.poll(TaskQueue.java:99)
+                """;
+
+        assertEquals(List.of(), verifier.verify(dump, dump).residualIdentifiers(),
+                "an allowlisted frame stays allowlisted behind a versioned module prefix");
+    }
 }
