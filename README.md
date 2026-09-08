@@ -458,7 +458,7 @@ them yourself:
 4. **The vault never leaves your filesystem**, because nothing in this jar can
    send it anywhere. Reversal requires the vault. Not the code — the vault.
 
-5. **Everything is tested against a corpus of 23 dumps** with golden
+5. **Everything is tested against a corpus of 26 dumps** with golden
    expectations, plus property tests on the token grammar, an end-to-end parity
    run against a real analyzer, and a hard non-leak assertion that plants
    secrets in the javacore fixtures and fails if any of them survives masking.
