@@ -404,7 +404,7 @@ Temurin, Corretto, Zulu, Liberica, Zing, GraalVM in JVM mode):
 **The JSON dialect** is worth a note, because it leaks in a way the text one
 does not: its `threadContainers[].container` field carries `toString()` of the
 executor or `StructuredTaskScope` that owns each group of threads — for example
-`com.acme.batch.LedgerScope@4f2b1a` — which is the only place in any format
+`com.acme.batch.LedgerScope@4f2b1a` — which is one of the few places
 where one of your classes names itself outside a stack frame. The same shape
 recurs in `blockedOn`, `waitingOn`, `parkBlocker` and `monitorsOwned`. All of it
 is masked. The output stays valid JSON, so the marker cannot be a leading
