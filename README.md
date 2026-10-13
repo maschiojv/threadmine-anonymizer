@@ -6,7 +6,7 @@ Anonymize a JVM thread dump **on your own machine**, before it goes anywhere.
 with deterministic pseudonyms, keeps everything an analyzer needs to work
 (structure, JDK/framework frames, lock addresses, states, pool suffixes), and
 stores the reverse mapping in a local vault file. You can then upload the masked
-dump to an analysis service such as [ThreadMine](https://threadmine.dev), and
+dump to an analysis service such as [ThreadMine's online thread dump analyzer](https://threadmine.dev/en/analyze), and
 run the analysis output back through `tm-anon unmask` to read it with your real
 names again.
 
