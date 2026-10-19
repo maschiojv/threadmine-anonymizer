@@ -42,7 +42,7 @@ tm-anon verify dump.txt dump.anon.txt    # the same check on demand: CI, reviewe
 
 The masked dump is still analyzable: the same detections fire and the same
 health score comes out, because everything the detectors match by name is on a
-published, auditable [allowlist](allowlist/allowlist-v1.json) and stays verbatim
+published, auditable [allowlist](allowlist/allowlist-v2.json) and stays verbatim
 (JDK internals, `http-nio-8080-exec-1`, `ForkJoinPool-1-worker-3`,
 Tomcat/Netty/Kafka frames, GC threads), while everything that is yours becomes a
 token.
@@ -450,7 +450,7 @@ them yourself:
    parser and the argument parser are small in-tree classes.
 
 3. **The allowlist is a readable JSON file, not a hidden heuristic.**
-   [`allowlist/allowlist-v1.json`](allowlist/allowlist-v1.json) is exactly what
+   [`allowlist/allowlist-v2.json`](allowlist/allowlist-v2.json) is exactly what
    stays verbatim, and [`allowlist/SOURCES.md`](allowlist/SOURCES.md) gives the
    `file:line` origin of every required entry. Disagree with an entry and you can
    see it, change it, and rebuild.

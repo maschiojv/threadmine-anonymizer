@@ -38,7 +38,7 @@ preserved_anchors:
   - "3XMTHREADBLOCK     Blocked on:"
   - "4XESTACKTRACE"
 allowlisted_threads_verbatim:
-  - "Signal Dispatcher"        # exact prefix from allowlist-v1
+  - "Signal Dispatcher"        # exact prefix from allowlist-v2
   - "Finalizer thread"         # "Finalizer" prefix
   - "Common-Cleaner"           # exact prefix
   - "Concurrent Mark Helper"   # regex (?i)^(GC |...|Concurrent Mark|...)
@@ -49,7 +49,7 @@ tokenized_threads:
   "pgto-worker-3": { keeps_suffix: "-3" }
   "pgto-worker-4": { keeps_suffix: "-4" }
   "http-sync tenant-acme /api/payments?invoice=99887766": { route_marker: true }   # "/", "?", digits>=8 -> t.../q
-  # OpenJ9 infra threads with NO allowlist-v1 rule (allowlist v2 candidates — if v2 takes them,
+  # OpenJ9 infra threads with NO allowlist-v2 rule (allowlist v2 candidates — if v2 takes them,
   # move them to allowlisted_threads_verbatim; the source of truth is the 1B artifact):
   "JIT Compilation Thread-000 Suspended": {}
   "JIT Compilation Thread-001 Suspended": {}

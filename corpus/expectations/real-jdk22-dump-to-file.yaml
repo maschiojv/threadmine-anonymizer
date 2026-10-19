@@ -1,0 +1,26 @@
+# Real JDK 22 jcmd Thread.dump_to_file -format=text of a virtual-thread workload (copied from the thread-forge repo,
+# backend/src/test/resources/dumps/), not a synthetic fixture. It is the evidence behind allowlist-v2:
+# `#N "" virtual` headers (21-24) / `#N "" virtual STATE <instant>` (25), frames without `at `,
+# and the `parkOnCarrierThread` frame (the pin signal). Application thread names and classes are tokenized.
+format: hotspot-jcmd-text
+preserved_anchors:
+  - "java.lang.VirtualThread.parkOnCarrierThread("
+  - "\"\" virtual"
+allowlisted_threads_verbatim:
+  - "Reference Handler"
+  - "Finalizer"
+  - "Signal Dispatcher"
+  - "ForkJoinPool-1-worker-1"
+  - "VirtualThread-unparker"
+  - "Read-Poller"
+  - "Write-Poller"
+  - "Common-Cleaner"
+tokenized_threads:
+  "main": {}
+  "worker-pedidos-1": { keeps_suffix: "-1" }
+tokenized_classes:
+  - "GeradorVirtualThreads"
+stripped_lines: []
+invariants:
+  - intra_dump_determinism
+  - blank_lines_preserved

@@ -1,9 +1,21 @@
 {
-  "version": 1,
+  "version": 2,
   "generatedFrom": {
     "analyzer": "ThreadMine",
     "rationale": "SOURCES.md",
-    "note": "Every required entry mirrors a name the ThreadMine analyzer matches; SOURCES.md states the reason for each family and what breaks if it is masked."
+    "note": "Every required entry mirrors a name the ThreadMine analyzer matches; SOURCES.md states the reason for each family and what breaks if it is masked.",
+    "repo": "thread-forge",
+    "files": [
+      "backend/src/test/resources/dumps/real-jdk21-dump-to-file.txt",
+      "backend/src/test/resources/dumps/real-jdk22-dump-to-file.txt",
+      "backend/src/test/resources/dumps/real-jdk23-dump-to-file.txt",
+      "backend/src/test/resources/dumps/real-jdk24-dump-to-file.txt",
+      "backend/src/test/resources/dumps/real-jdk25-dump-to-file.txt",
+      "backend/src/test/resources/dumps/real-jdk21-jstack.txt",
+      "backend/src/test/resources/dumps/real-jdk24-jstack.txt",
+      "backend/src/test/resources/dumps/real-jdk25-jstack.txt",
+      "backend/src/test/resources/dumps/real-jdk25-thread-print.txt"
+    ]
   },
   "required": {
     "packagePrefixes": [
@@ -64,6 +76,9 @@
       "VirtualThread-unblocker",
       "Read-Poller",
       "Write-Poller",
+      "Read-Updater",
+      "Write-Updater",
+      "VirtualThread-unparker",
       "Timer",
       "TimerQueue",
       "Catalina-utility-",
@@ -101,7 +116,8 @@
       "(?i)^(C[12] |Compiler)",
       "(?i)^(VM |Signal |Finalizer|Reference Handler|Attach Listener)",
       "^VirtualThread\\[.*",
-      "^ForkJoinPool-\\d+-worker-\\d+$"
+      "^ForkJoinPool-\\d+-worker-\\d+$",
+      "^ForkJoinPool-\\d+-delayScheduler$"
     ],
     "structuralMarkers": [
       "Full thread dump",
@@ -139,9 +155,9 @@
       "Found one Java-level deadlock:",
       "Found a Java-level deadlock:",
       "===",
-      "<pinned: synchronized>",
-      "<virtual thread is mounted on carrier thread ",
       "Carrying virtual thread #",
+      "Mounted virtual thread #",
+      "java.lang.VirtualThread.parkOnCarrierThread",
       "no object reference available",
       "\""
     ],
@@ -153,9 +169,9 @@
       "^\\s+at (.+)",
       "- locked <(.+?)>(?:\\s+\\(a (.+?)\\))?",
       "- (?:waiting on|waiting to lock|parking to wait for)\\s+<(.+?)>",
-      "<virtual thread is mounted on carrier thread \"(.+?)\">",
-      "<pinned:\\s*synchronized>",
-      "Carrying virtual thread #(\\d+)",
+      "(?:Carrying|Mounted) virtual thread #(\\d+)",
+      "^\"ForkJoinPool-\\d+-worker-\\d+\"\\s+#\\d+",
+      "^#\\d+\\s+\"(.*?)\"\\s+virtual(?:\\s+(RUNNABLE|BLOCKED|WAITING|TIMED_WAITING|NEW|TERMINATED))?\\b",
       "JRE\\s+([\\d._]+)|java version \"([^\"]+)\"|Full thread dump.*?\\((\\d+[\\d._]+)",
       "(HotSpot|OpenJDK|GraalVM|Zing)",
       "^(\\d{4}-\\d{2}-\\d{2}\\s+\\d{2}:\\d{2}:\\d{2})",

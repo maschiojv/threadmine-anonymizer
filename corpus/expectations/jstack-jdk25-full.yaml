@@ -12,6 +12,7 @@ allowlisted_threads_verbatim:
   - "C2 CompilerThread0"
   - "C1 CompilerThread0"
   - "VirtualThread-unblocker"
+  - "ForkJoinPool-1-delayScheduler"   # allowlist-v2: JDK 25 carrier-pool timer
   - "ForkJoinPool-1-worker-1"
   - "Attach Listener"
   - "GC Thread#0"
@@ -23,9 +24,8 @@ allowlisted_threads_verbatim:
   - "G1 Conc#0"
   - "G1 Main Marker"
 tokenized_threads:
-  "main": {}   # fixed after checking against the real allowlist: the real allowlist-v1 has no rule for "main" -> tokenized
-  "ForkJoinPool-1-delayScheduler": {}   # fixed after checking against the real allowlist: the allowlist regex covers only -worker-N
-  "process reaper (pid 4242)": {}   # fixed after checking against the real allowlist: allowlist-v1 has no "process reaper" prefix
+  "main": {}   # fixed after checking against the real allowlist: the real allowlist-v2 has no rule for "main" -> tokenized
+  "process reaper (pid 4242)": {}   # fixed after checking against the real allowlist: allowlist-v2 has no "process reaper" prefix
   "pgto-worker-4": { keeps_suffix: "-4" }
 tokenized_classes:
   - "com.acme.gateway.Bootstrap"

@@ -1,0 +1,901 @@
+41440
+2026-10-17T20:55:51.334515100Z
+24.0.2+12
+
+#3 "main"
+      java.base/java.lang.Thread.sleepNanos0(Native Method)
+      java.base/java.lang.Thread.sleepNanos(Thread.java:482)
+      java.base/java.lang.Thread.sleep(Thread.java:513)
+      GeradorVirtualThreads.main(GeradorVirtualThreads.java:100)
+      java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+      java.base/java.lang.reflect.Method.invoke(Method.java:565)
+      jdk.compiler/com.sun.tools.javac.launcher.SourceLauncher.execute(SourceLauncher.java:254)
+      jdk.compiler/com.sun.tools.javac.launcher.SourceLauncher.run(SourceLauncher.java:138)
+      jdk.compiler/com.sun.tools.javac.launcher.SourceLauncher.main(SourceLauncher.java:76)
+
+#14 "Reference Handler"
+      java.base/java.lang.ref.Reference.waitForReferencePendingList(Native Method)
+      java.base/java.lang.ref.Reference.processPendingReferences(Reference.java:246)
+      java.base/java.lang.ref.Reference$ReferenceHandler.run(Reference.java:208)
+
+#15 "Finalizer"
+      java.base/java.lang.Object.wait0(Native Method)
+      java.base/java.lang.Object.wait(Object.java:389)
+      java.base/java.lang.Object.wait(Object.java:351)
+      java.base/java.lang.ref.ReferenceQueue.remove0(ReferenceQueue.java:138)
+      java.base/java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:229)
+      java.base/java.lang.ref.Finalizer$FinalizerThread.run(Finalizer.java:165)
+
+#16 "Signal Dispatcher"
+
+#17 "Attach Listener"
+      java.base/java.lang.Thread.getStackTrace(Thread.java:2166)
+      java.base/jdk.internal.vm.ThreadDumper.dumpThread(ThreadDumper.java:165)
+      java.base/jdk.internal.vm.ThreadDumper.lambda$dumpThreads$0(ThreadDumper.java:158)
+      java.base/java.util.stream.ReferencePipeline$2$1.accept(ReferencePipeline.java:197)
+      java.base/java.util.Spliterators$ArraySpliterator.forEachRemaining(Spliterators.java:1024)
+      java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:570)
+      java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:560)
+      java.base/java.util.stream.StreamSpliterators$WrappingSpliterator.forEachRemaining(StreamSpliterators.java:315)
+      java.base/java.util.stream.Streams$ConcatSpliterator.forEachRemaining(Streams.java:734)
+      java.base/java.util.stream.ReferencePipeline$Head.forEach(ReferencePipeline.java:807)
+      java.base/jdk.internal.vm.ThreadDumper.dumpThreads(ThreadDumper.java:158)
+      java.base/jdk.internal.vm.ThreadDumper.dumpThreads(ThreadDumper.java:154)
+      java.base/jdk.internal.vm.ThreadDumper.dumpThreadsToFile(ThreadDumper.java:119)
+      java.base/jdk.internal.vm.ThreadDumper.dumpThreads(ThreadDumper.java:68)
+
+#24 "Notification Thread"
+
+#25 "Common-Cleaner"
+      java.base/java.lang.Object.wait0(Native Method)
+      java.base/java.lang.Object.wait(Object.java:389)
+      java.base/java.lang.ref.ReferenceQueue.remove0(ReferenceQueue.java:124)
+      java.base/java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:215)
+      java.base/jdk.internal.ref.CleanerImpl.run(CleanerImpl.java:140)
+      java.base/java.lang.Thread.run(Thread.java:1447)
+      java.base/jdk.internal.misc.InnocuousThread.run(InnocuousThread.java:148)
+
+#26 "VirtualThread-unblocker"
+      java.base/java.lang.VirtualThread.takeVirtualThreadListToUnblock(Native Method)
+      java.base/java.lang.VirtualThread.unblockVirtualThreads(VirtualThread.java:1489)
+      java.base/java.lang.Thread.run(Thread.java:1447)
+      java.base/jdk.internal.misc.InnocuousThread.run(InnocuousThread.java:148)
+
+#122 "Read-Poller"
+      java.base/sun.nio.ch.WEPoll.wait(Native Method)
+      java.base/sun.nio.ch.WEPollPoller.poll(WEPollPoller.java:61)
+      java.base/sun.nio.ch.Poller.pollerLoop(Poller.java:248)
+      java.base/java.lang.Thread.run(Thread.java:1447)
+      java.base/jdk.internal.misc.InnocuousThread.run(InnocuousThread.java:148)
+
+#123 "Write-Poller"
+      java.base/sun.nio.ch.WEPoll.wait(Native Method)
+      java.base/sun.nio.ch.WEPollPoller.poll(WEPollPoller.java:61)
+      java.base/sun.nio.ch.Poller.pollerLoop(Poller.java:248)
+      java.base/java.lang.Thread.run(Thread.java:1447)
+      java.base/jdk.internal.misc.InnocuousThread.run(InnocuousThread.java:148)
+
+#121 "worker-pedidos-1" virtual
+      java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:788)
+      java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:967)
+      java.base/java.lang.Thread.sleepNanos(Thread.java:480)
+      java.base/java.lang.Thread.sleep(Thread.java:513)
+      GeradorVirtualThreads.lambda$main$10(GeradorVirtualThreads.java:93)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#111 "VirtualThread-unparker"
+      java.base/jdk.internal.misc.Unsafe.park(Native Method)
+      java.base/java.util.concurrent.locks.LockSupport.parkNanos(LockSupport.java:271)
+      java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.awaitNanos(AbstractQueuedSynchronizer.java:1802)
+      java.base/java.util.concurrent.ScheduledThreadPoolExecutor$DelayedWorkQueue.take(ScheduledThreadPoolExecutor.java:1166)
+      java.base/java.util.concurrent.ScheduledThreadPoolExecutor$DelayedWorkQueue.take(ScheduledThreadPoolExecutor.java:883)
+      java.base/java.util.concurrent.ThreadPoolExecutor.getTask(ThreadPoolExecutor.java:1021)
+      java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1081)
+      java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:619)
+      java.base/java.lang.Thread.run(Thread.java:1447)
+      java.base/jdk.internal.misc.InnocuousThread.run(InnocuousThread.java:148)
+
+#27 "" virtual
+      java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:788)
+      java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:967)
+      java.base/java.lang.Thread.sleepNanos(Thread.java:480)
+      java.base/java.lang.Thread.sleep(Thread.java:513)
+      GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#29 "" virtual
+      java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:788)
+      java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:967)
+      java.base/java.lang.Thread.sleepNanos(Thread.java:480)
+      java.base/java.lang.Thread.sleep(Thread.java:513)
+      GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#31 "" virtual
+      java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:788)
+      java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:967)
+      java.base/java.lang.Thread.sleepNanos(Thread.java:480)
+      java.base/java.lang.Thread.sleep(Thread.java:513)
+      GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#32 "" virtual
+      java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:788)
+      java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:967)
+      java.base/java.lang.Thread.sleepNanos(Thread.java:480)
+      java.base/java.lang.Thread.sleep(Thread.java:513)
+      GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#33 "" virtual
+      java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:788)
+      java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:967)
+      java.base/java.lang.Thread.sleepNanos(Thread.java:480)
+      java.base/java.lang.Thread.sleep(Thread.java:513)
+      GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#34 "" virtual
+      java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:788)
+      java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:967)
+      java.base/java.lang.Thread.sleepNanos(Thread.java:480)
+      java.base/java.lang.Thread.sleep(Thread.java:513)
+      GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#35 "" virtual
+      java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:788)
+      java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:967)
+      java.base/java.lang.Thread.sleepNanos(Thread.java:480)
+      java.base/java.lang.Thread.sleep(Thread.java:513)
+      GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#36 "" virtual
+      java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:788)
+      java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:967)
+      java.base/java.lang.Thread.sleepNanos(Thread.java:480)
+      java.base/java.lang.Thread.sleep(Thread.java:513)
+      GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#37 "" virtual
+      java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:788)
+      java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:967)
+      java.base/java.lang.Thread.sleepNanos(Thread.java:480)
+      java.base/java.lang.Thread.sleep(Thread.java:513)
+      GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#38 "" virtual
+      java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:788)
+      java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:967)
+      java.base/java.lang.Thread.sleepNanos(Thread.java:480)
+      java.base/java.lang.Thread.sleep(Thread.java:513)
+      GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#39 "" virtual
+      java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:788)
+      java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:967)
+      java.base/java.lang.Thread.sleepNanos(Thread.java:480)
+      java.base/java.lang.Thread.sleep(Thread.java:513)
+      GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#40 "" virtual
+      java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:788)
+      java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:967)
+      java.base/java.lang.Thread.sleepNanos(Thread.java:480)
+      java.base/java.lang.Thread.sleep(Thread.java:513)
+      GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#41 "" virtual
+      java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:788)
+      java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:967)
+      java.base/java.lang.Thread.sleepNanos(Thread.java:480)
+      java.base/java.lang.Thread.sleep(Thread.java:513)
+      GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#42 "" virtual
+      java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:788)
+      java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:967)
+      java.base/java.lang.Thread.sleepNanos(Thread.java:480)
+      java.base/java.lang.Thread.sleep(Thread.java:513)
+      GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#43 "" virtual
+      java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:788)
+      java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:967)
+      java.base/java.lang.Thread.sleepNanos(Thread.java:480)
+      java.base/java.lang.Thread.sleep(Thread.java:513)
+      GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#44 "" virtual
+      java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:788)
+      java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:967)
+      java.base/java.lang.Thread.sleepNanos(Thread.java:480)
+      java.base/java.lang.Thread.sleep(Thread.java:513)
+      GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#45 "" virtual
+      java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:788)
+      java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:967)
+      java.base/java.lang.Thread.sleepNanos(Thread.java:480)
+      java.base/java.lang.Thread.sleep(Thread.java:513)
+      GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#46 "" virtual
+      java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:788)
+      java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:967)
+      java.base/java.lang.Thread.sleepNanos(Thread.java:480)
+      java.base/java.lang.Thread.sleep(Thread.java:513)
+      GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#47 "" virtual
+      java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:788)
+      java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:967)
+      java.base/java.lang.Thread.sleepNanos(Thread.java:480)
+      java.base/java.lang.Thread.sleep(Thread.java:513)
+      GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#48 "" virtual
+      java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:788)
+      java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:967)
+      java.base/java.lang.Thread.sleepNanos(Thread.java:480)
+      java.base/java.lang.Thread.sleep(Thread.java:513)
+      GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#49 "" virtual
+      java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:788)
+      java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:967)
+      java.base/java.lang.Thread.sleepNanos(Thread.java:480)
+      java.base/java.lang.Thread.sleep(Thread.java:513)
+      GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#50 "" virtual
+      java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:788)
+      java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:967)
+      java.base/java.lang.Thread.sleepNanos(Thread.java:480)
+      java.base/java.lang.Thread.sleep(Thread.java:513)
+      GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#51 "" virtual
+      java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:788)
+      java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:967)
+      java.base/java.lang.Thread.sleepNanos(Thread.java:480)
+      java.base/java.lang.Thread.sleep(Thread.java:513)
+      GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#52 "" virtual
+      java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:788)
+      java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:967)
+      java.base/java.lang.Thread.sleepNanos(Thread.java:480)
+      java.base/java.lang.Thread.sleep(Thread.java:513)
+      GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#53 "" virtual
+      java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:788)
+      java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:967)
+      java.base/java.lang.Thread.sleepNanos(Thread.java:480)
+      java.base/java.lang.Thread.sleep(Thread.java:513)
+      GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#54 "" virtual
+      java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:788)
+      java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:967)
+      java.base/java.lang.Thread.sleepNanos(Thread.java:480)
+      java.base/java.lang.Thread.sleep(Thread.java:513)
+      GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#55 "" virtual
+      java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:788)
+      java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:967)
+      java.base/java.lang.Thread.sleepNanos(Thread.java:480)
+      java.base/java.lang.Thread.sleep(Thread.java:513)
+      GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#56 "" virtual
+      java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:788)
+      java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:967)
+      java.base/java.lang.Thread.sleepNanos(Thread.java:480)
+      java.base/java.lang.Thread.sleep(Thread.java:513)
+      GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#57 "" virtual
+      java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:788)
+      java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:967)
+      java.base/java.lang.Thread.sleepNanos(Thread.java:480)
+      java.base/java.lang.Thread.sleep(Thread.java:513)
+      GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#58 "" virtual
+      java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:788)
+      java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:967)
+      java.base/java.lang.Thread.sleepNanos(Thread.java:480)
+      java.base/java.lang.Thread.sleep(Thread.java:513)
+      GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#59 "" virtual
+      java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:788)
+      java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:967)
+      java.base/java.lang.Thread.sleepNanos(Thread.java:480)
+      java.base/java.lang.Thread.sleep(Thread.java:513)
+      GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#60 "" virtual
+      java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:788)
+      java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:967)
+      java.base/java.lang.Thread.sleepNanos(Thread.java:480)
+      java.base/java.lang.Thread.sleep(Thread.java:513)
+      GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#61 "" virtual
+      java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:788)
+      java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:967)
+      java.base/java.lang.Thread.sleepNanos(Thread.java:480)
+      java.base/java.lang.Thread.sleep(Thread.java:513)
+      GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#62 "" virtual
+      java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:788)
+      java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:967)
+      java.base/java.lang.Thread.sleepNanos(Thread.java:480)
+      java.base/java.lang.Thread.sleep(Thread.java:513)
+      GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#63 "" virtual
+      java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:788)
+      java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:967)
+      java.base/java.lang.Thread.sleepNanos(Thread.java:480)
+      java.base/java.lang.Thread.sleep(Thread.java:513)
+      GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#64 "" virtual
+      java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:788)
+      java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:967)
+      java.base/java.lang.Thread.sleepNanos(Thread.java:480)
+      java.base/java.lang.Thread.sleep(Thread.java:513)
+      GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#65 "" virtual
+      java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:788)
+      java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:967)
+      java.base/java.lang.Thread.sleepNanos(Thread.java:480)
+      java.base/java.lang.Thread.sleep(Thread.java:513)
+      GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#66 "" virtual
+      java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:788)
+      java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:967)
+      java.base/java.lang.Thread.sleepNanos(Thread.java:480)
+      java.base/java.lang.Thread.sleep(Thread.java:513)
+      GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#67 "" virtual
+      java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:788)
+      java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:967)
+      java.base/java.lang.Thread.sleepNanos(Thread.java:480)
+      java.base/java.lang.Thread.sleep(Thread.java:513)
+      GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#68 "" virtual
+      java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:788)
+      java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:967)
+      java.base/java.lang.Thread.sleepNanos(Thread.java:480)
+      java.base/java.lang.Thread.sleep(Thread.java:513)
+      GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#69 "" virtual
+      java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:788)
+      java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:967)
+      java.base/java.lang.Thread.sleepNanos(Thread.java:480)
+      java.base/java.lang.Thread.sleep(Thread.java:513)
+      GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#70 "" virtual
+      java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:788)
+      java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:967)
+      java.base/java.lang.Thread.sleepNanos(Thread.java:480)
+      java.base/java.lang.Thread.sleep(Thread.java:513)
+      GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#71 "" virtual
+      java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:788)
+      java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:967)
+      java.base/java.lang.Thread.sleepNanos(Thread.java:480)
+      java.base/java.lang.Thread.sleep(Thread.java:513)
+      GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#72 "" virtual
+      java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:788)
+      java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:967)
+      java.base/java.lang.Thread.sleepNanos(Thread.java:480)
+      java.base/java.lang.Thread.sleep(Thread.java:513)
+      GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#73 "" virtual
+      java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:788)
+      java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:967)
+      java.base/java.lang.Thread.sleepNanos(Thread.java:480)
+      java.base/java.lang.Thread.sleep(Thread.java:513)
+      GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#74 "" virtual
+      java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:788)
+      java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:967)
+      java.base/java.lang.Thread.sleepNanos(Thread.java:480)
+      java.base/java.lang.Thread.sleep(Thread.java:513)
+      GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#75 "" virtual
+      java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:788)
+      java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:967)
+      java.base/java.lang.Thread.sleepNanos(Thread.java:480)
+      java.base/java.lang.Thread.sleep(Thread.java:513)
+      GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#76 "" virtual
+      java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:788)
+      java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:967)
+      java.base/java.lang.Thread.sleepNanos(Thread.java:480)
+      java.base/java.lang.Thread.sleep(Thread.java:513)
+      GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#78 "" virtual
+      java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:788)
+      java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:967)
+      java.base/java.lang.Thread.sleepNanos(Thread.java:480)
+      java.base/java.lang.Thread.sleep(Thread.java:513)
+      GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#79 "" virtual
+      java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:788)
+      java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:967)
+      java.base/java.lang.Thread.sleepNanos(Thread.java:480)
+      java.base/java.lang.Thread.sleep(Thread.java:513)
+      GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#83 "" virtual
+      java.base/java.lang.VirtualThread.park(VirtualThread.java:746)
+      java.base/java.lang.System$1.parkVirtualThread(System.java:2279)
+      java.base/java.util.concurrent.locks.LockSupport.park(LockSupport.java:221)
+      java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer.acquire(AbstractQueuedSynchronizer.java:789)
+      java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer.acquire(AbstractQueuedSynchronizer.java:1029)
+      java.base/java.util.concurrent.locks.ReentrantLock$Sync.lock(ReentrantLock.java:154)
+      java.base/java.util.concurrent.locks.ReentrantLock.lock(ReentrantLock.java:323)
+      GeradorVirtualThreads.lambda$main$1(GeradorVirtualThreads.java:41)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#84 "" virtual
+      java.base/java.lang.VirtualThread.park(VirtualThread.java:746)
+      java.base/java.lang.System$1.parkVirtualThread(System.java:2279)
+      java.base/java.util.concurrent.locks.LockSupport.park(LockSupport.java:221)
+      java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer.acquire(AbstractQueuedSynchronizer.java:789)
+      java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer.acquire(AbstractQueuedSynchronizer.java:1029)
+      java.base/java.util.concurrent.locks.ReentrantLock$Sync.lock(ReentrantLock.java:154)
+      java.base/java.util.concurrent.locks.ReentrantLock.lock(ReentrantLock.java:323)
+      GeradorVirtualThreads.lambda$main$1(GeradorVirtualThreads.java:41)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#85 "" virtual
+      java.base/java.lang.VirtualThread.park(VirtualThread.java:746)
+      java.base/java.lang.System$1.parkVirtualThread(System.java:2279)
+      java.base/java.util.concurrent.locks.LockSupport.park(LockSupport.java:221)
+      java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer.acquire(AbstractQueuedSynchronizer.java:789)
+      java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer.acquire(AbstractQueuedSynchronizer.java:1029)
+      java.base/java.util.concurrent.locks.ReentrantLock$Sync.lock(ReentrantLock.java:154)
+      java.base/java.util.concurrent.locks.ReentrantLock.lock(ReentrantLock.java:323)
+      GeradorVirtualThreads.lambda$main$1(GeradorVirtualThreads.java:41)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#86 "" virtual
+      java.base/java.lang.VirtualThread.park(VirtualThread.java:746)
+      java.base/java.lang.System$1.parkVirtualThread(System.java:2279)
+      java.base/java.util.concurrent.locks.LockSupport.park(LockSupport.java:221)
+      java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer.acquire(AbstractQueuedSynchronizer.java:789)
+      java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer.acquire(AbstractQueuedSynchronizer.java:1029)
+      java.base/java.util.concurrent.locks.ReentrantLock$Sync.lock(ReentrantLock.java:154)
+      java.base/java.util.concurrent.locks.ReentrantLock.lock(ReentrantLock.java:323)
+      GeradorVirtualThreads.lambda$main$1(GeradorVirtualThreads.java:41)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#87 "" virtual
+      java.base/java.lang.VirtualThread.park(VirtualThread.java:746)
+      java.base/java.lang.System$1.parkVirtualThread(System.java:2279)
+      java.base/java.util.concurrent.locks.LockSupport.park(LockSupport.java:221)
+      java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer.acquire(AbstractQueuedSynchronizer.java:789)
+      java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer.acquire(AbstractQueuedSynchronizer.java:1029)
+      java.base/java.util.concurrent.locks.ReentrantLock$Sync.lock(ReentrantLock.java:154)
+      java.base/java.util.concurrent.locks.ReentrantLock.lock(ReentrantLock.java:323)
+      GeradorVirtualThreads.lambda$main$1(GeradorVirtualThreads.java:41)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#90 "" virtual
+      java.base/java.lang.VirtualThread.park(VirtualThread.java:746)
+      java.base/java.lang.System$1.parkVirtualThread(System.java:2279)
+      java.base/java.util.concurrent.locks.LockSupport.park(LockSupport.java:367)
+      java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionNode.block(AbstractQueuedSynchronizer.java:519)
+      java.base/java.util.concurrent.ForkJoinPool.unmanagedBlock(ForkJoinPool.java:3946)
+      java.base/java.util.concurrent.ForkJoinPool.managedBlock(ForkJoinPool.java:3892)
+      java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(AbstractQueuedSynchronizer.java:1751)
+      java.base/java.util.concurrent.LinkedBlockingQueue.take(LinkedBlockingQueue.java:435)
+      GeradorVirtualThreads.lambda$main$2(GeradorVirtualThreads.java:46)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#91 "" virtual
+      java.base/java.lang.VirtualThread.park(VirtualThread.java:746)
+      java.base/java.lang.System$1.parkVirtualThread(System.java:2279)
+      java.base/java.util.concurrent.locks.LockSupport.park(LockSupport.java:367)
+      java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionNode.block(AbstractQueuedSynchronizer.java:519)
+      java.base/java.util.concurrent.ForkJoinPool.unmanagedBlock(ForkJoinPool.java:3946)
+      java.base/java.util.concurrent.ForkJoinPool.managedBlock(ForkJoinPool.java:3892)
+      java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(AbstractQueuedSynchronizer.java:1751)
+      java.base/java.util.concurrent.LinkedBlockingQueue.take(LinkedBlockingQueue.java:435)
+      GeradorVirtualThreads.lambda$main$2(GeradorVirtualThreads.java:46)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#92 "" virtual
+      java.base/java.lang.VirtualThread.park(VirtualThread.java:746)
+      java.base/java.lang.System$1.parkVirtualThread(System.java:2279)
+      java.base/java.util.concurrent.locks.LockSupport.park(LockSupport.java:367)
+      java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionNode.block(AbstractQueuedSynchronizer.java:519)
+      java.base/java.util.concurrent.ForkJoinPool.unmanagedBlock(ForkJoinPool.java:3946)
+      java.base/java.util.concurrent.ForkJoinPool.managedBlock(ForkJoinPool.java:3892)
+      java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(AbstractQueuedSynchronizer.java:1751)
+      java.base/java.util.concurrent.LinkedBlockingQueue.take(LinkedBlockingQueue.java:435)
+      GeradorVirtualThreads.lambda$main$2(GeradorVirtualThreads.java:46)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#93 "" virtual
+      java.base/java.lang.VirtualThread.park(VirtualThread.java:746)
+      java.base/java.lang.System$1.parkVirtualThread(System.java:2279)
+      java.base/java.util.concurrent.locks.LockSupport.park(LockSupport.java:367)
+      java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionNode.block(AbstractQueuedSynchronizer.java:519)
+      java.base/java.util.concurrent.ForkJoinPool.unmanagedBlock(ForkJoinPool.java:3946)
+      java.base/java.util.concurrent.ForkJoinPool.managedBlock(ForkJoinPool.java:3892)
+      java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(AbstractQueuedSynchronizer.java:1751)
+      java.base/java.util.concurrent.LinkedBlockingQueue.take(LinkedBlockingQueue.java:435)
+      GeradorVirtualThreads.lambda$main$2(GeradorVirtualThreads.java:46)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#94 "" virtual
+      java.base/java.lang.VirtualThread.park(VirtualThread.java:746)
+      java.base/java.lang.System$1.parkVirtualThread(System.java:2279)
+      java.base/java.util.concurrent.locks.LockSupport.park(LockSupport.java:367)
+      java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionNode.block(AbstractQueuedSynchronizer.java:519)
+      java.base/java.util.concurrent.ForkJoinPool.unmanagedBlock(ForkJoinPool.java:3946)
+      java.base/java.util.concurrent.ForkJoinPool.managedBlock(ForkJoinPool.java:3892)
+      java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(AbstractQueuedSynchronizer.java:1751)
+      java.base/java.util.concurrent.LinkedBlockingQueue.take(LinkedBlockingQueue.java:435)
+      GeradorVirtualThreads.lambda$main$2(GeradorVirtualThreads.java:46)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#107 "" virtual
+      java.base/java.lang.VirtualThread.park(VirtualThread.java:746)
+      java.base/java.lang.System$1.parkVirtualThread(System.java:2279)
+      java.base/java.util.concurrent.locks.LockSupport.park(LockSupport.java:367)
+      java.base/sun.nio.ch.Poller.poll(Poller.java:197)
+      java.base/sun.nio.ch.Poller.poll(Poller.java:142)
+      java.base/sun.nio.ch.NioSocketImpl.park(NioSocketImpl.java:174)
+      java.base/sun.nio.ch.NioSocketImpl.park(NioSocketImpl.java:200)
+      java.base/sun.nio.ch.NioSocketImpl.implRead(NioSocketImpl.java:308)
+      java.base/sun.nio.ch.NioSocketImpl.read(NioSocketImpl.java:345)
+      java.base/sun.nio.ch.NioSocketImpl$1.read(NioSocketImpl.java:790)
+      java.base/java.net.Socket$SocketInputStream.implRead(Socket.java:983)
+      java.base/java.net.Socket$SocketInputStream.read(Socket.java:970)
+      java.base/java.net.Socket$SocketInputStream.read(Socket.java:964)
+      GeradorVirtualThreads.lambda$main$3(GeradorVirtualThreads.java:54)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#108 "" virtual
+      GeradorVirtualThreads.lambda$main$3(GeradorVirtualThreads.java:52)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#109 "" virtual
+      GeradorVirtualThreads.lambda$main$3(GeradorVirtualThreads.java:52)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#113 "" virtual
+      java.base/java.lang.Object.wait0(Native Method)
+      java.base/java.lang.Object.wait(Object.java:382)
+      java.base/java.lang.Object.wait(Object.java:351)
+      GeradorVirtualThreads.lambda$main$4(GeradorVirtualThreads.java:63)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#114 "" virtual
+      GeradorVirtualThreads.lambda$main$5(GeradorVirtualThreads.java:73)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#115 "" virtual
+      GeradorVirtualThreads.lambda$main$5(GeradorVirtualThreads.java:73)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#116 "" virtual
+      java.base/java.io.FileInputStream.readBytes(Native Method)
+      java.base/java.io.FileInputStream.read(FileInputStream.java:294)
+      java.base/java.lang.Process$PipeInputStream.read(Process.java:897)
+      java.base/java.io.BufferedInputStream.fill(BufferedInputStream.java:289)
+      java.base/java.io.BufferedInputStream.read(BufferedInputStream.java:308)
+      GeradorVirtualThreads.lambda$main$6(GeradorVirtualThreads.java:82)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#117 "" virtual
+      java.base/java.io.FileInputStream.readBytes(Native Method)
+      java.base/java.io.FileInputStream.read(FileInputStream.java:294)
+      java.base/java.lang.Process$PipeInputStream.read(Process.java:897)
+      java.base/java.io.BufferedInputStream.fill(BufferedInputStream.java:289)
+      java.base/java.io.BufferedInputStream.read(BufferedInputStream.java:308)
+      GeradorVirtualThreads.lambda$main$6(GeradorVirtualThreads.java:82)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#118 "" virtual
+      java.base/jdk.internal.misc.Unsafe.park(Native Method)
+      java.base/java.lang.VirtualThread.parkOnCarrierThread(VirtualThread.java:823)
+      java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:802)
+      java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:967)
+      java.base/java.lang.Thread.sleepNanos(Thread.java:480)
+      java.base/java.lang.Thread.sleep(Thread.java:513)
+      Pin1.dormir(GeradorVirtualThreads.java:105)
+      Pin1.<clinit>(GeradorVirtualThreads.java:105)
+      GeradorVirtualThreads.lambda$main$7(GeradorVirtualThreads.java:87)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#119 "" virtual
+      java.base/jdk.internal.misc.Unsafe.park(Native Method)
+      java.base/java.lang.VirtualThread.parkOnCarrierThread(VirtualThread.java:823)
+      java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:802)
+      java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:967)
+      java.base/java.lang.Thread.sleepNanos(Thread.java:480)
+      java.base/java.lang.Thread.sleep(Thread.java:513)
+      Pin2.dormir(GeradorVirtualThreads.java:106)
+      Pin2.<clinit>(GeradorVirtualThreads.java:106)
+      GeradorVirtualThreads.lambda$main$8(GeradorVirtualThreads.java:88)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#120 "" virtual
+      java.base/jdk.internal.misc.Unsafe.park(Native Method)
+      java.base/java.lang.VirtualThread.parkOnCarrierThread(VirtualThread.java:823)
+      java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:802)
+      java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:967)
+      java.base/java.lang.Thread.sleepNanos(Thread.java:480)
+      java.base/java.lang.Thread.sleep(Thread.java:513)
+      Pin3.dormir(GeradorVirtualThreads.java:107)
+      Pin3.<clinit>(GeradorVirtualThreads.java:107)
+      GeradorVirtualThreads.lambda$main$9(GeradorVirtualThreads.java:89)
+      java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+      java.base/java.lang.VirtualThread.run(VirtualThread.java:466)
+
+#28 "ForkJoinPool-1-worker-1"
+      java.base/jdk.internal.misc.Unsafe.park(Native Method)
+      java.base/java.util.concurrent.ForkJoinPool.awaitWork(ForkJoinPool.java:2059)
+      java.base/java.util.concurrent.ForkJoinPool.deactivate(ForkJoinPool.java:2013)
+      java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1978)
+      java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+
+#30 "ForkJoinPool-1-worker-2"
+      java.base/jdk.internal.misc.Unsafe.park(Native Method)
+      java.base/java.util.concurrent.ForkJoinPool.awaitWork(ForkJoinPool.java:2059)
+      java.base/java.util.concurrent.ForkJoinPool.deactivate(ForkJoinPool.java:2013)
+      java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1978)
+      java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+
+#77 "ForkJoinPool-1-worker-3"
+      java.base/jdk.internal.vm.Continuation.run(Continuation.java:251)
+      java.base/java.lang.VirtualThread.runContinuation(VirtualThread.java:303)
+      java.base/java.util.concurrent.ForkJoinTask$RunnableExecuteAction.compute(ForkJoinTask.java:1735)
+      java.base/java.util.concurrent.ForkJoinTask$RunnableExecuteAction.compute(ForkJoinTask.java:1726)
+      java.base/java.util.concurrent.ForkJoinTask$InterruptibleTask.exec(ForkJoinTask.java:1650)
+      java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:507)
+      java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1394)
+      java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1970)
+      java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+
+#80 "ForkJoinPool-1-worker-4"
+      java.base/jdk.internal.misc.Unsafe.park(Native Method)
+      java.base/java.util.concurrent.ForkJoinPool.awaitWork(ForkJoinPool.java:2059)
+      java.base/java.util.concurrent.ForkJoinPool.deactivate(ForkJoinPool.java:2013)
+      java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1978)
+      java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+
+#81 "ForkJoinPool-1-worker-5"
+      java.base/jdk.internal.misc.Unsafe.park(Native Method)
+      java.base/java.util.concurrent.ForkJoinPool.awaitWork(ForkJoinPool.java:2059)
+      java.base/java.util.concurrent.ForkJoinPool.deactivate(ForkJoinPool.java:2013)
+      java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1978)
+      java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+
+#82 "ForkJoinPool-1-worker-6"
+      java.base/jdk.internal.vm.Continuation.run(Continuation.java:251)
+      java.base/java.lang.VirtualThread.runContinuation(VirtualThread.java:303)
+      java.base/java.util.concurrent.ForkJoinTask$RunnableExecuteAction.compute(ForkJoinTask.java:1735)
+      java.base/java.util.concurrent.ForkJoinTask$RunnableExecuteAction.compute(ForkJoinTask.java:1726)
+      java.base/java.util.concurrent.ForkJoinTask$InterruptibleTask.exec(ForkJoinTask.java:1650)
+      java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:507)
+      java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1394)
+      java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1970)
+      java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+
+#88 "ForkJoinPool-1-worker-7"
+      java.base/jdk.internal.vm.Continuation.run(Continuation.java:251)
+      java.base/java.lang.VirtualThread.runContinuation(VirtualThread.java:303)
+      java.base/java.util.concurrent.ForkJoinTask$RunnableExecuteAction.compute(ForkJoinTask.java:1735)
+      java.base/java.util.concurrent.ForkJoinTask$RunnableExecuteAction.compute(ForkJoinTask.java:1726)
+      java.base/java.util.concurrent.ForkJoinTask$InterruptibleTask.exec(ForkJoinTask.java:1650)
+      java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:507)
+      java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1394)
+      java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1970)
+      java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+
+#89 "ForkJoinPool-1-worker-8"
+      java.base/jdk.internal.vm.Continuation.run(Continuation.java:251)
+      java.base/java.lang.VirtualThread.runContinuation(VirtualThread.java:303)
+      java.base/java.util.concurrent.ForkJoinTask$RunnableExecuteAction.compute(ForkJoinTask.java:1735)
+      java.base/java.util.concurrent.ForkJoinTask$RunnableExecuteAction.compute(ForkJoinTask.java:1726)
+      java.base/java.util.concurrent.ForkJoinTask$InterruptibleTask.exec(ForkJoinTask.java:1650)
+      java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:507)
+      java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1394)
+      java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1970)
+      java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+
+#104 "ForkJoinPool-1-worker-9"
+      java.base/jdk.internal.vm.Continuation.run(Continuation.java:254)
+      java.base/java.lang.VirtualThread.runContinuation(VirtualThread.java:303)
+      java.base/java.util.concurrent.ForkJoinTask$RunnableExecuteAction.compute(ForkJoinTask.java:1735)
+      java.base/java.util.concurrent.ForkJoinTask$RunnableExecuteAction.compute(ForkJoinTask.java:1726)
+      java.base/java.util.concurrent.ForkJoinTask$InterruptibleTask.exec(ForkJoinTask.java:1650)
+      java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:507)
+      java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1394)
+      java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1970)
+      java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+
+#105 "ForkJoinPool-1-worker-10"
+      java.base/jdk.internal.misc.Unsafe.park(Native Method)
+      java.base/java.util.concurrent.ForkJoinPool.awaitWork(ForkJoinPool.java:2059)
+      java.base/java.util.concurrent.ForkJoinPool.deactivate(ForkJoinPool.java:2013)
+      java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1978)
+      java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+
+#106 "ForkJoinPool-1-worker-11"
+      java.base/jdk.internal.vm.Continuation.run(Continuation.java:251)
+      java.base/java.lang.VirtualThread.runContinuation(VirtualThread.java:303)
+      java.base/java.util.concurrent.ForkJoinTask$RunnableExecuteAction.compute(ForkJoinTask.java:1735)
+      java.base/java.util.concurrent.ForkJoinTask$RunnableExecuteAction.compute(ForkJoinTask.java:1726)
+      java.base/java.util.concurrent.ForkJoinTask$InterruptibleTask.exec(ForkJoinTask.java:1650)
+      java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:507)
+      java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1394)
+      java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1970)
+      java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+
+#110 "ForkJoinPool-1-worker-12"
+      java.base/jdk.internal.vm.Continuation.run(Continuation.java:251)
+      java.base/java.lang.VirtualThread.runContinuation(VirtualThread.java:303)
+      java.base/java.util.concurrent.ForkJoinTask$RunnableExecuteAction.compute(ForkJoinTask.java:1735)
+      java.base/java.util.concurrent.ForkJoinTask$RunnableExecuteAction.compute(ForkJoinTask.java:1726)
+      java.base/java.util.concurrent.ForkJoinTask$InterruptibleTask.exec(ForkJoinTask.java:1650)
+      java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:507)
+      java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1394)
+      java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1970)
+      java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+
+#112 "VirtualThread-unparker"
+      java.base/jdk.internal.misc.Unsafe.park(Native Method)
+      java.base/java.util.concurrent.locks.LockSupport.parkNanos(LockSupport.java:271)
+      java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.awaitNanos(AbstractQueuedSynchronizer.java:1802)
+      java.base/java.util.concurrent.ScheduledThreadPoolExecutor$DelayedWorkQueue.take(ScheduledThreadPoolExecutor.java:1166)
+      java.base/java.util.concurrent.ScheduledThreadPoolExecutor$DelayedWorkQueue.take(ScheduledThreadPoolExecutor.java:883)
+      java.base/java.util.concurrent.ThreadPoolExecutor.getTask(ThreadPoolExecutor.java:1021)
+      java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1081)
+      java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:619)
+      java.base/java.lang.Thread.run(Thread.java:1447)
+      java.base/jdk.internal.misc.InnocuousThread.run(InnocuousThread.java:148)
+

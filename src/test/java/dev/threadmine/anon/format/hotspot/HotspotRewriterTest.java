@@ -445,8 +445,8 @@ class HotspotRewriterTest {
                 Full thread dump OpenJDK 64-Bit Server VM (21.0.3+9-LTS mixed mode, sharing):
 
                    java.lang.Thread.State: TIMED_WAITING (sleeping)
-                      <pinned: synchronized>
-                      <virtual thread is mounted on carrier thread "ForkJoinPool-1-worker-1">
+                   Carrying virtual thread #32
+                   Mounted virtual thread #33
                 """;
         String out = mask(text);
         for (String line : text.lines().toList()) {
@@ -454,11 +454,43 @@ class HotspotRewriterTest {
         }
     }
 
+    /** The two markers no JDK prints must NOT be trusted: an unknown line is redacted, never passed through. */
     @Test
-    void carrierNameInsideLoomMarkerFollowsThreadNameRules() {
-        String out = mask("      <virtual thread is mounted on carrier thread \"acme-carrier-1\">\n");
-        assertFalse(out.contains("acme"));
-        assertTrue(Pattern.compile("<virtual thread is mounted on carrier thread \"t[0-9a-f]{5}x[0-9a-f]{5}-1\">").matcher(out).find(), out);
+    void markersNoJdkPrintsAreRedactedFailClosed() {
+        MaskResult result = rewriter.mask("      <virtual thread is mounted on carrier thread \"acme-carrier-1\">\n"
+                + "      <pinned: synchronized>\n");
+        assertEquals(2, result.redactedLines(), result.warnings().toString());
+        assertFalse(result.output().contains("acme"));
+    }
+
+    /** JDK 24+ jstack: the carrier-side "Mounted virtual thread #N" line is verbatim, like "Carrying". */
+    @Test
+    void mountedVirtualThreadLineIsVerbatim() {
+        String line = "   Mounted virtual thread #118";
+        assertTrue(mask(line + "\n").contains(line));
+    }
+
+    /** Real jdk25 jstack/dump_to_file shapes: virtual header, pin frame, application thread and class tokenized. */
+    @Test
+    void realVirtualThreadShapesKeepMarkersAndTokenizeApplicationNames() {
+        MaskResult result = rewriter.mask("""
+                #120 "worker-pedidos-1" virtual TIMED_WAITING 2026-10-16T22:14:11.950546700Z
+                      java.base/java.lang.VirtualThread.parkOnCarrierThread(VirtualThread.java:674)
+                      com.acme.Pin1.run(Pin1.java:21)
+
+                "ForkJoinPool-1-worker-1" #28 [32728] daemon prio=5 os_prio=0 cpu=15.62ms elapsed=4.69s tid=0x0000008021c08100  [0x0000008022fcd000]
+                   Mounted virtual thread #118
+                \tat java.lang.VirtualThread.runContinuation(java.base@25/VirtualThread.java:297)
+                """);
+        String out = result.output();
+        assertEquals(0, result.redactedLines(), result.warnings().toString());
+        assertTrue(out.contains("virtual TIMED_WAITING 2026-10-16T22:14:11.950546700Z"), out);
+        assertTrue(out.contains("java.lang.VirtualThread.parkOnCarrierThread(VirtualThread.java:674)"), out);
+        assertTrue(out.contains("\"ForkJoinPool-1-worker-1\" #28"), out);
+        assertTrue(out.contains("   Mounted virtual thread #118"), out);
+        assertFalse(out.contains("worker-pedidos-1"), out);
+        assertFalse(out.contains("Pin1"), out);
+        assertFalse(out.contains("acme"), out);
     }
 
     /**

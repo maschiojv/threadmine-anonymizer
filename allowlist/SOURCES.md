@@ -1,6 +1,6 @@
 # SOURCES — why each `required` allowlist entry exists
 
-**Artifact:** [allowlist-v1.json](allowlist-v1.json) · **Version:** 1
+**Artifact:** [allowlist-v2.json](allowlist-v2.json) · **Version:** 2
 
 The allowlist is the list of names `tm-anon` must **not** mask. Everything on it is public
 infrastructure — JDK internals, application servers, drivers, well-known libraries — and every
@@ -72,7 +72,9 @@ Semantics: `name.startsWith(entry)` → the **whole** name is preserved.
 - **JIT compiler:** `C1 CompilerThread`, `C2 CompilerThread`.
 - **Garbage collectors:** `GC `, `GC Thread`, `G1 `, `ZGC `, `Shenandoah `.
 - **VM threads:** `VM Thread`, `VM Periodic Task`, `VM Periodic Task Thread`.
-- **Loom runtime:** `VirtualThread-unblocker`, `Read-Poller`, `Write-Poller`.
+- **Loom runtime:** `VirtualThread-unblocker` (24+), `VirtualThread-unparker` (21–23), `Read-Poller`,
+  `Write-Poller`, `Read-Updater`, `Write-Updater` (21), and the JDK 25 carrier-pool timer
+  `ForkJoinPool-N-delayScheduler` (regex below). All appear in the real dumps of `generatedFrom.files`.
 - **JDK utilities:** `Timer`, `TimerQueue`.
 - **Application servers:** `Catalina-utility-`, `parallel-`, `reactor-http-nio-`,
   `reactor-tcp-nio-`, `MSC service thread`, `Reference Reaper`, `ServerService Thread Pool`,
@@ -128,15 +130,24 @@ Two notes for anyone applying these regexes directly:
 These are not identifiers at all — they are format anchors: `Full thread dump`,
 `java.lang.Thread.State:`, thread states, header fields (`daemon`, `prio=`, `cpu=`, `tid=`,
 `nid=`), lock lines (`- locked <`, `- waiting on`, `- parking to wait for`, `(a `), deadlock
-block markers, the Loom markers (`<pinned: synchronized>`, `<virtual thread is mounted on carrier
-thread `, `Carrying virtual thread #`), the `no object reference available` sentinel, the
+block markers, the Loom markers the JDK really prints (`Carrying virtual thread #` from JDK 21,
+`Mounted virtual thread #` from JDK 24, the `virtual` header token and the
+`java.lang.VirtualThread.parkOnCarrierThread` pin frame), the `no object reference available` sentinel, the
 OpenJ9 javacore tokens (`1TISIGINFO`, `3XMTHREADINFO`, `1XMJAVAVERSION`), and the double quote
 that delimits every thread name.
 
 Masking any of them does not hide a secret; it destroys the parse. The regex entries are
 **frames**: everything outside the capture group is preserved verbatim, and only what is captured
 is subject to the rewriting rules — a lock line keeps its address and gets its class tokenized,
-a carrier marker keeps its wording and gets the thread name inside it tokenized.
+a thread header keeps `#N` and `virtual` and gets the quoted name tokenized.
+
+**Version 2 (this release).** Removed `<pinned: synchronized>` and
+`<virtual thread is mounted on carrier thread "...">`: no JDK prints them (they came from synthetic
+fixtures; ThreadMine's parser dropped them too). Added what the JDK does print, taken from real
+dumps of JDK 21–25 (`generatedFrom.files`): `Carrying virtual thread #N` (21+), `Mounted virtual
+thread #N` (24+), `#N "" virtual` headers (21–24) and `#N "" virtual STATE <instant>` (25),
+frames with and without `at `, and `parkOnCarrierThread`. The `CarrierThreads` thread group named
+in the original brief appears in none of those dumps, so it is not listed.
 
 ---
 

@@ -104,7 +104,7 @@ class ComplianceVerifierTest {
         assertEquals(2, state.inMasked());
         assertTrue(report.anchors().stream().anyMatch(a -> a.marker().equals("Full thread dump")));
         assertTrue(report.anchors().stream().anyMatch(a -> a.marker().equals("- locked")));
-        assertTrue(report.anchors().stream().noneMatch(a -> a.marker().equals("<pinned:")),
+        assertTrue(report.anchors().stream().noneMatch(a -> a.marker().equals("Mounted virtual thread #")),
                 "anchors absent from both sides are noise, not findings");
     }
 
@@ -322,7 +322,6 @@ class ComplianceVerifierTest {
 
                 "" #19 virtual prio=5 tid=0x5 nid=0x0 runnable
                    java.lang.Thread.State: RUNNABLE
-                      <virtual thread is mounted on carrier thread "ForkJoinPool-1-worker-1">
                 """;
 
         VerifyReport report = verifier.verify(masked, masked);
@@ -389,17 +388,16 @@ class ComplianceVerifierTest {
         String original = """
                 Full thread dump OpenJDK 64-Bit Server VM (21.0.3+9-LTS mixed mode):
 
-                "" #21 virtual prio=5 tid=0x1 nid=0x0 waiting for monitor entry
-                   java.lang.Thread.State: BLOCKED (on object monitor)
-                      <pinned: synchronized>
-                      <virtual thread is mounted on carrier thread "ForkJoinPool-1-worker-1">
+                "ForkJoinPool-1-worker-1" #22 [4] daemon prio=5 os_prio=0 tid=0x1 nid=0x4
+                   Mounted virtual thread #21
+                \tat java.lang.VirtualThread.runContinuation(java.base@25/VirtualThread.java:297)
                 """;
-        String masked = original.replace("      <pinned: synchronized>\n", "");
+        String masked = original.replace("   Mounted virtual thread #21\n", "");
 
         VerifyReport report = verifier.verify(original, masked);
 
         assertFalse(report.passed());
-        assertTrue(report.brokenAnchors().stream().anyMatch(a -> a.marker().equals("<pinned:")));
+        assertTrue(report.brokenAnchors().stream().anyMatch(a -> a.marker().equals("Mounted virtual thread #")));
     }
 
     @Test

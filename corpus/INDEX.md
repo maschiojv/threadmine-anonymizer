@@ -26,7 +26,7 @@ expectations carry extra fields: `detection_anchors_4kb`, `preserved_sections`,
 | `jstack-jdk8-classic.txt` | jstack JDK 8: no cpu=/elapsed=, frames without a module, singular `JNI global references:`, Heap section (kill -3), Tomcat/http-nio | the lexer cannot assume post-JDK9 fields or module prefixes; stripping the multi-line Heap section |
 | `jstack-jdk11-smr.txt` | JDK 11: SMR block, cpu=/elapsed=, `java.base@11.0.16/`, G1 tail, `Thread-7`, custom pool with a suffix | stripping the SMR block without breaking blank lines; two VM threads with no blank line between them |
 | `jstack-jdk17-synchronizers.txt` | JDK 17 `-l`: `Locked ownable synchronizers` on every thread, ReentrantLock held×parked | stripping the block without swallowing the delimiting blank line; held/waiter correlation through the verbatim address |
-| `jstack-jdk21-virtual-threads.txt` | Loom: anonymous mounted VT, `<pinned: synchronized>` VT, VT with no carrier, named VT, FJP carriers | Loom markers byte for byte; `"" #N virtual` has nothing to tokenize; the carrier named in the marker is allowlisted |
+| `jstack-jdk21-virtual-threads.txt` | Loom: anonymous mounted VT, VT with no carrier, named VT, FJP carriers | Loom markers byte for byte; `"" #N virtual` has nothing to tokenize; the carrier named in the marker is allowlisted |
 | `jstack-jdk25-full.txt` | JDK 25: `#N [nid]`, allocated=/defined_classes=, decimal nid, `No compile task`, VirtualThread-unblocker, delayScheduler, process reaper, GC tail | rewriting the name must not touch the new header fields; infrastructure threads with no stack and no state |
 | `jcmd-thread-print.txt` | `jcmd <pid> Thread.print`: `48350:` preamble plus a body identical to jstack | the jcmd preamble must not be redacted by fail-closed, nor confuse detection inside the first 4KB |
 | `jcmd-dump-text.txt` | `Thread.dump_to_file -format=text`: `#N "name" STATE`, 6-space frames with `java.base/`, `#N "" VIRTUAL` | frames without `at ` and without the module `@` parenthesis; same canonical names imply the same tokens as the other dialects |
@@ -119,7 +119,7 @@ expectations carry extra fields: `detection_anchors_4kb`, `preserved_sections`,
      safe, since they carry no application identifier).
   6. **Allowlist v2 (OpenJ9 candidates):** `JIT Compilation Thread-`, `IProfiler`,
      `Attach API wait loop`, and a structural marker for `Anonymous native thread`. Today the
-     expectations declare those names as tokenized, since allowlist-v1 does not cover them.
+     expectations declare those names as tokenized, since allowlist-v2 does not cover them.
 - ~~**JSON format** of `Thread.dump_to_file -format=json`~~ **CLOSED.** The predicted leak was
   real: `threadContainers[].container` prints the `toString()` of the executor or
   `StructuredTaskScope` that owns the group (`com.acme.batch.LedgerScope@4f2b1a`), the
@@ -136,5 +136,5 @@ expectations carry extra fields: `detection_anchors_4kb`, `preserved_sections`,
   since mask accepts all three shapes and ThreadMine's regex (`THREAD_HEADER_JCMD`) matches this
   one, but anyone using it as a format reference should prefer the two newer fixtures.
 - Expectations cite allowlist entries by expected behaviour (http-nio, FJP, Thread-N,
-  process reaper…); the source of truth is the allowlist artifact itself. If allowlist-v1
+  process reaper…); the source of truth is the allowlist artifact itself. If allowlist-v2
   diverges, adjust the YAMLs, not the other way around.

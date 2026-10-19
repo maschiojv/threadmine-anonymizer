@@ -23,20 +23,16 @@ Full thread dump OpenJDK 64-Bit Server VM (21.0.3+9-LTS mixed mode, sharing):
    java.lang.Thread.State: RUNNABLE
 	at com.acme.order.OrderService.processOrder(OrderService.java:67)
 	at com.acme.order.handler.OrderHandler.handle(OrderHandler.java:34)
-      <virtual thread is mounted on carrier thread "ForkJoinPool-1-worker-1">
 
 "" #22 virtual prio=5 os_prio=0 cpu=400.00ms elapsed=28.00s tid=0x00007f9a1c201000 nid=0x0 waiting for monitor entry
    java.lang.Thread.State: BLOCKED (on object monitor)
 	at com.acme.cache.SharedCache.update(SharedCache.java:45)
 	- waiting to lock <0x000000061fcc0001> (a java.util.HashMap)
-      <pinned: synchronized>
-      <virtual thread is mounted on carrier thread "ForkJoinPool-1-worker-2">
 
 "order-vt-9" #23 virtual prio=5 os_prio=0 cpu=300.00ms elapsed=27.50s tid=0x00007f9a1c202000 nid=0x0 runnable
    java.lang.Thread.State: RUNNABLE
 	at java.net.SocketInputStream.socketRead0(java.base@21.0.3/Native Method)
 	at com.acme.payment.gateway.AcquirerClient.call(AcquirerClient.java:89)
-      <virtual thread is mounted on carrier thread "ForkJoinPool-1-worker-3">
 
 "" #24 virtual prio=5 os_prio=0 cpu=150.00ms elapsed=26.50s tid=0x00007f9a1c204000 nid=0x0 waiting on condition
    java.lang.Thread.State: WAITING (parking)

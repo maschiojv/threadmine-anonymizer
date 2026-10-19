@@ -1,0 +1,27 @@
+# Real JDK 22 jstack / jcmd Thread.print of a virtual-thread workload (copied from the thread-forge repo,
+# backend/src/test/resources/dumps/), not a synthetic fixture. It is the evidence behind allowlist-v2:
+# carriers print `Carrying virtual thread #N` (21+) and `Mounted virtual thread #N` (24+); no JDK prints
+# `<pinned: synchronized>` or `<virtual thread is mounted on carrier thread "...">`.
+format: hotspot-vt
+preserved_anchors:
+  - "Full thread dump"
+  - "java.lang.Thread.State:"
+  - "Carrying virtual thread #"
+allowlisted_threads_verbatim:
+  - "Reference Handler"
+  - "Finalizer"
+  - "Signal Dispatcher"
+  - "ForkJoinPool-1-worker-1"
+  - "VirtualThread-unparker"
+  - "Read-Poller"
+  - "Write-Poller"
+  - "Common-Cleaner"
+tokenized_threads:
+  "main": {}
+tokenized_classes:
+  - "GeradorVirtualThreads"
+stripped_lines:
+  - "JNI global refs"
+invariants:
+  - intra_dump_determinism
+  - blank_lines_preserved

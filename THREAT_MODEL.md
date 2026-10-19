@@ -131,7 +131,7 @@ upload the masked file it produced.
 | Lock addresses `<0x…>`, `- locked` / `- parking to wait for` markers | contention and deadlock analysis group by address |
 | Thread name **suffixes** (`-1`, `#7`) and pool shapes | pool grouping, starvation, thread-leak detection |
 | `prio=`, `daemon`, `cpu=`, `elapsed=`, `tid=`, `nid=`, timestamps | timing and metadata; used by the UI and some heuristics |
-| Loom markers: `<pinned: synchronized>`, carrier-thread lines | virtual-thread analysis |
+| Loom markers: `Carrying/Mounted virtual thread #N`, `virtual` header token, `parkOnCarrierThread` frame | virtual-thread analysis |
 | Tokens `[pCmt]…` in place of your names | opaque without the vault |
 
 ### Removed entirely (stripped, zero analytical cost)
@@ -202,7 +202,7 @@ Explicit non-goals:
    sources, bytecode or dependencies. Read the test; it is short.
 2. `grep -rn "java.net" src/main/java` — expect nothing.
 3. Read `pom.xml` — one dependency, JUnit, test scope.
-4. Read `allowlist/allowlist-v1.json` — everything that stays verbatim, with
+4. Read `allowlist/allowlist-v2.json` — everything that stays verbatim, with
    provenance in `allowlist/SOURCES.md`.
 5. Read `src/main/java/dev/threadmine/anon/core/HmacTokenEngine.java` and
    `Vault.java` — the entire cryptographic surface, a few hundred lines.

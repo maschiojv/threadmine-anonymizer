@@ -6,7 +6,7 @@
 
     <groupId>dev.threadmine</groupId>
     <artifactId>tm-anon</artifactId>
-    <version>0.4.0-SNAPSHOT</version>
+    <version>0.4.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>tm-anon</name>
@@ -43,7 +43,7 @@
 
     <build>
         <!--
-          The allowlist artifact lives at allowlist/allowlist-v1.json (single
+          The allowlist artifact lives at allowlist/allowlist-v2.json (single
           source of truth, reviewed in the open). It is copied into the jar
           root so AllowlistMatcher.fromClasspath() can load it offline.
         -->
@@ -51,7 +51,7 @@
             <resource>
                 <directory>allowlist</directory>
                 <includes>
-                    <include>allowlist-v1.json</include>
+                    <include>allowlist-v2.json</include>
                 </includes>
             </resource>
             <resource>

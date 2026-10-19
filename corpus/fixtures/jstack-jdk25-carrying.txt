@@ -30,14 +30,11 @@ Full thread dump OpenJDK 64-Bit Server VM (25.0.1+9-LTS mixed mode, sharing):
    java.lang.Thread.State: RUNNABLE
 	at com.acme.order.OrderService.processOrder(OrderService.java:67)
 	at com.acme.order.handler.OrderHandler.handle(OrderHandler.java:34)
-      <virtual thread is mounted on carrier thread "ForkJoinPool-1-worker-1">
 
 "pedido-vt-7" #35 virtual
    java.lang.Thread.State: BLOCKED (on object monitor)
 	at com.acme.stock.StockSync.reserve(StockSync.java:112)
 	- waiting to lock <0x000000061fcc0001> (a com.acme.stock.StockLatch)
-      <pinned: synchronized>
-      <virtual thread is mounted on carrier thread "ForkJoinPool-1-worker-2">
 
 "VirtualThread-unblocker" #37 daemon prio=5 os_prio=31 cpu=0.42ms elapsed=33.64s tid=0x00000001328a2400 [0x000000016e849000]
    java.lang.Thread.State: RUNNABLE

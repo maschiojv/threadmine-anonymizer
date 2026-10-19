@@ -17,7 +17,7 @@ allowlisted_threads_verbatim:
   - "G1 Service"
   - "VM Periodic Task Thread"
 tokenized_threads:
-  "main": {}   # fixed after checking against the real allowlist: the real allowlist-v1 has no rule for "main" -> tokenized
+  "main": {}   # fixed after checking against the real allowlist: the real allowlist-v2 has no rule for "main" -> tokenized
   "pgto-worker-1": { keeps_suffix: "-1" }
   "pgto-worker-2": { keeps_suffix: "-2" }  # same prefix => same base token as pgto-worker-1
 tokenized_classes:
