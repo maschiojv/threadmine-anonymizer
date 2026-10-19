@@ -7,7 +7,7 @@ import dev.threadmine.anon.verify.AllowlistLookup;
  * Single place where the CLI reaches the allowlist module.
  *
  * <p>Wired to the real {@link AllowlistMatcher} (task 2E): the allowlist ships
- * inside the jar as {@code /allowlist-v1.json}, so {@code verify} judges
+ * inside the jar as {@code /allowlist-v2.json}, so {@code verify} judges
  * residual identifiers against the very same rules {@code mask} used.</p>
  */
 final class AllowlistBridge {

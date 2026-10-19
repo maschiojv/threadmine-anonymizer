@@ -1,13 +1,10 @@
-# jstack JDK 21 with virtual threads: VT mounted on a carrier, VT pinned (<pinned: synchronized>),
-# VT with no carrier (unmounted... here: parked with no carrier line), VT with a custom name.
+# jstack JDK 21 with virtual threads: VT mounted on a carrier, VT with no carrier, named VT,
+# parked VT with no carrier line, VT with a custom name. Synthetic fixture: the real JDK 21-25
+# shapes are the real-jdk* fixtures.
 format: hotspot-vt
 preserved_anchors:
   - "Full thread dump OpenJDK 64-Bit Server VM (21.0.3+9-LTS mixed mode, sharing):"
   - "java.lang.Thread.State:"
-  - "<pinned: synchronized>"
-  - "<virtual thread is mounted on carrier thread \"ForkJoinPool-1-worker-1\">"
-  - "<virtual thread is mounted on carrier thread \"ForkJoinPool-1-worker-2\">"
-  - "<virtual thread is mounted on carrier thread \"ForkJoinPool-1-worker-3\">"
 allowlisted_threads_verbatim:
   - "ForkJoinPool-1-worker-1"
   - "ForkJoinPool-1-worker-2"
@@ -15,7 +12,7 @@ allowlisted_threads_verbatim:
   - "Reference Handler"
   - "Finalizer"
 tokenized_threads:
-  "main": {}   # fixed after checking against the real allowlist: the real allowlist-v1 has no rule for "main" -> tokenized
+  "main": {}   # fixed after checking against the real allowlist: the real allowlist-v2 has no rule for "main" -> tokenized
   "order-vt-9": { keeps_suffix: "-9" }   # named VT: the `"order-vt-9" #23 virtual` header tokenizes only the name
 tokenized_classes:
   - "com.acme.gateway.Bootstrap"

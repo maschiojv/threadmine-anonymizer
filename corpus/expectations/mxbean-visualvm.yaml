@@ -10,7 +10,7 @@ allowlisted_threads_verbatim:
   - "Finalizer"
   - "http-nio-8080-exec-1"
 tokenized_threads:
-  "main": {}   # fixed after checking against the real allowlist: the real allowlist-v1 has no rule for "main" -> tokenized
+  "main": {}   # fixed after checking against the real allowlist: the real allowlist-v2 has no rule for "main" -> tokenized
   "pgto-worker-1": { keeps_suffix: "-1" }
   "pgto-worker-2": { keeps_suffix: "-2" }
   "order-dispatcher": {}

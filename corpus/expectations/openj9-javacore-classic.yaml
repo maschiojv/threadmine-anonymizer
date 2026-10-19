@@ -41,7 +41,7 @@ preserved_anchors:
   - "3XMTHREADINFO"
   - "4XESTACKTRACE"
 allowlisted_threads_verbatim:
-  - "Signal dispatcher"    # allowlist-v1 regex (?i)^(VM |Signal |Finalizer|Reference Handler|Attach Listener)
+  - "Signal dispatcher"    # allowlist-v2 regex (?i)^(VM |Signal |Finalizer|Reference Handler|Attach Listener)
   - "Finalizer"
   - "Reference Handler"
   - "Thread-1"             # ^Thread-\d+$
@@ -57,7 +57,7 @@ tokenized_threads:
   "QueueWorker: '0' for queue: 'acme.kernel.System'": {}
   "ListenThread.Default": {}
   "com.acme.health.CoreHealthMonitor": {}   # thread name that IS an FQCN -> thread token (t...), not a class token
-  "main": {}                                # allowlist-v1 has no rule for "main" (same decision as the HotSpot fixtures)
+  "main": {}                                # allowlist-v2 has no rule for "main" (same decision as the HotSpot fixtures)
 tokenized_classes:
   # In XM the frames are dotted FQCNs (classic dialect) — same SPEC 5.1 rules.
   - "com.acme.kernel.QueueWorker"

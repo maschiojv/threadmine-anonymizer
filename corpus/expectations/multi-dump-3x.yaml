@@ -10,7 +10,7 @@ preserved_anchors:
 allowlisted_threads_verbatim:
   - "Reference Handler"
 tokenized_threads:
-  "main": {}   # fixed after checking against the real allowlist: the real allowlist-v1 has no rule for "main" -> tokenized
+  "main": {}   # fixed after checking against the real allowlist: the real allowlist-v2 has no rule for "main" -> tokenized
   "pgto-worker-3": { keeps_suffix: "-3" }
   "order-dispatcher": {}
 tokenized_classes:

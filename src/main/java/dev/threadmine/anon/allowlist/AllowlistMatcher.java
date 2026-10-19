@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
  */
 public final class AllowlistMatcher {
 
-    private static final String CLASSPATH_RESOURCE = "/allowlist-v1.json";
+    private static final String CLASSPATH_RESOURCE = "/allowlist-v2.json";
 
     private final List<String> requiredPackagePrefixes;
     private final List<String> recommendedPackagePrefixes;
@@ -48,7 +48,7 @@ public final class AllowlistMatcher {
         this.strict = strict;
     }
 
-    /** Loads allowlist-v1.json from the classpath resource {@value #CLASSPATH_RESOURCE}. */
+    /** Loads allowlist-v2.json from the classpath resource {@value #CLASSPATH_RESOURCE}. */
     public static AllowlistMatcher fromClasspath() {
         try (InputStream in = AllowlistMatcher.class.getResourceAsStream(CLASSPATH_RESOURCE)) {
             if (in == null) {

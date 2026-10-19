@@ -1,9 +1,8 @@
 # jstack/jcmd Thread.print from JDK 21+ with MOUNTED virtual threads: the carrier prints
 # `Carrying virtual thread #N` INSTEAD OF the `java.lang.Thread.State:` line (HotSpot only
-# prints one of the two), and the mounted VT block carries the marker
-# `<virtual thread is mounted on carrier thread "...">`. The number after `#` is the VT's
+# prints one of the two). The number after `#` is the VT's
 # threadId, not a name — nothing to tokenize, everything to preserve: the ThreadMine HotSpot
-# parser reads the line (CARRYING_VIRTUAL) and allowlist v1 lists it as a structuralMarker.
+# parser reads the line (CARRYING_VIRTUAL) and allowlist v2 lists it as a structuralMarker.
 # Also exercises the JDK 21+ header shape with `#N [nid]` in brackets and no nid=.
 format: hotspot-vt
 preserved_anchors:
@@ -11,9 +10,6 @@ preserved_anchors:
   - "java.lang.Thread.State:"
   - "Carrying virtual thread #32"
   - "Carrying virtual thread #35"
-  - "<pinned: synchronized>"
-  - "<virtual thread is mounted on carrier thread \"ForkJoinPool-1-worker-1\">"
-  - "<virtual thread is mounted on carrier thread \"ForkJoinPool-1-worker-2\">"
 allowlisted_threads_verbatim:
   - "ForkJoinPool-1-worker-1"
   - "ForkJoinPool-1-worker-2"

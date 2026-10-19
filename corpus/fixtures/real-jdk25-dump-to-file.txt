@@ -1,0 +1,980 @@
+33608
+2026-10-16T22:14:11.938522800Z
+25.0.2+10-LTS-69
+
+#3 "main" TIMED_WAITING 2026-10-16T22:14:11.946531800Z
+    at java.base/java.lang.Thread.sleepNanos0(Native Method)
+    at java.base/java.lang.Thread.sleepNanos(Thread.java:509)
+    at java.base/java.lang.Thread.sleep(Thread.java:540)
+    at GeradorVirtualThreads.main(GeradorVirtualThreads.java:100)
+    at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+    at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+    at jdk.compiler/com.sun.tools.javac.launcher.SourceLauncher.execute(SourceLauncher.java:258)
+    at jdk.compiler/com.sun.tools.javac.launcher.SourceLauncher.run(SourceLauncher.java:138)
+    at jdk.compiler/com.sun.tools.javac.launcher.SourceLauncher.main(SourceLauncher.java:76)
+
+#14 "Reference Handler" RUNNABLE 2026-10-16T22:14:11.948535400Z
+    at java.base/java.lang.ref.Reference.waitForReferencePendingList(Native Method)
+    at java.base/java.lang.ref.Reference.processPendingReferences(Reference.java:246)
+    at java.base/java.lang.ref.Reference$ReferenceHandler.run(Reference.java:208)
+
+#15 "Finalizer" WAITING 2026-10-16T22:14:11.949548900Z
+    at java.base/java.lang.Object.wait0(Native Method)
+    - waiting on <java.lang.ref.ReferenceQueue$Lock@72fd8f07>
+    at java.base/java.lang.Object.wait(Object.java:389)
+    at java.base/java.lang.Object.wait(Object.java:351)
+    at java.base/java.lang.ref.ReferenceQueue.remove0(ReferenceQueue.java:137)
+    at java.base/java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:215)
+    - locked <java.lang.ref.ReferenceQueue$Lock@72fd8f07>
+    at java.base/java.lang.ref.Finalizer$FinalizerThread.run(Finalizer.java:165)
+
+#16 "Signal Dispatcher" RUNNABLE 2026-10-16T22:14:11.949548900Z
+
+#17 "Attach Listener" RUNNABLE 2026-10-16T22:14:11.950546700Z
+    at java.base/jdk.internal.vm.ThreadSnapshot.create(Native Method)
+    at java.base/jdk.internal.vm.ThreadSnapshot.of(ThreadSnapshot.java:60)
+    at java.base/jdk.internal.vm.ThreadDumper.dumpThread(ThreadDumper.java:181)
+    at java.base/jdk.internal.vm.ThreadDumper.lambda$dumpThreads$0(ThreadDumper.java:176)
+    at java.base/java.util.stream.ReferencePipeline$2$1.accept(ReferencePipeline.java:197)
+    at java.base/java.util.Spliterators$ArraySpliterator.forEachRemaining(Spliterators.java:1024)
+    at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:570)
+    at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:560)
+    at java.base/java.util.stream.StreamSpliterators$WrappingSpliterator.forEachRemaining(StreamSpliterators.java:315)
+    at java.base/java.util.stream.Streams$ConcatSpliterator.forEachRemaining(Streams.java:734)
+    at java.base/java.util.stream.ReferencePipeline$Head.forEach(ReferencePipeline.java:803)
+    at java.base/jdk.internal.vm.ThreadDumper.dumpThreads(ThreadDumper.java:176)
+    at java.base/jdk.internal.vm.ThreadDumper.dumpThreads(ThreadDumper.java:172)
+    at java.base/jdk.internal.vm.ThreadDumper.dumpThreadsToFile(ThreadDumper.java:133)
+    at java.base/jdk.internal.vm.ThreadDumper.dumpThreads(ThreadDumper.java:73)
+
+#24 "Notification Thread" RUNNABLE 2026-10-16T22:14:11.950546700Z
+
+#25 "Common-Cleaner" TIMED_WAITING 2026-10-16T22:14:11.950546700Z
+    at java.base/java.lang.Object.wait0(Native Method)
+    - waiting on <java.lang.ref.ReferenceQueue$Lock@5f3ba623>
+    at java.base/java.lang.Object.wait(Object.java:389)
+    at java.base/java.lang.ref.ReferenceQueue.remove0(ReferenceQueue.java:123)
+    at java.base/java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:201)
+    - locked <java.lang.ref.ReferenceQueue$Lock@5f3ba623>
+    at java.base/jdk.internal.ref.CleanerImpl.run(CleanerImpl.java:146)
+    at java.base/java.lang.Thread.run(Thread.java:1474)
+    at java.base/jdk.internal.misc.InnocuousThread.run(InnocuousThread.java:148)
+
+#26 "VirtualThread-unblocker" RUNNABLE 2026-10-16T22:14:11.950546700Z
+    at java.base/java.lang.VirtualThread.takeVirtualThreadListToUnblock(Native Method)
+    at java.base/java.lang.VirtualThread.unblockVirtualThreads(VirtualThread.java:1507)
+    at java.base/java.lang.Thread.run(Thread.java:1474)
+    at java.base/jdk.internal.misc.InnocuousThread.run(InnocuousThread.java:148)
+
+#121 "Read-Poller" RUNNABLE 2026-10-16T22:14:11.950546700Z
+    at java.base/sun.nio.ch.WEPoll.wait(Native Method)
+    at java.base/sun.nio.ch.WEPollPoller.poll(WEPollPoller.java:61)
+    at java.base/sun.nio.ch.Poller.pollerLoop(Poller.java:248)
+    at java.base/java.lang.Thread.run(Thread.java:1474)
+    at java.base/jdk.internal.misc.InnocuousThread.run(InnocuousThread.java:148)
+
+#122 "Write-Poller" RUNNABLE 2026-10-16T22:14:11.950546700Z
+    at java.base/sun.nio.ch.WEPoll.wait(Native Method)
+    at java.base/sun.nio.ch.WEPollPoller.poll(WEPollPoller.java:61)
+    at java.base/sun.nio.ch.Poller.pollerLoop(Poller.java:248)
+    at java.base/java.lang.Thread.run(Thread.java:1474)
+    at java.base/jdk.internal.misc.InnocuousThread.run(InnocuousThread.java:148)
+
+#120 "worker-pedidos-1" virtual TIMED_WAITING 2026-10-16T22:14:11.950546700Z
+    at java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:780)
+    at java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:971)
+    at java.base/java.lang.Thread.sleepNanos(Thread.java:507)
+    at java.base/java.lang.Thread.sleep(Thread.java:540)
+    at GeradorVirtualThreads.lambda$main$10(GeradorVirtualThreads.java:93)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#27 "" virtual TIMED_WAITING 2026-10-16T22:14:11.953544900Z
+    at java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:780)
+    at java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:971)
+    at java.base/java.lang.Thread.sleepNanos(Thread.java:507)
+    at java.base/java.lang.Thread.sleep(Thread.java:540)
+    at GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#29 "" virtual TIMED_WAITING 2026-10-16T22:14:11.953544900Z
+    at java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:780)
+    at java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:971)
+    at java.base/java.lang.Thread.sleepNanos(Thread.java:507)
+    at java.base/java.lang.Thread.sleep(Thread.java:540)
+    at GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#31 "" virtual TIMED_WAITING 2026-10-16T22:14:11.953544900Z
+    at java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:780)
+    at java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:971)
+    at java.base/java.lang.Thread.sleepNanos(Thread.java:507)
+    at java.base/java.lang.Thread.sleep(Thread.java:540)
+    at GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#32 "" virtual TIMED_WAITING 2026-10-16T22:14:11.953544900Z
+    at java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:780)
+    at java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:971)
+    at java.base/java.lang.Thread.sleepNanos(Thread.java:507)
+    at java.base/java.lang.Thread.sleep(Thread.java:540)
+    at GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#33 "" virtual TIMED_WAITING 2026-10-16T22:14:11.954546Z
+    at java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:780)
+    at java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:971)
+    at java.base/java.lang.Thread.sleepNanos(Thread.java:507)
+    at java.base/java.lang.Thread.sleep(Thread.java:540)
+    at GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#34 "" virtual TIMED_WAITING 2026-10-16T22:14:11.954546Z
+    at java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:780)
+    at java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:971)
+    at java.base/java.lang.Thread.sleepNanos(Thread.java:507)
+    at java.base/java.lang.Thread.sleep(Thread.java:540)
+    at GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#35 "" virtual TIMED_WAITING 2026-10-16T22:14:11.954546Z
+    at java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:780)
+    at java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:971)
+    at java.base/java.lang.Thread.sleepNanos(Thread.java:507)
+    at java.base/java.lang.Thread.sleep(Thread.java:540)
+    at GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#36 "" virtual TIMED_WAITING 2026-10-16T22:14:11.954546Z
+    at java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:780)
+    at java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:971)
+    at java.base/java.lang.Thread.sleepNanos(Thread.java:507)
+    at java.base/java.lang.Thread.sleep(Thread.java:540)
+    at GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#37 "" virtual TIMED_WAITING 2026-10-16T22:14:11.955546300Z
+    at java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:780)
+    at java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:971)
+    at java.base/java.lang.Thread.sleepNanos(Thread.java:507)
+    at java.base/java.lang.Thread.sleep(Thread.java:540)
+    at GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#38 "" virtual TIMED_WAITING 2026-10-16T22:14:11.955546300Z
+    at java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:780)
+    at java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:971)
+    at java.base/java.lang.Thread.sleepNanos(Thread.java:507)
+    at java.base/java.lang.Thread.sleep(Thread.java:540)
+    at GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#39 "" virtual TIMED_WAITING 2026-10-16T22:14:11.955546300Z
+    at java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:780)
+    at java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:971)
+    at java.base/java.lang.Thread.sleepNanos(Thread.java:507)
+    at java.base/java.lang.Thread.sleep(Thread.java:540)
+    at GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#40 "" virtual TIMED_WAITING 2026-10-16T22:14:11.955546300Z
+    at java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:780)
+    at java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:971)
+    at java.base/java.lang.Thread.sleepNanos(Thread.java:507)
+    at java.base/java.lang.Thread.sleep(Thread.java:540)
+    at GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#42 "" virtual TIMED_WAITING 2026-10-16T22:14:11.955546300Z
+    at java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:780)
+    at java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:971)
+    at java.base/java.lang.Thread.sleepNanos(Thread.java:507)
+    at java.base/java.lang.Thread.sleep(Thread.java:540)
+    at GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#43 "" virtual TIMED_WAITING 2026-10-16T22:14:11.955546300Z
+    at java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:780)
+    at java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:971)
+    at java.base/java.lang.Thread.sleepNanos(Thread.java:507)
+    at java.base/java.lang.Thread.sleep(Thread.java:540)
+    at GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#44 "" virtual TIMED_WAITING 2026-10-16T22:14:11.956546100Z
+    at java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:780)
+    at java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:971)
+    at java.base/java.lang.Thread.sleepNanos(Thread.java:507)
+    at java.base/java.lang.Thread.sleep(Thread.java:540)
+    at GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#45 "" virtual TIMED_WAITING 2026-10-16T22:14:11.956546100Z
+    at java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:780)
+    at java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:971)
+    at java.base/java.lang.Thread.sleepNanos(Thread.java:507)
+    at java.base/java.lang.Thread.sleep(Thread.java:540)
+    at GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#46 "" virtual TIMED_WAITING 2026-10-16T22:14:11.956546100Z
+    at java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:780)
+    at java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:971)
+    at java.base/java.lang.Thread.sleepNanos(Thread.java:507)
+    at java.base/java.lang.Thread.sleep(Thread.java:540)
+    at GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#47 "" virtual TIMED_WAITING 2026-10-16T22:14:11.957546700Z
+    at java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:780)
+    at java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:971)
+    at java.base/java.lang.Thread.sleepNanos(Thread.java:507)
+    at java.base/java.lang.Thread.sleep(Thread.java:540)
+    at GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#48 "" virtual TIMED_WAITING 2026-10-16T22:14:11.957546700Z
+    at java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:780)
+    at java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:971)
+    at java.base/java.lang.Thread.sleepNanos(Thread.java:507)
+    at java.base/java.lang.Thread.sleep(Thread.java:540)
+    at GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#50 "" virtual TIMED_WAITING 2026-10-16T22:14:11.957546700Z
+    at java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:780)
+    at java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:971)
+    at java.base/java.lang.Thread.sleepNanos(Thread.java:507)
+    at java.base/java.lang.Thread.sleep(Thread.java:540)
+    at GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#51 "" virtual TIMED_WAITING 2026-10-16T22:14:11.957546700Z
+    at java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:780)
+    at java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:971)
+    at java.base/java.lang.Thread.sleepNanos(Thread.java:507)
+    at java.base/java.lang.Thread.sleep(Thread.java:540)
+    at GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#52 "" virtual TIMED_WAITING 2026-10-16T22:14:11.958545300Z
+    at java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:780)
+    at java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:971)
+    at java.base/java.lang.Thread.sleepNanos(Thread.java:507)
+    at java.base/java.lang.Thread.sleep(Thread.java:540)
+    at GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#53 "" virtual TIMED_WAITING 2026-10-16T22:14:11.958545300Z
+    at java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:780)
+    at java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:971)
+    at java.base/java.lang.Thread.sleepNanos(Thread.java:507)
+    at java.base/java.lang.Thread.sleep(Thread.java:540)
+    at GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#54 "" virtual TIMED_WAITING 2026-10-16T22:14:11.958545300Z
+    at java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:780)
+    at java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:971)
+    at java.base/java.lang.Thread.sleepNanos(Thread.java:507)
+    at java.base/java.lang.Thread.sleep(Thread.java:540)
+    at GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#55 "" virtual TIMED_WAITING 2026-10-16T22:14:11.958545300Z
+    at java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:780)
+    at java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:971)
+    at java.base/java.lang.Thread.sleepNanos(Thread.java:507)
+    at java.base/java.lang.Thread.sleep(Thread.java:540)
+    at GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#56 "" virtual TIMED_WAITING 2026-10-16T22:14:11.958545300Z
+    at java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:780)
+    at java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:971)
+    at java.base/java.lang.Thread.sleepNanos(Thread.java:507)
+    at java.base/java.lang.Thread.sleep(Thread.java:540)
+    at GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#57 "" virtual TIMED_WAITING 2026-10-16T22:14:11.958545300Z
+    at java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:780)
+    at java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:971)
+    at java.base/java.lang.Thread.sleepNanos(Thread.java:507)
+    at java.base/java.lang.Thread.sleep(Thread.java:540)
+    at GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#58 "" virtual TIMED_WAITING 2026-10-16T22:14:11.958545300Z
+    at java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:780)
+    at java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:971)
+    at java.base/java.lang.Thread.sleepNanos(Thread.java:507)
+    at java.base/java.lang.Thread.sleep(Thread.java:540)
+    at GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#59 "" virtual TIMED_WAITING 2026-10-16T22:14:11.958545300Z
+    at java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:780)
+    at java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:971)
+    at java.base/java.lang.Thread.sleepNanos(Thread.java:507)
+    at java.base/java.lang.Thread.sleep(Thread.java:540)
+    at GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#60 "" virtual TIMED_WAITING 2026-10-16T22:14:11.959546100Z
+    at java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:780)
+    at java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:971)
+    at java.base/java.lang.Thread.sleepNanos(Thread.java:507)
+    at java.base/java.lang.Thread.sleep(Thread.java:540)
+    at GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#61 "" virtual TIMED_WAITING 2026-10-16T22:14:11.959546100Z
+    at java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:780)
+    at java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:971)
+    at java.base/java.lang.Thread.sleepNanos(Thread.java:507)
+    at java.base/java.lang.Thread.sleep(Thread.java:540)
+    at GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#62 "" virtual TIMED_WAITING 2026-10-16T22:14:11.959546100Z
+    at java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:780)
+    at java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:971)
+    at java.base/java.lang.Thread.sleepNanos(Thread.java:507)
+    at java.base/java.lang.Thread.sleep(Thread.java:540)
+    at GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#63 "" virtual TIMED_WAITING 2026-10-16T22:14:11.959546100Z
+    at java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:780)
+    at java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:971)
+    at java.base/java.lang.Thread.sleepNanos(Thread.java:507)
+    at java.base/java.lang.Thread.sleep(Thread.java:540)
+    at GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#64 "" virtual TIMED_WAITING 2026-10-16T22:14:11.959546100Z
+    at java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:780)
+    at java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:971)
+    at java.base/java.lang.Thread.sleepNanos(Thread.java:507)
+    at java.base/java.lang.Thread.sleep(Thread.java:540)
+    at GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#65 "" virtual TIMED_WAITING 2026-10-16T22:14:11.959546100Z
+    at java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:780)
+    at java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:971)
+    at java.base/java.lang.Thread.sleepNanos(Thread.java:507)
+    at java.base/java.lang.Thread.sleep(Thread.java:540)
+    at GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#66 "" virtual TIMED_WAITING 2026-10-16T22:14:11.959546100Z
+    at java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:780)
+    at java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:971)
+    at java.base/java.lang.Thread.sleepNanos(Thread.java:507)
+    at java.base/java.lang.Thread.sleep(Thread.java:540)
+    at GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#67 "" virtual TIMED_WAITING 2026-10-16T22:14:11.959546100Z
+    at java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:780)
+    at java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:971)
+    at java.base/java.lang.Thread.sleepNanos(Thread.java:507)
+    at java.base/java.lang.Thread.sleep(Thread.java:540)
+    at GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#68 "" virtual TIMED_WAITING 2026-10-16T22:14:11.960546900Z
+    at java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:780)
+    at java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:971)
+    at java.base/java.lang.Thread.sleepNanos(Thread.java:507)
+    at java.base/java.lang.Thread.sleep(Thread.java:540)
+    at GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#69 "" virtual TIMED_WAITING 2026-10-16T22:14:11.960546900Z
+    at java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:780)
+    at java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:971)
+    at java.base/java.lang.Thread.sleepNanos(Thread.java:507)
+    at java.base/java.lang.Thread.sleep(Thread.java:540)
+    at GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#70 "" virtual TIMED_WAITING 2026-10-16T22:14:11.960546900Z
+    at java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:780)
+    at java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:971)
+    at java.base/java.lang.Thread.sleepNanos(Thread.java:507)
+    at java.base/java.lang.Thread.sleep(Thread.java:540)
+    at GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#71 "" virtual TIMED_WAITING 2026-10-16T22:14:11.960546900Z
+    at java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:780)
+    at java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:971)
+    at java.base/java.lang.Thread.sleepNanos(Thread.java:507)
+    at java.base/java.lang.Thread.sleep(Thread.java:540)
+    at GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#72 "" virtual TIMED_WAITING 2026-10-16T22:14:11.960546900Z
+    at java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:780)
+    at java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:971)
+    at java.base/java.lang.Thread.sleepNanos(Thread.java:507)
+    at java.base/java.lang.Thread.sleep(Thread.java:540)
+    at GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#73 "" virtual TIMED_WAITING 2026-10-16T22:14:11.960546900Z
+    at java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:780)
+    at java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:971)
+    at java.base/java.lang.Thread.sleepNanos(Thread.java:507)
+    at java.base/java.lang.Thread.sleep(Thread.java:540)
+    at GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#74 "" virtual TIMED_WAITING 2026-10-16T22:14:11.960546900Z
+    at java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:780)
+    at java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:971)
+    at java.base/java.lang.Thread.sleepNanos(Thread.java:507)
+    at java.base/java.lang.Thread.sleep(Thread.java:540)
+    at GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#75 "" virtual TIMED_WAITING 2026-10-16T22:14:11.961546900Z
+    at java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:780)
+    at java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:971)
+    at java.base/java.lang.Thread.sleepNanos(Thread.java:507)
+    at java.base/java.lang.Thread.sleep(Thread.java:540)
+    at GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#76 "" virtual TIMED_WAITING 2026-10-16T22:14:11.961546900Z
+    at java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:780)
+    at java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:971)
+    at java.base/java.lang.Thread.sleepNanos(Thread.java:507)
+    at java.base/java.lang.Thread.sleep(Thread.java:540)
+    at GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#77 "" virtual TIMED_WAITING 2026-10-16T22:14:11.961546900Z
+    at java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:780)
+    at java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:971)
+    at java.base/java.lang.Thread.sleepNanos(Thread.java:507)
+    at java.base/java.lang.Thread.sleep(Thread.java:540)
+    at GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#78 "" virtual TIMED_WAITING 2026-10-16T22:14:11.961546900Z
+    at java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:780)
+    at java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:971)
+    at java.base/java.lang.Thread.sleepNanos(Thread.java:507)
+    at java.base/java.lang.Thread.sleep(Thread.java:540)
+    at GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#80 "" virtual TIMED_WAITING 2026-10-16T22:14:11.961546900Z
+    at java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:780)
+    at java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:971)
+    at java.base/java.lang.Thread.sleepNanos(Thread.java:507)
+    at java.base/java.lang.Thread.sleep(Thread.java:540)
+    at GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#81 "" virtual TIMED_WAITING 2026-10-16T22:14:11.961546900Z
+    at java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:780)
+    at java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:971)
+    at java.base/java.lang.Thread.sleepNanos(Thread.java:507)
+    at java.base/java.lang.Thread.sleep(Thread.java:540)
+    at GeradorVirtualThreads.lambda$main$0(GeradorVirtualThreads.java:35)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#85 "" virtual WAITING 2026-10-16T22:14:11.961546900Z
+    at java.base/java.lang.VirtualThread.park(VirtualThread.java:738)
+    - parking to wait for <java.util.concurrent.locks.ReentrantLock$NonfairSync@2238467e>
+    at java.base/java.lang.System$1.parkVirtualThread(System.java:2284)
+    at java.base/java.util.concurrent.locks.LockSupport.park(LockSupport.java:221)
+    at java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer.acquire(AbstractQueuedSynchronizer.java:790)
+    at java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer.acquire(AbstractQueuedSynchronizer.java:1030)
+    at java.base/java.util.concurrent.locks.ReentrantLock$Sync.lock(ReentrantLock.java:154)
+    at java.base/java.util.concurrent.locks.ReentrantLock.lock(ReentrantLock.java:323)
+    at GeradorVirtualThreads.lambda$main$1(GeradorVirtualThreads.java:41)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#86 "" virtual WAITING 2026-10-16T22:14:11.961546900Z
+    at java.base/java.lang.VirtualThread.park(VirtualThread.java:738)
+    - parking to wait for <java.util.concurrent.locks.ReentrantLock$NonfairSync@2238467e>
+    at java.base/java.lang.System$1.parkVirtualThread(System.java:2284)
+    at java.base/java.util.concurrent.locks.LockSupport.park(LockSupport.java:221)
+    at java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer.acquire(AbstractQueuedSynchronizer.java:790)
+    at java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer.acquire(AbstractQueuedSynchronizer.java:1030)
+    at java.base/java.util.concurrent.locks.ReentrantLock$Sync.lock(ReentrantLock.java:154)
+    at java.base/java.util.concurrent.locks.ReentrantLock.lock(ReentrantLock.java:323)
+    at GeradorVirtualThreads.lambda$main$1(GeradorVirtualThreads.java:41)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#87 "" virtual WAITING 2026-10-16T22:14:11.962546Z
+    at java.base/java.lang.VirtualThread.park(VirtualThread.java:738)
+    - parking to wait for <java.util.concurrent.locks.ReentrantLock$NonfairSync@2238467e>
+    at java.base/java.lang.System$1.parkVirtualThread(System.java:2284)
+    at java.base/java.util.concurrent.locks.LockSupport.park(LockSupport.java:221)
+    at java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer.acquire(AbstractQueuedSynchronizer.java:790)
+    at java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer.acquire(AbstractQueuedSynchronizer.java:1030)
+    at java.base/java.util.concurrent.locks.ReentrantLock$Sync.lock(ReentrantLock.java:154)
+    at java.base/java.util.concurrent.locks.ReentrantLock.lock(ReentrantLock.java:323)
+    at GeradorVirtualThreads.lambda$main$1(GeradorVirtualThreads.java:41)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#88 "" virtual WAITING 2026-10-16T22:14:11.962546Z
+    at java.base/java.lang.VirtualThread.park(VirtualThread.java:738)
+    - parking to wait for <java.util.concurrent.locks.ReentrantLock$NonfairSync@2238467e>
+    at java.base/java.lang.System$1.parkVirtualThread(System.java:2284)
+    at java.base/java.util.concurrent.locks.LockSupport.park(LockSupport.java:221)
+    at java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer.acquire(AbstractQueuedSynchronizer.java:790)
+    at java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer.acquire(AbstractQueuedSynchronizer.java:1030)
+    at java.base/java.util.concurrent.locks.ReentrantLock$Sync.lock(ReentrantLock.java:154)
+    at java.base/java.util.concurrent.locks.ReentrantLock.lock(ReentrantLock.java:323)
+    at GeradorVirtualThreads.lambda$main$1(GeradorVirtualThreads.java:41)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#89 "" virtual WAITING 2026-10-16T22:14:11.962546Z
+    at java.base/java.lang.VirtualThread.park(VirtualThread.java:738)
+    - parking to wait for <java.util.concurrent.locks.ReentrantLock$NonfairSync@2238467e>
+    at java.base/java.lang.System$1.parkVirtualThread(System.java:2284)
+    at java.base/java.util.concurrent.locks.LockSupport.park(LockSupport.java:221)
+    at java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer.acquire(AbstractQueuedSynchronizer.java:790)
+    at java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer.acquire(AbstractQueuedSynchronizer.java:1030)
+    at java.base/java.util.concurrent.locks.ReentrantLock$Sync.lock(ReentrantLock.java:154)
+    at java.base/java.util.concurrent.locks.ReentrantLock.lock(ReentrantLock.java:323)
+    at GeradorVirtualThreads.lambda$main$1(GeradorVirtualThreads.java:41)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#92 "" virtual WAITING 2026-10-16T22:14:11.962546Z
+    at java.base/java.lang.VirtualThread.park(VirtualThread.java:738)
+    - parking to wait for <java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject@2f0cfd8a>
+    at java.base/java.lang.System$1.parkVirtualThread(System.java:2284)
+    at java.base/java.util.concurrent.locks.LockSupport.park(LockSupport.java:367)
+    at java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionNode.block(AbstractQueuedSynchronizer.java:520)
+    at java.base/java.util.concurrent.ForkJoinPool.unmanagedBlock(ForkJoinPool.java:4364)
+    at java.base/java.util.concurrent.ForkJoinPool.managedBlock(ForkJoinPool.java:4310)
+    at java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(AbstractQueuedSynchronizer.java:1752)
+    at java.base/java.util.concurrent.LinkedBlockingQueue.take(LinkedBlockingQueue.java:435)
+    at GeradorVirtualThreads.lambda$main$2(GeradorVirtualThreads.java:46)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#93 "" virtual WAITING 2026-10-16T22:14:11.962546Z
+    at java.base/java.lang.VirtualThread.park(VirtualThread.java:738)
+    - parking to wait for <java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject@2f0cfd8a>
+    at java.base/java.lang.System$1.parkVirtualThread(System.java:2284)
+    at java.base/java.util.concurrent.locks.LockSupport.park(LockSupport.java:367)
+    at java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionNode.block(AbstractQueuedSynchronizer.java:520)
+    at java.base/java.util.concurrent.ForkJoinPool.unmanagedBlock(ForkJoinPool.java:4364)
+    at java.base/java.util.concurrent.ForkJoinPool.managedBlock(ForkJoinPool.java:4310)
+    at java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(AbstractQueuedSynchronizer.java:1752)
+    at java.base/java.util.concurrent.LinkedBlockingQueue.take(LinkedBlockingQueue.java:435)
+    at GeradorVirtualThreads.lambda$main$2(GeradorVirtualThreads.java:46)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#95 "" virtual WAITING 2026-10-16T22:14:11.963547200Z
+    at java.base/java.lang.VirtualThread.park(VirtualThread.java:738)
+    - parking to wait for <java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject@2f0cfd8a>
+    at java.base/java.lang.System$1.parkVirtualThread(System.java:2284)
+    at java.base/java.util.concurrent.locks.LockSupport.park(LockSupport.java:367)
+    at java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionNode.block(AbstractQueuedSynchronizer.java:520)
+    at java.base/java.util.concurrent.ForkJoinPool.unmanagedBlock(ForkJoinPool.java:4364)
+    at java.base/java.util.concurrent.ForkJoinPool.managedBlock(ForkJoinPool.java:4310)
+    at java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(AbstractQueuedSynchronizer.java:1752)
+    at java.base/java.util.concurrent.LinkedBlockingQueue.take(LinkedBlockingQueue.java:435)
+    at GeradorVirtualThreads.lambda$main$2(GeradorVirtualThreads.java:46)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#96 "" virtual WAITING 2026-10-16T22:14:11.963547200Z
+    at java.base/java.lang.VirtualThread.park(VirtualThread.java:738)
+    - parking to wait for <java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject@2f0cfd8a>
+    at java.base/java.lang.System$1.parkVirtualThread(System.java:2284)
+    at java.base/java.util.concurrent.locks.LockSupport.park(LockSupport.java:367)
+    at java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionNode.block(AbstractQueuedSynchronizer.java:520)
+    at java.base/java.util.concurrent.ForkJoinPool.unmanagedBlock(ForkJoinPool.java:4364)
+    at java.base/java.util.concurrent.ForkJoinPool.managedBlock(ForkJoinPool.java:4310)
+    at java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(AbstractQueuedSynchronizer.java:1752)
+    at java.base/java.util.concurrent.LinkedBlockingQueue.take(LinkedBlockingQueue.java:435)
+    at GeradorVirtualThreads.lambda$main$2(GeradorVirtualThreads.java:46)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#97 "" virtual WAITING 2026-10-16T22:14:11.964059600Z
+    at java.base/java.lang.VirtualThread.park(VirtualThread.java:738)
+    - parking to wait for <java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject@2f0cfd8a>
+    at java.base/java.lang.System$1.parkVirtualThread(System.java:2284)
+    at java.base/java.util.concurrent.locks.LockSupport.park(LockSupport.java:367)
+    at java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionNode.block(AbstractQueuedSynchronizer.java:520)
+    at java.base/java.util.concurrent.ForkJoinPool.unmanagedBlock(ForkJoinPool.java:4364)
+    at java.base/java.util.concurrent.ForkJoinPool.managedBlock(ForkJoinPool.java:4310)
+    at java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(AbstractQueuedSynchronizer.java:1752)
+    at java.base/java.util.concurrent.LinkedBlockingQueue.take(LinkedBlockingQueue.java:435)
+    at GeradorVirtualThreads.lambda$main$2(GeradorVirtualThreads.java:46)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#98 "" virtual WAITING 2026-10-16T22:14:11.964059600Z
+    at java.base/java.lang.VirtualThread.park(VirtualThread.java:738)
+    at java.base/java.lang.System$1.parkVirtualThread(System.java:2284)
+    at java.base/java.util.concurrent.locks.LockSupport.park(LockSupport.java:367)
+    at java.base/sun.nio.ch.Poller.poll(Poller.java:197)
+    at java.base/sun.nio.ch.Poller.poll(Poller.java:142)
+    at java.base/sun.nio.ch.NioSocketImpl.park(NioSocketImpl.java:174)
+    at java.base/sun.nio.ch.NioSocketImpl.park(NioSocketImpl.java:200)
+    at java.base/sun.nio.ch.NioSocketImpl.implRead(NioSocketImpl.java:307)
+    at java.base/sun.nio.ch.NioSocketImpl.read(NioSocketImpl.java:354)
+    at java.base/sun.nio.ch.NioSocketImpl$1.read(NioSocketImpl.java:798)
+    at java.base/java.net.Socket$SocketInputStream.implRead(Socket.java:974)
+    at java.base/java.net.Socket$SocketInputStream.read(Socket.java:964)
+    at java.base/java.net.Socket$SocketInputStream.read(Socket.java:958)
+    at GeradorVirtualThreads.lambda$main$3(GeradorVirtualThreads.java:54)
+    - locked <java.lang.Object@4199c8e7>
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#99 "" virtual BLOCKED 2026-10-16T22:14:11.964059600Z
+    at GeradorVirtualThreads.lambda$main$3(GeradorVirtualThreads.java:52)
+    - waiting to lock <java.lang.Object@4199c8e7>
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#100 "" virtual BLOCKED 2026-10-16T22:14:11.964059600Z
+    at GeradorVirtualThreads.lambda$main$3(GeradorVirtualThreads.java:52)
+    - waiting to lock <java.lang.Object@4199c8e7>
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#102 "" virtual WAITING 2026-10-16T22:14:11.964059600Z
+    at java.base/java.lang.Object.wait0(Native Method)
+    - waiting on <java.lang.Object@2002a8ad>
+    at java.base/java.lang.Object.wait(Object.java:382)
+    at java.base/java.lang.Object.wait(Object.java:351)
+    at GeradorVirtualThreads.lambda$main$4(GeradorVirtualThreads.java:63)
+    - locked <java.lang.Object@2002a8ad>
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#113 "" virtual RUNNABLE 2026-10-16T22:14:11.964059600Z
+    at GeradorVirtualThreads.lambda$main$5(GeradorVirtualThreads.java:73)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#114 "" virtual RUNNABLE 2026-10-16T22:14:11.964059600Z
+    at GeradorVirtualThreads.lambda$main$5(GeradorVirtualThreads.java:73)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#115 "" virtual RUNNABLE 2026-10-16T22:14:11.964059600Z
+    at java.base/java.io.FileInputStream.readBytes(Native Method)
+    at java.base/java.io.FileInputStream.read(FileInputStream.java:281)
+    at java.base/java.lang.Process$PipeInputStream.read(Process.java:988)
+    at java.base/java.io.BufferedInputStream.fill(BufferedInputStream.java:289)
+    at java.base/java.io.BufferedInputStream.read(BufferedInputStream.java:308)
+    - locked <java.io.BufferedInputStream@40e91165>
+    at GeradorVirtualThreads.lambda$main$6(GeradorVirtualThreads.java:82)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#116 "" virtual RUNNABLE 2026-10-16T22:14:11.965070100Z
+    at java.base/java.io.FileInputStream.readBytes(Native Method)
+    at java.base/java.io.FileInputStream.read(FileInputStream.java:281)
+    at java.base/java.lang.Process$PipeInputStream.read(Process.java:988)
+    at java.base/java.io.BufferedInputStream.fill(BufferedInputStream.java:289)
+    at java.base/java.io.BufferedInputStream.read(BufferedInputStream.java:308)
+    - locked <java.io.BufferedInputStream@8c1445f>
+    at GeradorVirtualThreads.lambda$main$6(GeradorVirtualThreads.java:82)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#117 "" virtual TIMED_WAITING 2026-10-16T22:14:11.965070100Z
+    at java.base/jdk.internal.misc.Unsafe.park(Native Method)
+    at java.base/java.lang.VirtualThread.parkOnCarrierThread(VirtualThread.java:815)
+    at java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:794)
+    at java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:971)
+    at java.base/java.lang.Thread.sleepNanos(Thread.java:507)
+    at java.base/java.lang.Thread.sleep(Thread.java:540)
+    at Pin1.dormir(GeradorVirtualThreads.java:105)
+    at Pin1.<clinit>(GeradorVirtualThreads.java:105)
+    at GeradorVirtualThreads.lambda$main$7(GeradorVirtualThreads.java:87)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#118 "" virtual TIMED_WAITING 2026-10-16T22:14:11.965070100Z
+    at java.base/jdk.internal.misc.Unsafe.park(Native Method)
+    at java.base/java.lang.VirtualThread.parkOnCarrierThread(VirtualThread.java:815)
+    at java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:794)
+    at java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:971)
+    at java.base/java.lang.Thread.sleepNanos(Thread.java:507)
+    at java.base/java.lang.Thread.sleep(Thread.java:540)
+    at Pin2.dormir(GeradorVirtualThreads.java:106)
+    at Pin2.<clinit>(GeradorVirtualThreads.java:106)
+    at GeradorVirtualThreads.lambda$main$8(GeradorVirtualThreads.java:88)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#119 "" virtual TIMED_WAITING 2026-10-16T22:14:11.965070100Z
+    at java.base/jdk.internal.misc.Unsafe.park(Native Method)
+    at java.base/java.lang.VirtualThread.parkOnCarrierThread(VirtualThread.java:815)
+    at java.base/java.lang.VirtualThread.parkNanos(VirtualThread.java:794)
+    at java.base/java.lang.VirtualThread.sleepNanos(VirtualThread.java:971)
+    at java.base/java.lang.Thread.sleepNanos(Thread.java:507)
+    at java.base/java.lang.Thread.sleep(Thread.java:540)
+    at Pin3.dormir(GeradorVirtualThreads.java:107)
+    at Pin3.<clinit>(GeradorVirtualThreads.java:107)
+    at GeradorVirtualThreads.lambda$main$9(GeradorVirtualThreads.java:89)
+    at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+    at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
+
+#28 "ForkJoinPool-1-worker-1" TIMED_WAITING 2026-10-16T22:14:11.966080800Z
+    at java.base/jdk.internal.vm.Continuation.run(Continuation.java:251)
+    at java.base/java.lang.VirtualThread.runContinuation(VirtualThread.java:293)
+    at java.base/java.util.concurrent.ForkJoinTask$RunnableExecuteAction.compute(ForkJoinTask.java:1750)
+    at java.base/java.util.concurrent.ForkJoinTask$RunnableExecuteAction.compute(ForkJoinTask.java:1742)
+    at java.base/java.util.concurrent.ForkJoinTask$InterruptibleTask.exec(ForkJoinTask.java:1659)
+    at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+    at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1450)
+    at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:2019)
+    at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+
+#30 "ForkJoinPool-1-worker-2" TIMED_WAITING 2026-10-16T22:14:11.966080800Z
+    at java.base/jdk.internal.vm.Continuation.run(Continuation.java:251)
+    at java.base/java.lang.VirtualThread.runContinuation(VirtualThread.java:293)
+    at java.base/java.util.concurrent.ForkJoinTask$RunnableExecuteAction.compute(ForkJoinTask.java:1750)
+    at java.base/java.util.concurrent.ForkJoinTask$RunnableExecuteAction.compute(ForkJoinTask.java:1742)
+    at java.base/java.util.concurrent.ForkJoinTask$InterruptibleTask.exec(ForkJoinTask.java:1659)
+    at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+    at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1450)
+    at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:2019)
+    at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+
+#41 "ForkJoinPool-1-worker-3" WAITING 2026-10-16T22:14:11.966080800Z
+    at java.base/jdk.internal.misc.Unsafe.park(Native Method)
+    - parking to wait for <java.util.concurrent.ForkJoinPool@7106b50>
+    at java.base/java.util.concurrent.ForkJoinPool.awaitWork(ForkJoinPool.java:2109)
+    at java.base/java.util.concurrent.ForkJoinPool.deactivate(ForkJoinPool.java:2063)
+    at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:2027)
+    at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+
+#49 "ForkJoinPool-1-worker-4" RUNNABLE 2026-10-16T22:14:11.966080800Z
+    at java.base/jdk.internal.vm.Continuation.run(Continuation.java:254)
+    at java.base/java.lang.VirtualThread.runContinuation(VirtualThread.java:293)
+    at java.base/java.util.concurrent.ForkJoinTask$RunnableExecuteAction.compute(ForkJoinTask.java:1750)
+    at java.base/java.util.concurrent.ForkJoinTask$RunnableExecuteAction.compute(ForkJoinTask.java:1742)
+    at java.base/java.util.concurrent.ForkJoinTask$InterruptibleTask.exec(ForkJoinTask.java:1659)
+    at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+    at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1450)
+    at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:2019)
+    at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+
+#79 "ForkJoinPool-1-worker-5" TIMED_WAITING 2026-10-16T22:14:11.966080800Z
+    at java.base/jdk.internal.vm.Continuation.run(Continuation.java:251)
+    at java.base/java.lang.VirtualThread.runContinuation(VirtualThread.java:293)
+    at java.base/java.util.concurrent.ForkJoinTask$RunnableExecuteAction.compute(ForkJoinTask.java:1750)
+    at java.base/java.util.concurrent.ForkJoinTask$RunnableExecuteAction.compute(ForkJoinTask.java:1742)
+    at java.base/java.util.concurrent.ForkJoinTask$InterruptibleTask.exec(ForkJoinTask.java:1659)
+    at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+    at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1450)
+    at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:2019)
+    at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+
+#82 "ForkJoinPool-1-worker-6" RUNNABLE 2026-10-16T22:14:11.967078600Z
+    at java.base/jdk.internal.vm.Continuation.run(Continuation.java:251)
+    at java.base/java.lang.VirtualThread.runContinuation(VirtualThread.java:293)
+    at java.base/java.util.concurrent.ForkJoinTask$RunnableExecuteAction.compute(ForkJoinTask.java:1750)
+    at java.base/java.util.concurrent.ForkJoinTask$RunnableExecuteAction.compute(ForkJoinTask.java:1742)
+    at java.base/java.util.concurrent.ForkJoinTask$InterruptibleTask.exec(ForkJoinTask.java:1659)
+    at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+    at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1450)
+    at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:2019)
+    at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+
+#83 "ForkJoinPool-1-worker-7" RUNNABLE 2026-10-16T22:14:11.967078600Z
+    at java.base/jdk.internal.vm.Continuation.run(Continuation.java:251)
+    at java.base/java.lang.VirtualThread.runContinuation(VirtualThread.java:293)
+    at java.base/java.util.concurrent.ForkJoinTask$RunnableExecuteAction.compute(ForkJoinTask.java:1750)
+    at java.base/java.util.concurrent.ForkJoinTask$RunnableExecuteAction.compute(ForkJoinTask.java:1742)
+    at java.base/java.util.concurrent.ForkJoinTask$InterruptibleTask.exec(ForkJoinTask.java:1659)
+    at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+    at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1450)
+    at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:2019)
+    at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+
+#84 "ForkJoinPool-1-worker-8" WAITING 2026-10-16T22:14:11.967078600Z
+    at java.base/jdk.internal.misc.Unsafe.park(Native Method)
+    - parking to wait for <java.util.concurrent.ForkJoinPool@7106b50>
+    at java.base/java.util.concurrent.ForkJoinPool.awaitWork(ForkJoinPool.java:2109)
+    at java.base/java.util.concurrent.ForkJoinPool.deactivate(ForkJoinPool.java:2063)
+    at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:2027)
+    at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+
+#90 "ForkJoinPool-1-worker-9" WAITING 2026-10-16T22:14:11.967078600Z
+    at java.base/jdk.internal.misc.Unsafe.park(Native Method)
+    - parking to wait for <java.util.concurrent.ForkJoinPool@7106b50>
+    at java.base/java.util.concurrent.ForkJoinPool.awaitWork(ForkJoinPool.java:2109)
+    at java.base/java.util.concurrent.ForkJoinPool.deactivate(ForkJoinPool.java:2063)
+    at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:2027)
+    at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+
+#91 "ForkJoinPool-1-worker-10" WAITING 2026-10-16T22:14:11.967078600Z
+    at java.base/jdk.internal.misc.Unsafe.park(Native Method)
+    - parking to wait for <java.util.concurrent.ForkJoinPool@7106b50>
+    at java.base/java.util.concurrent.ForkJoinPool.awaitWork(ForkJoinPool.java:2109)
+    at java.base/java.util.concurrent.ForkJoinPool.deactivate(ForkJoinPool.java:2063)
+    at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:2027)
+    at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+
+#94 "ForkJoinPool-1-worker-11" RUNNABLE 2026-10-16T22:14:11.967078600Z
+    at java.base/jdk.internal.vm.Continuation.run(Continuation.java:251)
+    at java.base/java.lang.VirtualThread.runContinuation(VirtualThread.java:293)
+    at java.base/java.util.concurrent.ForkJoinTask$RunnableExecuteAction.compute(ForkJoinTask.java:1750)
+    at java.base/java.util.concurrent.ForkJoinTask$RunnableExecuteAction.compute(ForkJoinTask.java:1742)
+    at java.base/java.util.concurrent.ForkJoinTask$InterruptibleTask.exec(ForkJoinTask.java:1659)
+    at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+    at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1450)
+    at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:2019)
+    at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+
+#101 "ForkJoinPool-1-worker-12" WAITING 2026-10-16T22:14:11.967078600Z
+    at java.base/jdk.internal.misc.Unsafe.park(Native Method)
+    - parking to wait for <java.util.concurrent.ForkJoinPool@7106b50>
+    at java.base/java.util.concurrent.ForkJoinPool.awaitWork(ForkJoinPool.java:2109)
+    at java.base/java.util.concurrent.ForkJoinPool.deactivate(ForkJoinPool.java:2063)
+    at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:2027)
+    at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+
+#112 "ForkJoinPool-1-delayScheduler" TIMED_WAITING 2026-10-16T22:14:11.968081500Z
+    at java.base/jdk.internal.misc.Unsafe.park(Native Method)
+    at java.base/java.util.concurrent.DelayScheduler.loop(DelayScheduler.java:253)
+    at java.base/java.util.concurrent.DelayScheduler.run(DelayScheduler.java:221)
+

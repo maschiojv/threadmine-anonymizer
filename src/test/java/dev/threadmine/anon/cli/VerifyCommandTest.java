@@ -255,7 +255,7 @@ class VerifyCommandTest {
 
     @Test
     void withTheRealAllowlistJdkFramesCountAsPublicInfrastructure(@TempDir Path dir) throws IOException {
-        // Wired since the 2E merge: the bundled allowlist-v1 recognizes JDK frames,
+        // Wired since the 2E merge: the bundled allowlist-v2 recognizes JDK frames,
         // so a properly masked dump passes instead of tripping fail-closed noise.
         writePair(dir, ORIGINAL, MASKED);
 

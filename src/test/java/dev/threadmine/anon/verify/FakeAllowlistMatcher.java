@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 /**
  * Stand-in for {@code dev.threadmine.anon.allowlist.AllowlistMatcher} (task
  * 2E), with the same query methods and the same tier semantics as the
- * contract. It is seeded with a representative slice of {@code allowlist-v1.json}
+ * contract. It is seeded with a representative slice of {@code allowlist-v2.json}
  * so the verifier tests exercise realistic decisions while staying independent
  * of whatever the shipped file happens to contain on any given day.
  */
@@ -24,7 +24,7 @@ final class FakeAllowlistMatcher implements AllowlistLookup {
     private FakeAllowlistMatcher() {
     }
 
-    /** A slice of allowlist-v1.json: enough tiers to prove each one is consulted. */
+    /** A slice of allowlist-v2.json: enough tiers to prove each one is consulted. */
     static FakeAllowlistMatcher threadMineDefaults() {
         FakeAllowlistMatcher matcher = new FakeAllowlistMatcher();
         matcher.requiredPackagePrefixes.addAll(List.of(

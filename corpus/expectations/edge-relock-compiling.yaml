@@ -14,8 +14,8 @@ allowlisted_threads_verbatim:
   - "GC Thread#0"
   - "VM Periodic Task Thread"
 tokenized_threads:
-  "main": {}   # fixed after checking against the real allowlist: the real allowlist-v1 has no rule for "main" -> tokenized
-  "process reaper (pid 4242)": {}   # fixed after checking against the real allowlist: allowlist-v1 has no "process reaper" prefix
+  "main": {}   # fixed after checking against the real allowlist: the real allowlist-v2 has no rule for "main" -> tokenized
+  "process reaper (pid 4242)": {}   # fixed after checking against the real allowlist: allowlist-v2 has no "process reaper" prefix
   "order-consumer-1": { keeps_suffix: "-1" }
   "order-consumer-2": { keeps_suffix: "-2" }
   "gc-notifier-1": { keeps_suffix: "-1" }   # starts with lowercase "gc-": NOT the "GC " infra prefix - tokenized

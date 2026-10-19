@@ -26,9 +26,8 @@ final class DumpScan {
     static final List<String> ANCHOR_MARKERS = List.of(
             "Full thread dump",
             "java.lang.Thread.State:",
-            "<pinned:",
-            "<virtual thread is mounted on carrier thread",
             "Carrying virtual thread #",
+            "Mounted virtual thread #",
             "Java-level deadlock:",
             "Java stack information for the threads listed above:",
             "- locked",

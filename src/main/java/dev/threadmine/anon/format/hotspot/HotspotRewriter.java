@@ -29,10 +29,9 @@ public final class HotspotRewriter {
             Pattern.compile("^\\d{4}-\\d{2}-\\d{2}([ T]\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?Z?)?$");
     /** jcmd preamble pid ("48350:"/"48350") and version lines ("21.0.3+9-LTS"). */
     private static final Pattern PID_OR_VERSION = Pattern.compile("^\\d[0-9A-Za-z.+_-]*:?$");
-    private static final Pattern PINNED = Pattern.compile("^\\s*<pinned:\\s*synchronized>\\s*$");
-    private static final Pattern CARRIER =
-            Pattern.compile("^(\\s*<virtual thread is mounted on carrier thread \")(.*)(\">\\s*)$");
-    private static final Pattern CARRYING = Pattern.compile("^\\s*Carrying virtual thread #\\d+\\s*$");
+    /** jstack link between a carrier and its virtual thread: "Carrying" (JDK 21+), "Mounted" (JDK 24+). */
+    private static final Pattern VIRTUAL_THREAD_LINK =
+            Pattern.compile("^\\s*(Carrying|Mounted) virtual thread #\\d+\\s*$");
     private static final Pattern SYNCHRONIZER_COUNT =
             Pattern.compile("^\\s*Number of locked synchronizers = \\d+\\s*$");
     private static final Pattern DASH_NONE = Pattern.compile("^\\s*-\\s+None\\s*$");
@@ -295,8 +294,7 @@ public final class HotspotRewriter {
                 || STATE_LINE.matcher(line).matches()
                 || TIMESTAMP.matcher(trimmed).matches()
                 || PID_OR_VERSION.matcher(trimmed).matches()
-                || PINNED.matcher(line).matches()
-                || CARRYING.matcher(line).matches()
+                || VIRTUAL_THREAD_LINK.matcher(line).matches()
                 || LOCK_ELIMINATED.matcher(line).matches()
                 || SYNCHRONIZER_COUNT.matcher(line).matches()
                 || DASH_NONE.matcher(line).matches()
@@ -305,11 +303,6 @@ public final class HotspotRewriter {
                 || DEADLOCK_STACK_INFO.matcher(trimmed).matches()
                 || DEADLOCK_COUNT.matcher(trimmed).matches()) {
             return line;
-        }
-
-        Matcher carrier = CARRIER.matcher(line);
-        if (carrier.matches()) {
-            return carrier.group(1) + rewriteThreadName(carrier.group(2)) + carrier.group(3);
         }
 
         Matcher quotedHeader = QUOTED_HEADER.matcher(line);
