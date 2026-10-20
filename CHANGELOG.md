@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.4.1 (unreleased)
+## 0.4.1 (2026-10-20)
 
 ### Changed
 - **Allowlist v2** (`allowlist/allowlist-v2.json`, replaces `allowlist-v1.json`). Virtual-thread
