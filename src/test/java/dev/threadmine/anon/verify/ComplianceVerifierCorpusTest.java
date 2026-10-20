@@ -8,6 +8,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+import java.util.ArrayList;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -57,9 +60,11 @@ class ComplianceVerifierCorpusTest {
 
             assertFalse(report.passed(), "a raw dump must never be reported as compliant");
             assertFalse(report.residualIdentifiers().isEmpty());
-            assertTrue(report.residualIdentifiers().stream().anyMatch(f -> f.value().contains("acme")),
-                    "the fictional application namespace must be among the findings: "
-                            + report.residualIdentifiers());
+            List<String> application = applicationIdentifiers(fixture);
+            assertTrue(report.residualIdentifiers().stream()
+                            .anyMatch(f -> application.stream().anyMatch(id -> f.value().contains(id))),
+                    "the fixture's application identifiers " + application
+                            + " must be among the findings: " + report.residualIdentifiers());
         }));
     }
 
@@ -75,5 +80,35 @@ class ComplianceVerifierCorpusTest {
                     "threads/frames/blank lines must be counted identically on both sides");
             assertTrue(report.counts().originalThreads() > 0, "every fixture has threads");
         }));
+    }
+
+    /**
+     * What the verifier must flag in a raw copy of this fixture: the fictional
+     * {@code acme} namespace that the synthetic corpus uses, plus the
+     * {@code tokenized_classes} its expectation file declares. The real JDK
+     * 21-25 dumps captured for allowlist-v2 have their application classes in
+     * the default package ({@code GeradorVirtualThreads}, {@code Pin1}), so
+     * {@code acme} alone would miss them.
+     */
+    private static List<String> applicationIdentifiers(Path fixture) throws IOException {
+        List<String> ids = new ArrayList<>(List.of("acme"));
+        String name = fixture.getFileName().toString().replaceFirst("\\.txt$", "");
+        Path expectation = Path.of("corpus", "expectations", name + ".yaml");
+        if (Files.exists(expectation)) {
+            boolean inSection = false;
+            for (String line : Files.readAllLines(expectation, StandardCharsets.UTF_8)) {
+                if (!line.startsWith(" ")) {
+                    inSection = line.startsWith("tokenized_classes:");
+                    continue;
+                }
+                if (inSection) {
+                    Matcher m = Pattern.compile("^\\s*-\\s*\"?([^\"#]+?)\"?\\s*(#.*)?$").matcher(line);
+                    if (m.find()) {
+                        ids.add(m.group(1).trim());
+                    }
+                }
+            }
+        }
+        return ids;
     }
 }
