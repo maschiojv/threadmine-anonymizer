@@ -396,7 +396,9 @@ Temurin, Corretto, Zulu, Liberica, Zing, GraalVM in JVM mode):
 - `jcmd Thread.dump_to_file -format=text` (`#N "name" STATE`)
 - `jcmd Thread.dump_to_file -format=json` (JDK 21+)
 - `ThreadMXBean` / VisualVM (`"name" Id=N STATE on Class@hash`)
-- virtual threads: pinned, mounted on a carrier, unmounted
+- virtual threads (JDK 21+): the `#N "" virtual [STATE]` header, the JDK 24+
+  `jstack` line `Mounted virtual thread #N`, and the
+  `java.lang.VirtualThread.parkOnCarrierThread` pin frame
 - deadlock blocks, multi-dump files, header-less and reverse-ordered dumps
 - Azul Zing (`Zing thread dump header:` block, C4 collector threads)
 - GraalVM native-image (inline state, `Heap: { }` / `Isolates: { }` sections)
@@ -468,7 +470,37 @@ The security argument in full, including what a masked dump still reveals, is in
 [THREAT_MODEL.md](THREAT_MODEL.md). It is deliberately written as "here is what
 this does not protect you from".
 
+## Upgrading from 0.4.0 or earlier
+
+**What happened.** On JDK 24+, `jstack` and `jcmd Thread.print` print a
+`Mounted virtual thread #N` line for every virtual thread that is running on a
+carrier. The allowlist shipped up to 0.4.0 (`allowlist-v1.json`) did not know
+that line, so `mask` redacted it.
+
+**The effect.** The analysis service cannot tell: the first line of the file is
+still `# tm-anon v1`, whichever version produced it. The stack of every
+*mounted* virtual thread silently disappears server-side, and pinning
+diagnosis goes blind. `verify` in 0.4.1 cannot detect it in a file that 0.4.0
+already masked, because the line is gone from the file.
+
+**The fix.** Install 0.4.1 or later and run `mask` again on the **original**
+dump (not on the masked file). Use the same vault: you get the same tokens, so
+earlier unmasked reports stay readable.
+
+```bash
+tm-anon mask --vault ./vault.tmv -o dump.masked.txt dump-original.txt
+```
+
+**Who does not need to do anything.** Dumps taken on JDK 23 or older, and
+`Thread.dump_to_file -format=text` output on any JDK, were never affected.
+
+Details in the [changelog](CHANGELOG.md#041-2026-10-20).
+
 ## FAQ
+
+**I masked JDK 24+ dumps with 0.4.0 or earlier. Do I need to do anything?**
+Yes, if the dump came from `jstack` or `Thread.print`: re-run `mask` with 0.4.1
+on the original file. See [Upgrading from 0.4.0 or earlier](#upgrading-from-040-or-earlier).
 
 **What exactly does the analysis service see?**
 Structure and public names. Thread count and states, pool shapes, JDK and
