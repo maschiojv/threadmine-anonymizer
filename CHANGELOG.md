@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.5.0 (unreleased)
+## 0.5.0 (2026-10-26)
 
 ### Added
 - **Allowlist v3** (`allowlist/allowlist-v3.json`, replaces `allowlist-v2.json` in the jar; v2 stays in
