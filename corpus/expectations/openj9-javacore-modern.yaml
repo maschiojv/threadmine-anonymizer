@@ -42,17 +42,15 @@ allowlisted_threads_verbatim:
   - "Finalizer thread"         # "Finalizer" prefix
   - "Common-Cleaner"           # exact prefix
   - "Concurrent Mark Helper"   # regex (?i)^(GC |...|Concurrent Mark|...)
+  - "main"   # allowlist-v3 threadNameExact (role catalog: MAIN)
+  - "JIT Compilation Thread-000 Suspended"   # allowlist-v3 threadNameRegexes (role catalog: JVM_COMPILER)
+  - "JIT Compilation Thread-001 Suspended"   # allowlist-v3 threadNameRegexes (role catalog: JVM_COMPILER)
 tokenized_threads:
-  "main": {}
   "pgto-worker-1": { keeps_suffix: "-1" }   # app pool: same base token + suffix (SPEC 5.3c)
   "pgto-worker-2": { keeps_suffix: "-2" }
   "pgto-worker-3": { keeps_suffix: "-3" }
   "pgto-worker-4": { keeps_suffix: "-4" }
   "http-sync tenant-acme /api/payments?invoice=99887766": { route_marker: true }   # "/", "?", digits>=8 -> t.../q
-  # OpenJ9 infra threads with NO allowlist-v2 rule (allowlist v2 candidates — if v2 takes them,
-  # move them to allowlisted_threads_verbatim; the source of truth is the 1B artifact):
-  "JIT Compilation Thread-000 Suspended": {}
-  "JIT Compilation Thread-001 Suspended": {}
   "IProfiler": {}
 tokenized_classes:
   # Canonical form uses DOTS; in the file they appear with SLASHES (com/acme/...) in 4XESTACKTRACE,

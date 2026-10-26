@@ -45,6 +45,8 @@ allowlisted_threads_verbatim:
   - "Finalizer"
   - "Reference Handler"
   - "Thread-1"             # ^Thread-\d+$
+  - "ListenThread.Default"   # allowlist-v3 threadNameExact (role catalog: HTTP_ACCEPTOR)
+  - "main"   # allowlist-v3 threadNameExact (role catalog: MAIN)
 tokenized_threads:
   # Classic pool names "X: 'N' for queue: 'Q'" do NOT match the [-#]N suffix heuristic of
   # SPEC 5.3c (the number sits in the middle, in single quotes) -> rule 5.3d: token for the whole
@@ -55,9 +57,7 @@ tokenized_threads:
   "QueueWorker: '3' for queue: 'acme.kernel.Default'": {}
   "QueueWorker: '4' for queue: 'acme.kernel.Default'": {}
   "QueueWorker: '0' for queue: 'acme.kernel.System'": {}
-  "ListenThread.Default": {}
   "com.acme.health.CoreHealthMonitor": {}   # thread name that IS an FQCN -> thread token (t...), not a class token
-  "main": {}                                # allowlist-v2 has no rule for "main" (same decision as the HotSpot fixtures)
 tokenized_classes:
   # In XM the frames are dotted FQCNs (classic dialect) — same SPEC 5.1 rules.
   - "com.acme.kernel.QueueWorker"
@@ -65,7 +65,7 @@ tokenized_classes:
   - "com.acme.gateway.CardSwitchClient"
   - "com.acme.pay.PaymentRouter"
   - "com.acme.server.AcmeServerSocket"
-  - "com.acme.server.ListenThread"
+  - "com.acme.server.SocketListener"
   - "com.acme.server.PayServer"
   - "com.acme.health.CoreHealthMonitorThread"
 native_ids_verbatim: true   # TID:0x... / sys_thread_t:0x... / native ID:0x... on 3XMTHREADINFO (5-B.4)

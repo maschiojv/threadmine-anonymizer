@@ -202,7 +202,7 @@ public final class ComplianceVerifier {
         String value = candidate.value();
         switch (candidate.kind()) {
             case THREAD_NAME, CONTAINER_POOL -> {
-                if (!allowlist.allowsThreadName(value) && !THREAD_TOKEN.matcher(value).matches()) {
+                if (!isMaskedOrAllowedThreadName(value)) {
                     findings.add(new Finding(0, Finding.Kind.THREAD_NAME, value, candidate.path()));
                 }
             }
@@ -325,11 +325,24 @@ public final class ComplianceVerifier {
         Matcher quoted = QUOTED.matcher(line);
         while (quoted.find()) {
             String name = quoted.group(1);
-            if (name.isEmpty() || allowlist.allowsThreadName(name) || THREAD_TOKEN.matcher(name).matches()) {
+            if (name.isEmpty() || isMaskedOrAllowedThreadName(name)) {
                 continue;
             }
             findings.add(new Finding(lineNumber, Finding.Kind.THREAD_NAME, name, line));
         }
+    }
+
+    /**
+     * Allowlisted, a thread token, or a name template whose every captured part is a token (the
+     * template keeps only what the framework generates; an unmasked part is a leak).
+     */
+    private boolean isMaskedOrAllowedThreadName(String name) {
+        if (allowlist.allowsThreadName(name) || THREAD_TOKEN.matcher(name).matches()) {
+            return true;
+        }
+        List<String> parts = allowlist.threadNameTemplateParts(name);
+        return parts != null
+                && parts.stream().allMatch(part -> part.isEmpty() || THREAD_TOKEN.matcher(part).matches());
     }
 
     private void checkLockClasses(String line, int lineNumber, List<Finding> findings) {

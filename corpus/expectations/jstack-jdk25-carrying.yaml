@@ -16,8 +16,8 @@ allowlisted_threads_verbatim:
   - "ForkJoinPool-1-worker-3"
   - "VirtualThread-unblocker"
   - "Reference Handler"
+  - "main"   # allowlist-v3 threadNameExact (role catalog: MAIN)
 tokenized_threads:
-  "main": {}
   "pedido-vt-7": { keeps_suffix: "-7" }
 tokenized_classes:
   - "com.acme.gateway.Bootstrap"

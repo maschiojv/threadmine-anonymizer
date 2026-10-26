@@ -54,7 +54,7 @@ class JavacoreNoLeakTest {
                     "vendor-scoring-5.1.jar", "cardswitch-client-7.0.2.jar", "oradriver-9.2.jar",
                     // thread and class names (XM tokenized, LK/CL stripped)
                     "QueueWorker", "acme.kernel.Default", "acme.kernel.System",
-                    "ListenThread", "CoreHealthMonitor", "PayServer", "LedgerCache",
+                    "SocketListener", "CoreHealthMonitor", "PayServer", "LedgerCache",
                     "PaymentRouter", "CardSwitchClient", "AcmeServerSocket",
                     "HealthBoard", "ScoreMatrix", "AcmeModuleClassLoader",
                     "com.acme", "com/acme"),

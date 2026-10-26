@@ -16,8 +16,8 @@ allowlisted_threads_verbatim:
   - "VM Thread"
   - "GC Thread#0"
   - "VM Periodic Task Thread"
+  - "main"   # allowlist-v3 threadNameExact (role catalog: MAIN)
 tokenized_threads:
-  "main": {}   # fixed after checking against the real allowlist: the real allowlist-v2 has no rule for "main" -> tokenized
   "pgto-worker-1": { keeps_suffix: "-1" }
   "pgto-worker-2": { keeps_suffix: "-2" }
 tokenized_classes:

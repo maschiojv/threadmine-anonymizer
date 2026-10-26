@@ -9,8 +9,8 @@ preserved_anchors:
   - "java.lang.Thread.State:"
 allowlisted_threads_verbatim:
   - "Reference Handler"
+  - "main"   # allowlist-v3 threadNameExact (role catalog: MAIN)
 tokenized_threads:
-  "main": {}   # fixed after checking against the real allowlist: the real allowlist-v2 has no rule for "main" -> tokenized
   "pgto-worker-3": { keeps_suffix: "-3" }
   "order-dispatcher": {}
 tokenized_classes:

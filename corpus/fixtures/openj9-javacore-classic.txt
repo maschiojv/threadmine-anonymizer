@@ -203,8 +203,8 @@ NULL
 4XESTACKTRACE          at java.net.ServerSocket.implAccept(ServerSocket.java:471)
 4XESTACKTRACE          at java.net.ServerSocket.accept(ServerSocket.java:442)
 4XESTACKTRACE          at com.acme.server.AcmeServerSocket.accept(AcmeServerSocket.java:26)
-4XESTACKTRACE          at com.acme.server.ListenThread.accept(ListenThread.java:735)
-4XESTACKTRACE          at com.acme.server.ListenThread.run(ListenThread.java:301)
+4XESTACKTRACE          at com.acme.server.SocketListener.accept(SocketListener.java:735)
+4XESTACKTRACE          at com.acme.server.SocketListener.run(SocketListener.java:301)
 3XMTHREADINFO      "com.acme.health.CoreHealthMonitor" (TID:0x2A378F8, sys_thread_t:0x106CA1C8, state:CW, native ID:0x14C8) prio=5
 4XESTACKTRACE          at java.lang.Thread.sleep(Native Method)
 4XESTACKTRACE          at com.acme.health.CoreHealthMonitorThread.run(CoreHealthMonitorThread.java:127)

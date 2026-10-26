@@ -11,8 +11,8 @@ allowlisted_threads_verbatim:
   - "ForkJoinPool-1-worker-3"
   - "Reference Handler"
   - "Finalizer"
+  - "main"   # allowlist-v3 threadNameExact (role catalog: MAIN)
 tokenized_threads:
-  "main": {}   # fixed after checking against the real allowlist: the real allowlist-v2 has no rule for "main" -> tokenized
   "order-vt-9": { keeps_suffix: "-9" }   # named VT: the `"order-vt-9" #23 virtual` header tokenizes only the name
 tokenized_classes:
   - "com.acme.gateway.Bootstrap"

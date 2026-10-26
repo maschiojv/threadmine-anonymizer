@@ -19,8 +19,8 @@ allowlisted_threads_verbatim:
   - "Notification Thread"
   - "Common-Cleaner"
   - "VirtualThread-unblocker"
+  - "main"   # allowlist-v3 threadNameExact (role catalog: MAIN)
 tokenized_threads:
-  "main": {}
   "sync-/api/orders?id=99887766": { route_marker: true }
 tokenized_classes:
   - "com.acme.gateway.Bootstrap"

@@ -369,15 +369,27 @@ public final class HotspotRewriter {
     // --- thread names (SPEC §5.3) ---------------------------------------------
 
     /**
-     * Applies the §5.3 cascade: allowlist, route heuristic, numeric suffix,
-     * whole name. Public because the cascade is dialect-independent: the
-     * OpenJ9 {@link dev.threadmine.anon.format.openj9.JavacoreRewriter}
-     * delegates here so both formats assign identical tokens (SPEC §5-B.4).
+     * Applies the §5.3 cascade: allowlist, name template, route heuristic,
+     * numeric suffix, whole name. Public because the cascade is
+     * dialect-independent: the OpenJ9
+     * {@link dev.threadmine.anon.format.openj9.JavacoreRewriter} delegates here
+     * so both formats assign identical tokens (SPEC §5-B.4).
+     *
+     * <p>A name template keeps the part a framework generates and masks only
+     * the captured parts ({@code kafka-producer-network-thread | producer-1}
+     * keeps everything up to the {@code |}); each part goes through the rest of
+     * the cascade on its own.</p>
      */
     public String rewriteThreadName(String name) {
         if (name.isEmpty() || allowlist.allowsThreadName(name)) {
             return name;
         }
+        String templated = allowlist.applyThreadNameTemplate(name, this::tokenizeThreadName);
+        return templated != null ? templated : tokenizeThreadName(name);
+    }
+
+    /** Route heuristic, numeric suffix, whole name: the part of the cascade that always masks. */
+    private String tokenizeThreadName(String name) {
         if (looksLikeRoute(name)) {
             return engine.tokenize(TokenType.THREAD_NAME, name) + "/q";
         }

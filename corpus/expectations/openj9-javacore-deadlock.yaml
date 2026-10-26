@@ -31,8 +31,8 @@ preserved_anchors:
 allowlisted_threads_verbatim:
   - "Signal Dispatcher"
   - "Finalizer thread"
+  - "main"   # allowlist-v3 threadNameExact (role catalog: MAIN)
 tokenized_threads:
-  "main": {}
   "pgto-worker-1": { keeps_suffix: "-1" }
   "pgto-worker-2": { keeps_suffix: "-2" }
   "pgto-worker-3": { keeps_suffix: "-3" }
