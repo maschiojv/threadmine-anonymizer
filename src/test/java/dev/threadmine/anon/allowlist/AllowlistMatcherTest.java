@@ -35,7 +35,7 @@ class AllowlistMatcherTest {
     void fromClasspathLoadsTheShippedAllowlist() {
         AllowlistMatcher shipped = AllowlistMatcher.fromClasspath();
         assertNotNull(shipped);
-        // entries straight from allowlist/allowlist-v2.json
+        // entries straight from allowlist/allowlist-v3.json
         assertTrue(shipped.allowsFqcn("java.lang.Thread"));
         assertTrue(shipped.allowsFqcn("org.apache.tomcat.util.threads.TaskThread"));
         assertTrue(shipped.allowsThreadName("http-nio-8080-exec-1"));

@@ -15,8 +15,8 @@ allowlisted_threads_verbatim:
   - "Read-Poller"
   - "Write-Poller"
   - "Common-Cleaner"
+  - "main"   # allowlist-v3 threadNameExact (role catalog: MAIN)
 tokenized_threads:
-  "main": {}
   "worker-pedidos-1": { keeps_suffix: "-1" }
 tokenized_classes:
   - "GeradorVirtualThreads"

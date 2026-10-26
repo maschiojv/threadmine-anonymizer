@@ -23,8 +23,8 @@ allowlisted_threads_verbatim:
   - "G1 Refine#0"
   - "G1 Conc#0"
   - "G1 Main Marker"
+  - "main"   # allowlist-v3 threadNameExact (role catalog: MAIN)
 tokenized_threads:
-  "main": {}   # fixed after checking against the real allowlist: the real allowlist-v2 has no rule for "main" -> tokenized
   "process reaper (pid 4242)": {}   # fixed after checking against the real allowlist: allowlist-v2 has no "process reaper" prefix
   "pgto-worker-4": { keeps_suffix: "-4" }
 tokenized_classes:

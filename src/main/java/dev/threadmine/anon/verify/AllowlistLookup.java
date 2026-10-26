@@ -1,5 +1,7 @@
 package dev.threadmine.anon.verify;
 
+import java.util.List;
+
 /**
  * The two allowlist questions {@code verify} needs to ask, with the exact
  * signatures of {@code dev.threadmine.anon.allowlist.AllowlistMatcher}.
@@ -18,4 +20,12 @@ public interface AllowlistLookup {
 
     /** Exact / prefix / suffix / regex tiers for thread names. */
     boolean allowsThreadName(String name);
+
+    /**
+     * The parts a {@code threadNameTemplates} entry captures from the whole name, or {@code null}
+     * when no template matches. A masked name passes only if every captured part is a token.
+     */
+    default List<String> threadNameTemplateParts(String name) {
+        return null;
+    }
 }

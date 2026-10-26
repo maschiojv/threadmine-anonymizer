@@ -25,8 +25,8 @@ preserved_anchors:
   - "- parking to wait for <java.util.concurrent.locks.ReentrantLock$NonfairSync@5e8f9a3b>"
 allowlisted_threads_verbatim:
   - "ForkJoinPool-1-worker-1"
+  - "main"   # allowlist-v3 threadNameExact (role catalog: MAIN)
 tokenized_threads:
-  "main": {}
   "pgto-worker-1": { keeps_suffix: "-1" }
   "pgto-worker-2": { keeps_suffix: "-2" }
   "pgto-worker-3": { keeps_suffix: "-3" }

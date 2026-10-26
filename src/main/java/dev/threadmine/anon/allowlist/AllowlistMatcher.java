@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.LinkedHashSet;
+import java.util.function.UnaryOperator;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -22,7 +24,7 @@ import java.util.regex.Pattern;
  */
 public final class AllowlistMatcher {
 
-    private static final String CLASSPATH_RESOURCE = "/allowlist-v2.json";
+    private static final String CLASSPATH_RESOURCE = "/allowlist-v3.json";
 
     private final List<String> requiredPackagePrefixes;
     private final List<String> recommendedPackagePrefixes;
@@ -30,6 +32,7 @@ public final class AllowlistMatcher {
     private final List<String> threadNamePrefixes;
     private final List<String> threadNameSuffixes;
     private final List<Pattern> threadNameRegexes;
+    private final List<Pattern> threadNameTemplates;
     private final boolean strict;
 
     private AllowlistMatcher(List<String> requiredPackagePrefixes,
@@ -38,6 +41,7 @@ public final class AllowlistMatcher {
                              List<String> threadNamePrefixes,
                              List<String> threadNameSuffixes,
                              List<Pattern> threadNameRegexes,
+                             List<Pattern> threadNameTemplates,
                              boolean strict) {
         this.requiredPackagePrefixes = requiredPackagePrefixes;
         this.recommendedPackagePrefixes = recommendedPackagePrefixes;
@@ -45,10 +49,11 @@ public final class AllowlistMatcher {
         this.threadNamePrefixes = threadNamePrefixes;
         this.threadNameSuffixes = threadNameSuffixes;
         this.threadNameRegexes = threadNameRegexes;
+        this.threadNameTemplates = threadNameTemplates;
         this.strict = strict;
     }
 
-    /** Loads allowlist-v2.json from the classpath resource {@value #CLASSPATH_RESOURCE}. */
+    /** Loads allowlist-v3.json from the classpath resource {@value #CLASSPATH_RESOURCE}. */
     public static AllowlistMatcher fromClasspath() {
         try (InputStream in = AllowlistMatcher.class.getResourceAsStream(CLASSPATH_RESOURCE)) {
             if (in == null) {
@@ -69,6 +74,16 @@ public final class AllowlistMatcher {
         for (String regex : strings(required, "threadNameRegexes")) {
             regexes.add(Pattern.compile(regex));
         }
+        List<Pattern> templates = new ArrayList<>();
+        for (String template : strings(required, "threadNameTemplates")) {
+            Pattern pattern = Pattern.compile(template);
+            if (pattern.matcher("").groupCount() == 0) {
+                // Without a capture group the template would keep the whole name: that is a regex entry.
+                throw new AllowlistJson.ParseException(
+                        "threadNameTemplates entry has no capture group to mask: " + template);
+            }
+            templates.add(pattern);
+        }
         return new AllowlistMatcher(
                 List.copyOf(strings(required, "packagePrefixes")),
                 List.copyOf(strings(recommended, "packagePrefixes")),
@@ -76,6 +91,7 @@ public final class AllowlistMatcher {
                 List.copyOf(strings(required, "threadNamePrefixes")),
                 List.copyOf(strings(required, "threadNameSuffixes")),
                 List.copyOf(regexes),
+                List.copyOf(templates),
                 false);
     }
 
@@ -85,7 +101,8 @@ public final class AllowlistMatcher {
             return this;
         }
         return new AllowlistMatcher(requiredPackagePrefixes, recommendedPackagePrefixes,
-                threadNameExact, threadNamePrefixes, threadNameSuffixes, threadNameRegexes, strict);
+                threadNameExact, threadNamePrefixes, threadNameSuffixes, threadNameRegexes,
+                threadNameTemplates, strict);
     }
 
     /** Longest-prefix match of required(+recommended) packagePrefixes against a FQCN or package. */
@@ -137,6 +154,57 @@ public final class AllowlistMatcher {
             }
         }
         return false;
+    }
+
+    /**
+     * The first {@code threadNameTemplates} entry that matches the <b>whole</b> name, rebuilt with
+     * every capture group passed through {@code maskPart}; the text outside the groups (the part
+     * the framework generates) stays verbatim. Returns {@code null} when no template matches.
+     * Empty groups are kept as they are, and a group nested in an earlier one is already masked
+     * with it.
+     */
+    public String applyThreadNameTemplate(String name, UnaryOperator<String> maskPart) {
+        for (Pattern template : threadNameTemplates) {
+            Matcher matcher = template.matcher(name);
+            if (!matcher.matches()) {
+                continue;
+            }
+            StringBuilder sb = new StringBuilder();
+            int last = 0;
+            for (int group = 1; group <= matcher.groupCount(); group++) {
+                int start = matcher.start(group);
+                if (start < last) {
+                    continue;
+                }
+                sb.append(name, last, start);
+                String part = matcher.group(group);
+                sb.append(part.isEmpty() ? part : maskPart.apply(part));
+                last = matcher.end(group);
+            }
+            return sb.append(name, last, name.length()).toString();
+        }
+        return null;
+    }
+
+    /**
+     * The captured parts of the first template that matches the whole name, or {@code null}.
+     * {@code verify} uses it to accept a masked name only when every part is a token.
+     */
+    public List<String> threadNameTemplateParts(String name) {
+        for (Pattern template : threadNameTemplates) {
+            Matcher matcher = template.matcher(name);
+            if (!matcher.matches()) {
+                continue;
+            }
+            List<String> parts = new ArrayList<>();
+            for (int group = 1; group <= matcher.groupCount(); group++) {
+                if (matcher.group(group) != null) {
+                    parts.add(matcher.group(group));
+                }
+            }
+            return parts;
+        }
+        return null;
     }
 
     private static Map<String, Object> section(Map<String, Object> root, String key) {

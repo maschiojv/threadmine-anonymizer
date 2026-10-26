@@ -4,7 +4,7 @@
 loaders, so this directory holds the minimum a native build needs: the
 allowlist JSON must stay in the image.
 
-`AllowlistMatcher.fromClasspath()` reads `/allowlist-v2.json` through
+`AllowlistMatcher.fromClasspath()` reads `/allowlist-v3.json` through
 `getResourceAsStream`, and `native-image` does not embed classpath resources
 unless they are declared. That single entry is `resource-config.json`.
 

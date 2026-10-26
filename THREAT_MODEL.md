@@ -202,7 +202,7 @@ Explicit non-goals:
    sources, bytecode or dependencies. Read the test; it is short.
 2. `grep -rn "java.net" src/main/java` — expect nothing.
 3. Read `pom.xml` — one dependency, JUnit, test scope.
-4. Read `allowlist/allowlist-v2.json` — everything that stays verbatim, with
+4. Read `allowlist/allowlist-v3.json` — everything that stays verbatim, with
    provenance in `allowlist/SOURCES.md`.
 5. Read `src/main/java/dev/threadmine/anon/core/HmacTokenEngine.java` and
    `Vault.java` — the entire cryptographic surface, a few hundred lines.

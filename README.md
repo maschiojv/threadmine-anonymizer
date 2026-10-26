@@ -42,7 +42,7 @@ tm-anon verify dump.txt dump.anon.txt    # the same check on demand: CI, reviewe
 
 The masked dump is still analyzable: the same detections fire and the same
 health score comes out, because everything the detectors match by name is on a
-published, auditable [allowlist](allowlist/allowlist-v2.json) and stays verbatim
+published, auditable [allowlist](allowlist/allowlist-v3.json) and stays verbatim
 (JDK internals, `http-nio-8080-exec-1`, `ForkJoinPool-1-worker-3`,
 Tomcat/Netty/Kafka frames, GC threads), while everything that is yours becomes a
 token.
@@ -426,8 +426,20 @@ modern one (`ENVINFO/LOCKS/THREADS/CLASSES`) are handled. Trade-off worth
 knowing: the JVM version line sits in a stripped section, so the analyzer may
 report an unknown Java version.
 
+**Thread names keep their role (0.5.0).** ThreadMine labels each thread by what
+it is — HTTP worker, Kafka client, connection-pool housekeeper, scheduler, Redis
+client — from its name. Allowlist v3 keeps every name of that catalog: names a
+framework generates in full stay verbatim (`HikariPool-1:housekeeper`, `task-3`,
+`lettuce-nioEventLoop-4-1`, WildFly's `default task-12`), and names with a part
+you choose keep only the generated part
+(`kafka-coordinator-heartbeat-thread | billing` becomes
+`kafka-coordinator-heartbeat-thread | t3a9f1x0c2e7`, the IP in
+`RMI TCP Connection(3)-10.0.0.5` is tokenized). Dumps masked with 0.4.1 or
+earlier lose those roles; see
+[Upgrading from 0.4.1 or earlier](#upgrading-from-041-or-earlier).
+
 Anything the tool cannot classify is refused with exit `2` rather than
-half-masked. See [`corpus/`](corpus/) for the 26 fixtures every release is
+half-masked. See [`corpus/`](corpus/) for the 37 fixtures every release is
 tested against.
 
 ## Why you can trust this
@@ -452,15 +464,18 @@ them yourself:
    parser and the argument parser are small in-tree classes.
 
 3. **The allowlist is a readable JSON file, not a hidden heuristic.**
-   [`allowlist/allowlist-v2.json`](allowlist/allowlist-v2.json) is exactly what
+   [`allowlist/allowlist-v3.json`](allowlist/allowlist-v3.json) is exactly what
    stays verbatim, and [`allowlist/SOURCES.md`](allowlist/SOURCES.md) gives the
    `file:line` origin of every required entry. Disagree with an entry and you can
-   see it, change it, and rebuild.
+   see it, change it, and rebuild. Its one rule for thread names: only text a
+   framework or the JDK generates, never a segment that can carry your data.
+   Where a name mixes both, a *template* keeps the generated part and tokenizes
+   yours, and `verify` fails if that part was not tokenized.
 
 4. **The vault never leaves your filesystem**, because nothing in this jar can
    send it anywhere. Reversal requires the vault. Not the code — the vault.
 
-5. **Everything is tested against a corpus of 26 dumps** with golden
+5. **Everything is tested against a corpus of 37 dumps** with golden
    expectations, plus property tests on the token grammar, an end-to-end parity
    run against a real analyzer, and a hard non-leak assertion that plants
    secrets in the javacore fixtures and fails if any of them survives masking.
@@ -469,6 +484,18 @@ them yourself:
 The security argument in full, including what a masked dump still reveals, is in
 [THREAT_MODEL.md](THREAT_MODEL.md). It is deliberately written as "here is what
 this does not protect you from".
+
+## Upgrading from 0.4.1 or earlier
+
+**What changed in 0.5.0.** Allowlist v3 keeps the thread names ThreadMine uses to
+tell what each thread is (see [Supported dump formats](#supported-dump-formats)).
+A dump masked with 0.4.1 or earlier has those names as tokens, so the analysis
+shows those threads without a role (or with the role guessed from the stack).
+Nothing else changes: detections, virtual threads and the health score are the
+same.
+
+**The fix.** Run `mask` again with 0.5.0 on the **original** dump, with the same
+vault. Your own names get the same tokens as before.
 
 ## Upgrading from 0.4.0 or earlier
 

@@ -19,8 +19,8 @@ allowlisted_threads_verbatim:
   - "Write-Poller"
   - "ForkJoinPool-1-delayScheduler"
   - "Common-Cleaner"
-tokenized_threads:
-  "main": {}
+  - "main"   # allowlist-v3 threadNameExact (role catalog: MAIN)
+tokenized_threads: []
 tokenized_classes:
   - "GeradorVirtualThreads"
 stripped_lines:
