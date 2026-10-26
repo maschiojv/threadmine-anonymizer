@@ -28,6 +28,10 @@
   threads move from tokenized to verbatim. The synthetic OpenJ9 classic fixture's application class
   `com.acme.server.ListenThread` is renamed `SocketListener`, so it no longer shares a name with
   WebLogic's real `ListenThread.Default` thread.
+- The `threadNameSuffixes` tier is empty. `-Acceptor`, `-Poller` and `-ClientPoller` kept the whole
+  name, so a Tomcat connector bound to an address (`http-nio-10.0.0.5-8080-Acceptor`) kept the IP.
+  Tomcat's default connector names are regexes now, and a template keeps only the suffix and masks
+  the rest (`acme-Poller` becomes `<token>-Poller`).
 - `pom.xml` version is `0.5.0`, without `-SNAPSHOT` (the 0.4.1 tag was cut from a `-SNAPSHOT` pom).
 
 ### Upgrading

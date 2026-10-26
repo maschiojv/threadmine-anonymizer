@@ -94,7 +94,9 @@ class AllowlistV3ThreadNamesTest {
             Map.entry("kafka-coordinator-heartbeat-thread | grupo", "kafka-coordinator-heartbeat-thread | "),
             Map.entry("AMQP Connection 10.0.0.7:5672", "AMQP Connection "),
             Map.entry("MeuScheduler_Worker-1", "_Worker-1"),
-            Map.entry("AsyncAppender-Worker-ASYNC", "AsyncAppender-Worker-"));
+            Map.entry("AsyncAppender-Worker-ASYNC", "AsyncAppender-Worker-"),
+            Map.entry("http-nio-10.0.0.5-8080-Acceptor", "http-nio-"),
+            Map.entry("AcmeGateway-Poller", "-Poller"));
 
     /**
      * Planted application data next to generated text. Every value on the right is something
@@ -124,7 +126,12 @@ class AllowlistV3ThreadNamesTest {
             Map.entry("scheduler-acme", List.of("acme")),
             Map.entry("task-acme-1", List.of("acme")),
             Map.entry("lettuce-acme-1-1", List.of("acme")),
-            Map.entry("RMI TCP Accept-acme", List.of("acme")));
+            Map.entry("RMI TCP Accept-acme", List.of("acme")),
+            // Tomcat connector bound with address=: the v2 suffix tier kept the whole name, IP included
+            Map.entry("http-nio-10.0.0.5-8080-Acceptor", List.of("10.0.0.5")),
+            Map.entry("https-jsse-nio-192.168.1.15-8443-ClientPoller-0", List.of("192.168.1.15")),
+            Map.entry("acme-billing-Poller", List.of("acme", "billing")),
+            Map.entry("AcmeGateway-Acceptor-2", List.of("Acme")));
 
     @TempDir
     Path tempDir;
@@ -195,6 +202,47 @@ class AllowlistV3ThreadNamesTest {
             assertTrue(report.residualIdentifiers().isEmpty(),
                     "masked " + name + " flagged: " + report.residualIdentifiers());
         }
+    }
+
+    @Test
+    void maskAndVerifyAgreeOnEveryPlantedName() {
+        // mask and verify parse the same allowlist twice (lesson of 0.3.1): for every template, the
+        // masked name must pass verify and the raw one must be reported.
+        ComplianceVerifier verifier = new ComplianceVerifier(lookup(shipped));
+        for (String name : PLANTED.keySet()) {
+            String original = header(name);
+            String masked = header(rewriter.rewriteThreadName(name));
+
+            assertFalse(verifier.verify(original, original).residualIdentifiers().isEmpty(),
+                    "unmasked " + name + " must be a finding");
+            assertTrue(verifier.verify(original, masked).residualIdentifiers().isEmpty(),
+                    "masked " + name + " flagged: " + verifier.verify(original, masked).residualIdentifiers());
+        }
+    }
+
+    @Test
+    void verifyFlagsATemplatedNameWhoseCapturedPartIsNotAToken() {
+        ComplianceVerifier verifier = new ComplianceVerifier(lookup(shipped));
+        String original = header("kafka-producer-network-thread | acme-payments");
+        for (String leaked : List.of(
+                "kafka-producer-network-thread | acme-payments",
+                "kafka-producer-network-thread | t81b0cx4e2a9-acme",
+                "RMI TCP Connection(2)-10.0.0.5",
+                "http-nio-10.0.0.5-8080-Acceptor",
+                "acme-billing-Poller")) {
+            assertTrue(verifier.verify(original, header(leaked)).residualIdentifiers().stream()
+                            .anyMatch(f -> f.value().equals(leaked)),
+                    "verify accepted " + leaked);
+        }
+    }
+
+    @Test
+    void noWholeNameSuffixTierLeftInV3() {
+        // A suffix keeps the whole name: "http-nio-10.0.0.5-8080-Acceptor" kept the bind IP. v3 keeps
+        // the connector suffixes through a template instead, so the part before them is masked.
+        assertEquals("tX-Acceptor", shipped.applyThreadNameTemplate("acme-Acceptor", part -> "tX"));
+        assertFalse(shipped.allowsThreadName("acme-Poller"));
+        assertTrue(shipped.allowsThreadName("http-nio-8080-Poller"), "Tomcat default name stays verbatim");
     }
 
     @Test

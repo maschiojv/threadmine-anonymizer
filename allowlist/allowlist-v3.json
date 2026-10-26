@@ -141,11 +141,7 @@
       "QuartzScheduler_",
       "DefaultQuartzScheduler"
     ],
-    "threadNameSuffixes": [
-      "-Acceptor",
-      "-Poller",
-      "-ClientPoller"
-    ],
+    "threadNameSuffixes": [],
     "threadNameRegexes": [
       "^http-nio-\\d+-exec-\\d+$",
       "^qtp\\d+-\\d+$",
@@ -217,7 +213,8 @@
       "^micrometer-(.+)$",
       "^(.+)-metrics-publisher$",
       "^ContainerBackgroundProcessor\\[StandardEngine\\[(.+)\\]\\]$",
-      "^weblogic\\.(.+)$"
+      "^weblogic\\.(.+)$",
+      "^(.+)-(?:Acceptor|ClientPoller|Poller)(?:-\\d+)?$"
     ],
     "structuralMarkers": [
       "Full thread dump",

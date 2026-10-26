@@ -101,12 +101,17 @@ are kept anyway: redundancy is harmless in a match set and makes the list verifi
 
 ---
 
-## 4. `required.threadNameSuffixes` (3 entries)
+## 4. `required.threadNameSuffixes` (0 entries in version 3)
 
 Semantics: `name.endsWith(entry)` → the whole name is preserved.
 
-`-Acceptor`, `-Poller`, `-ClientPoller` — HTTP connector threads, named by suffix rather than
-prefix by Tomcat and friends.
+Version 2 listed `-Acceptor`, `-Poller`, `-ClientPoller` here (HTTP connector threads, named by
+suffix by Tomcat and friends). A suffix keeps everything in front of it, so a Tomcat connector bound
+with `address=` (`http-nio-10.0.0.5-8080-Acceptor`) kept its IP verbatim, and so did any
+application thread ending in `-Poller`. Version 3 empties this tier: Tomcat's default names are
+regexes (§5), a connector with an address goes through the Tomcat template (§6), and the last
+template in §6 keeps only the suffix and masks what comes before it (`acme-Poller` →
+`t5d1e7x9a0b3-Poller`). The analyzer's suffix check still sees `-Acceptor` / `-Poller`.
 
 ---
 
@@ -150,7 +155,7 @@ OpenTelemetry and Prometheus exporters, `container-N` and `Catalina-startStop-N`
 
 ---
 
-## 6. `required.threadNameTemplates` (19 entries) — new in version 3
+## 6. `required.threadNameTemplates` (20 entries) — new in version 3
 
 Semantics: the regex must match the **whole** name. Text outside the capture groups is what the
 framework generates and stays verbatim; **each capture group is masked like a thread name of its
@@ -189,6 +194,7 @@ name, which is a regex entry and must be argued as one.
 | `^(.+)-metrics-publisher$` |
 | `^ContainerBackgroundProcessor\[StandardEngine\[(.+)\]\]$` |
 | `^weblogic\.(.+)$` |
+| `^(.+)-(?:Acceptor\|ClientPoller\|Poller)(?:-\d+)?$` — connector suffixes (§4); last, so the Tomcat template wins for a connector name |
 
 ## 7. `required.structuralMarkers` and `structuralMarkerRegexes`
 
