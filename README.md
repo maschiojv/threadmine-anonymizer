@@ -590,6 +590,17 @@ send — but **never attach a real dump**. Reduce it to a synthetic fixture in t
 style of [`corpus/fixtures/`](corpus/fixtures/) (fictional `com.acme.*`
 namespace) and attach that instead.
 
+## Related projects
+
+Same authors, separate tools:
+
+- [threadmine-mcp](https://github.com/maschiojv/threadmine-mcp): MCP server that
+  sends a thread dump to ThreadMine from Claude Code, Claude Desktop or Cursor.
+- [threadmine-action](https://github.com/maschiojv/threadmine-action): GitHub
+  Action that dumps the stuck test JVM when a CI job hits `timeout-minutes`. It
+  does not mask the dump; with `analyze: false` the dump stays in the workflow
+  artifact and nothing is sent.
+
 ## License
 
 [MIT](LICENSE)
