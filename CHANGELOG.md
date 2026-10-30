@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+### Added
+- `com.mchange.v2.resourcepool.` in `required.packagePrefixes`: a c3p0 request waiting for a connection
+  parks in `BasicResourcePool.awaitAvailable`, outside `com.mchange.v2.c3p0.`. ThreadMine reads that frame
+  to report an exhausted connection pool, so a masked dump keeps it.
+
 ## 0.5.0 (2026-10-26)
 
 ### Added

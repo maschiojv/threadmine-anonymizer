@@ -44,6 +44,16 @@ class AllowlistMatcherTest {
         assertFalse(shipped.allowsThreadName("pgto-worker-3"));
     }
 
+    @Test
+    void shippedAllowlistKeepsTheConnectionPoolWaitFrames() {
+        AllowlistMatcher shipped = AllowlistMatcher.fromClasspath();
+        // the frames where a request waits for a pooled connection (ThreadMine POOL_CONEXOES_ESGOTADO)
+        assertTrue(shipped.allowsFqcn("com.zaxxer.hikari.pool.HikariPool"));
+        assertTrue(shipped.allowsFqcn("org.apache.commons.pool2.impl.GenericObjectPool"));
+        assertTrue(shipped.allowsFqcn("org.apache.tomcat.jdbc.pool.ConnectionPool"));
+        assertTrue(shipped.allowsFqcn("com.mchange.v2.resourcepool.BasicResourcePool"));
+    }
+
     // --- allowsFqcn -------------------------------------------------------
 
     @Test

@@ -55,6 +55,7 @@
       "oracle.jdbc.",
       "com.zaxxer.hikari.",
       "com.mchange.v2.c3p0.",
+      "com.mchange.v2.resourcepool.",
       "com.rabbitmq.",
       "com.amazonaws.",
       "software.amazon.awssdk."

@@ -34,7 +34,7 @@ allowlist is the union, and the shortest prefix wins.
 
 ---
 
-## 1. `required.packagePrefixes` (30 entries)
+## 1. `required.packagePrefixes` (31 entries)
 
 | Prefix | Why it must survive |
 |---|---|
@@ -51,7 +51,7 @@ allowlist is the union, and the shortest prefix wins.
 | `kotlin.` `scala.` | Runtime frames of JVM languages, not application code. |
 | `okhttp3.` `feign.` | HTTP clients — outbound-call detection. |
 | `org.postgresql.` `com.mysql.` `oracle.jdbc.` | JDBC drivers — identify a thread parked inside a query. |
-| `com.zaxxer.hikari.` `com.mchange.v2.c3p0.` | Connection pools — connection-starvation detection. |
+| `com.zaxxer.hikari.` `com.mchange.v2.c3p0.` `com.mchange.v2.resourcepool.` | Connection pools — connection-starvation detection. `com.mchange.v2.resourcepool.` holds `BasicResourcePool.awaitAvailable`, where a c3p0 request waits for a connection. |
 | `com.rabbitmq.` `com.amazonaws.` `software.amazon.awssdk.` | Message consumers (RabbitMQ, SQS) — idle-consumer detection. |
 
 **Frame fragments without a package.** The analyzer also matches a few bare fragments
