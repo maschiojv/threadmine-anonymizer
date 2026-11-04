@@ -6,7 +6,7 @@
 
     <groupId>dev.threadmine</groupId>
     <artifactId>tm-anon</artifactId>
-    <version>0.5.0</version>
+    <version>0.5.1</version>
     <packaging>jar</packaging>
 
     <name>tm-anon</name>

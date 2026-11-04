@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.5.1 (2026-11-04)
 
 ### Added
 - `com.mchange.v2.resourcepool.` in `required.packagePrefixes`: a c3p0 request waiting for a connection
